@@ -13,4 +13,21 @@ export default defineConfig({
       "@": new URL("./src", import.meta.url).pathname,
     },
   },
+  build: {
+    target: "es2022",
+    cssCodeSplit: true,
+    sourcemap: false,
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        // 资源优化：拆出 react 与业务，利于缓存与首屏
+        manualChunks(id) {
+          if (id.includes("node_modules/react") || id.includes("node_modules/scheduler")) {
+            return "react-vendor";
+          }
+          return undefined;
+        },
+      },
+    },
+  },
 });

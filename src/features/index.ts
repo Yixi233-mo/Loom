@@ -1,7 +1,5 @@
 /**
- * FE.1 Feature 聚合 — 按业务域组织，底层仍复用 views/state/services。
- * 仅 re-export `.ts` 实现，保证 `node --experimental-strip-types` 可测。
- * FE.3 将在此扩展对话工作台 / 任务中心 / 设置 / 技能树页面组件。
+ * FE.3 Feature 聚合 — 核心页面 + 底层 views/shell 复用
  */
 
 export * as chat from "../views/chat-panel.ts";
@@ -10,6 +8,18 @@ export * as files from "../views/file-panel.ts";
 export * as llm from "../views/llm-settings-panel.ts";
 export * as mcp from "../views/mcp-panel.ts";
 export * as dsl from "../shell/dsl-editor.impl.ts";
+
+export {
+  LoadingState,
+  EmptyState,
+  ErrorState,
+  PageShell,
+  phaseOf,
+  type AsyncPhase,
+} from "./page-states.ts";
+export { ChatWorkbench } from "./chat-workbench.ts";
+export { TaskCenter, ResultCard } from "./task-center.ts";
+export { SettingsPage, type SettingsTab } from "./settings-page.ts";
 
 export type FeatureId =
   | "chat"

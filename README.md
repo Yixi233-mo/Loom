@@ -1,6 +1,6 @@
 # Loom · 织巢
 
-> **状态：开发中（WIP）** · 尚未正式发布，请勿当生产依赖  
+> **状态：开发中（WIP）** · `0.1.0` · 请勿当生产依赖  
 > 跨端协作 · Agent 联邦 · DSL 驱动的可生长工作台
 
 把 Windows / 平板 / 手机编织成一台电脑，把手边的 AI Agent 编织成一个团队。
@@ -14,14 +14,12 @@
 | 版本 | `0.1.0` · 预览 / 内部迭代 |
 | 稳定性 | **不稳定**，接口与目录可能随时调整 |
 | 三端 | Web 与 Win 壳可跑；Android / 平板打包 **未完成** |
-| 文档 | 以 `目录/` 交接文档为准，公开文档持续补全中 |
-| 贡献 | 欢迎试用与提 Issue；**暂不接受大规模 PR**（架构仍在收敛） |
-
-如果你只是想看看效果：本地 `npm run start` 或直接打开 `app.html`（Hub 能力除外）。
+| 文档 | 交付清单见 [`目录/FE7_交付清单.md`](./目录/FE7_交付清单.md) |
+| 贡献 | 欢迎试用与提 Issue；**暂不接受大规模 PR** |
 
 ---
 
-## 一分钟看懂
+## 架构
 
 ```text
   手机 / 平板 / PC          Agent（Claude Code · MCP · 内置）
@@ -38,68 +36,84 @@
   跨端消息/心跳   排队/超时     YAML 热加载
 ```
 
-**核心主张**：功能用 YAML DSL 声明，改声明即扩展，尽量不改主程序。
+| 层 | 技术 | 目录 |
+|----|------|------|
+| Shell | Tauri 2 · React · TS · Vite | `src/` `src-tauri/` |
+| Hub | Python · FastAPI · LangGraph | `api/` `integration/` `dsl/` … |
+| 通信 | WebSocket · REST · Tauri IPC | `src/services/` `src/platform/` |
+| 扩展 | YAML DSL（四类） | `dsl/` `plugins/` |
+| 设计 | 暖白毛玻璃 Token | `src/styles/` |
+
+前端分层：`contracts → api → state/stores → features/components → platform/perf`。
 
 ---
 
-## 能做什么
+## 功能
 
-- **对话与任务** — 聊天、任务状态、结果卡片（tokens / latency / 降级档位）
-- **自定义 LLM** — OpenAI 兼容 API，加密存 Key，拉模型列表，一键测试对话
-- **MCP 外接** — 填地址 → 检测连接 → 看服务与工具（自带演示 MCP）
-- **DSL 扩展** — Workflow / Plugin / Agent / Trigger 四类；校验后保存，约 2s 热生效
-- **跨端协同** — 手机触发 → Hub 路由 → PC 执行 → 多端查看；离线排队、上线分发
-- **可观测与安全** — trace_id 日志、降级链、Token 熔断、OAuth 风格鉴权
-
----
-
-## 技术栈
-
-| 层 | 技术 |
-|----|------|
-| Shell | Tauri 2.0 · React · TypeScript · Vite |
-| Hub | Python 3.11+ · FastAPI · LangGraph · Pydantic |
-| DSL | YAML · JSON Schema |
-| Agent | MCP（JSON-RPC 兼容）· httpx |
-| Device | WebSocket · HMAC-SHA256 |
-| Store | SQLite |
-| Deploy | Docker · GitHub Actions / Releases |
+- **对话工作台** — 消息流、模型对话、加载/空/错误态
+- **任务中心** — 筛选、结果卡片（tokens / latency / 降级），长列表虚拟化
+- **设置** — 自定义 LLM（加密 Key、拉模型、测试）· MCP 检测
+- **DSL** — 校验后热加载；对话式生成（需确认落盘）
+- **跨端** — 手机触发 → Hub → PC 执行 → 多端查看
+- **安全观测** — trace_id、降级链、Token 熔断、OAuth 风格鉴权
 
 ---
 
-## 快速开始
+## 开发
+
+### 环境
+
+Node 20+ · Python 3.11+ ·（桌面）Rust + WebView2 · Windows 优先
+
+### 三端启动
 
 ```powershell
-# 安装前端依赖
 npm install
 
-# 后端 Hub（REST + WebSocket）
-npm run start:hub
+# Web / 开发
+npm run start              # Hub :8765 + 前端 :5173
+# 或：npm run start:hub  +  npm run dev
 
-# 另开终端：前端开发服务
-npm run dev
-# 浏览器打开 http://localhost:5173/
+# 单文件预览（无 Hub）
+npm run build:single       # 打开 app.html
 
-# 或一键同时启动
-npm run start
+# 桌面 Win
+cd src-tauri && cargo run  # 另开终端保持 npm run dev
 
-# 无服务单文件预览（Hub 功能除外）
-npm run build:single   # 然后打开 app.html
+# 移动预览：手机访问 http://<PC-IP>:5173/（正式 Tauri 打包待配置）
+
+# 演示 MCP
+npm run mcp:demo           # http://127.0.0.1:3900/mcp
 ```
 
-**自测 MCP**（无需 Claude Code）：
+### 常用脚本
+
+| 命令 | 说明 |
+|------|------|
+| `npm run test` | Py + JS + Rust 全量 |
+| `npm run test:ui` | 前端单测 |
+| `npm run lint` / `npm run ci` | 静态检查 / 一键 CI |
+| `npm run build` | 生产构建（react-vendor 拆包） |
+
+---
+
+## 构建与部署
 
 ```powershell
-npm run mcp:demo
-# 面板地址填 http://127.0.0.1:3900/mcp → 检测连接
+# 前端
+npm run build              # dist/
+npm run build:single       # app.html
+
+# Hub（Docker）
+docker compose up hub      # :8765
 ```
 
-**测试 / 静态检查**：
+- CI：`.github/workflows/ci.yml`
+- Release（含 app.html）：`.github/workflows/release.yml`
+- 环境变量（**勿写进仓库**）：`WS_SECRET` · `LOOM_AUTH_SECRET` · `LOOM_MASTER_KEY`
 
-```powershell
-npm run test   # Python + JS + Rust
-npm run lint
-```
+完整清单与验证步骤：**[`目录/FE7_交付清单.md`](./目录/FE7_交付清单.md)**  
+三端人工验证：[`目录/FE5_三端验证步骤.md`](./目录/FE5_三端验证步骤.md)
 
 ---
 
@@ -107,57 +121,35 @@ npm run lint
 
 ```text
 loom/
-├── dsl/  agent_hub/  device_mesh/  task_orchestrator/  sync/
-├── api/  integration/  llm/  auth/  observability/
-├── plugins/example/          # notes 插件 + 4 场景 workflow
-├── src/                      # 前端（views / state / services / features…）
-├── src-tauri/                # Tauri 壳
-├── tests/                    # Python · JS · e2e
-├── scripts/                  # 启动 / 构建 / 测试
-└── 目录/                     # 设计与交接文档（中文）
+├── dsl/ agent_hub/ device_mesh/ task_orchestrator/ sync/
+├── api/ integration/ llm/ auth/ observability/
+├── plugins/example/
+├── src/                 # 前端
+├── src-tauri/           # 桌面壳
+├── tests/ scripts/
+└── 目录/                # 设计与交付文档
 ```
 
-深入阅读（建议顺序）：
-
-1. [`目录/项目介绍.md`](./目录/项目介绍.md) — 定位与功能  
-2. [`目录/交接手册.md`](./目录/交接手册.md) — 代码地图与决策  
-3. [`目录/ROADMAP.md`](./目录/ROADMAP.md) — 阶段与计划  
-4. [`目录/plan.md`](./目录/plan.md) — 进度日志  
+深入：[`目录/项目介绍.md`](./目录/项目介绍.md) · [`目录/交接手册.md`](./目录/交接手册.md) · [`目录/ROADMAP.md`](./目录/ROADMAP.md)
 
 ---
 
-## 当前进度（摘要）
+## 设计方向
 
-| 阶段 | 状态 |
-|------|------|
-| DSL / Agent 联邦 / 跨端 / 编排 | ✅ 核心已落地 |
-| Shell 前端骨架 · LLM / MCP / DSL 面板 | ✅ 可演示 |
-| 可观测 · OAuth · CI · Docker | ✅ 初版 |
-| **前端生产化（FE）** | 🚧 进行中（暖色毛玻璃 UI · 技能树交互） |
-| 移动端打包 · 跨机真机 E2E | ⏳ 计划中 |
-
-> 完整清单见 `目录/ROADMAP.md`。**开发中，一切以仓库内文档与代码为准。**
-
----
-
-## 设计方向（前端 FE）
-
-界面气质：暖白底 + 毛玻璃面板，蜜桃杏 / 陶土强调，鼠尾草绿表示「已连接 / 成功」。  
-设备与 Agent 呈「技能树」节点，点亮即解锁；DSL 保存带「成就达成」式轻反馈。
+暖白底 + 毛玻璃，蜜桃杏/陶土强调，鼠尾草表示成功/已连接；设备与 Agent 呈技能树点亮。Token 见 `src/styles/README.md`。
 
 ---
 
 ## 许可与声明
 
-- 本项目处于 **活跃开发中**，不提供任何明示或暗示的担保。  
-- 示例配置中的第三方 API / 密钥 **请勿提交到仓库**。  
-- License 待正式发布前确定（开发阶段仅作学习与内部协作用途）。
+- **开发中**，不提供明示或暗示担保  
+- 禁止提交真实 API 密钥  
+- License 待正式发布前确定  
 
 ---
 
 <div align="center">
 
-**开发中 · Work in Progress**  
-文档与行为以后续 Release 说明为准
+**开发中 · Work in Progress** · 交付基线见 `目录/FE7_交付清单.md`
 
 </div>

@@ -1,0 +1,85 @@
+/**
+ * FE.5 三端适配样式 — 安全区 / 断点列 / 软键盘 / 拖拽
+ */
+
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+}
+
+body {
+  padding-top: var(--safe-top);
+  padding-right: var(--safe-right);
+  padding-bottom: var(--safe-bottom);
+  padding-left: var(--safe-left);
+}
+
+/* Web / 三栏断点 */
+.ui-layout-main[data-bp="lg"] {
+  grid-template-columns: 220px 1fr;
+}
+
+.ui-layout-main[data-bp="md"] {
+  grid-template-columns: 180px 1fr;
+}
+
+.ui-layout-main[data-bp="sm"] {
+  grid-template-columns: 1fr;
+}
+
+/* 移动底部抽屉（不用厚重阴影） */
+.ui-drawer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--z-drawer);
+  padding: var(--space-4) var(--space-4) calc(var(--space-4) + var(--safe-bottom));
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  border-top: 1px solid var(--line);
+  background: var(--panel);
+  backdrop-filter: var(--card-backdrop);
+  -webkit-backdrop-filter: var(--card-backdrop);
+  transform: translateY(110%);
+  transition: transform var(--duration-normal) var(--ease-out);
+}
+
+.ui-drawer[data-open="true"] {
+  transform: translateY(0);
+}
+
+/* 软键盘打开时压缩主区 */
+html[data-kb="open"] .ui-layout-content {
+  padding-bottom: var(--space-8);
+}
+
+html[data-kb="open"] .ui-drawer {
+  transform: translateY(110%);
+}
+
+/* 拖拽接收（桌面） */
+.ui-dropzone[data-dragover="true"] {
+  outline: 2px dashed var(--accent);
+  outline-offset: -6px;
+  background: var(--accent-soft);
+}
+
+/* 桌面无边框窗口可拖区域 */
+[data-tauri-drag-region] {
+  -webkit-app-region: drag;
+}
+
+@media (max-width: 639px) {
+  .fe-page-header {
+    padding-top: var(--space-2);
+  }
+
+  .chat-composer {
+    position: sticky;
+    bottom: 0;
+    padding-bottom: var(--safe-bottom);
+    background: var(--panel);
+  }
+}

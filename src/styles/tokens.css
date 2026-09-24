@@ -1,49 +1,271 @@
 /**
- * FE.1 设计 Token — 暖白毛玻璃 / 暖杏蜜桃强调 / 鼠尾草状态色。
- * FE.2 将在此扩展完整色板、间距、圆角、阴影、字体层级。
+ * FE.2 设计 Token — Loom · 织巢
+ * 暖白毛玻璃 · 蜜桃/杏/陶土强调 · 鼠尾草状态 · 技能树节点
+ *
+ * 层级：primitive（原始色/尺度）→ semantic（语义别名）→ component（组件局部，少量）
+ * 默认主题：暖光 light（data-theme="light" 或缺省）
+ * 可选主题：暖夜 dark（data-theme="dark"）
  */
 
-:root {
-  /* 底色与质感 */
-  --bg: #f7f1ea;
-  --bg-glow: #f3d7c4;
-  --panel: rgba(255, 252, 248, 0.72);
-  --panel-solid: #fffcf8;
-  --ink: #2a221c;
-  --muted: #7a6b60;
-  --line: rgba(42, 34, 28, 0.1);
-  --shadow: 0 8px 28px rgba(120, 72, 40, 0.08);
-  --blur: blur(14px);
+/* ---------------------------------------------------------------------------
+ * Primitive
+ * ------------------------------------------------------------------------- */
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* 底：暖白 / 奶油 / 米色，禁止大面积死黑与纯白 */
+  --p-cream-0: #fffcf8;
+  --p-cream-50: #faf5ef;
+  --p-cream-100: #f7f1ea;
+  --p-cream-200: #f0e6da;
+  --p-cream-300: #e4d6c8;
+
+  /* 暖中性 */
+  --p-ink-900: #2a221c;
+  --p-ink-700: #4a3c32;
+  --p-ink-500: #7a6b60;
+  --p-ink-300: #a8988c;
+  --p-ink-100: #cfc6bd;
 
   /* 主强调：蜜桃橘 / 暖杏 / 陶土 */
-  --accent: #d9895b;
-  --accent-soft: #f6e2d4;
-  --accent-strong: #c56d42;
-  --apricot: #e8b48a;
-  --terracotta: #c56d42;
+  --p-peach-400: #e8a070;
+  --p-peach-300: #e8b48a;
+  --p-apricot-500: #d9895b;
+  --p-apricot-600: #c56d42;
+  --p-terracotta-700: #a85632;
+  --p-peach-soft: #f6e2d4;
+  --p-peach-glow: rgba(232, 160, 112, 0.45);
 
-  /* 辅助 / 状态：鼠尾草、香槟 */
-  --sage: #8faf9a;
-  --sage-soft: #e4efe7;
-  --champagne: #efe2c8;
-  --warn: #c4785a;
-  --danger: #b85c4a;
+  /* 辅助：鼠尾草 / 香槟 */
+  --p-sage-400: #8faf9a;
+  --p-sage-600: #5f7f6a;
+  --p-sage-soft: #e4efe7;
+  --p-champagne: #efe2c8;
+  --p-champagne-soft: rgba(239, 226, 200, 0.55);
 
-  /* 游戏化技能树 */
-  --node-off: #cfc6bd;
-  --node-on: #e8a070;
-  --node-glow: 0 0 12px rgba(232, 160, 112, 0.45);
+  /* 警示 / 危险（仍偏暖，不刺眼） */
+  --p-warn: #c4785a;
+  --p-warn-soft: #f6e2d4;
+  --p-danger: #b85c4a;
+  --p-danger-soft: #f3ddd6;
 
-  /* 间距 / 圆角 / 字体（FE.2 细化） */
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 22px;
+  /* 背景光晕 */
+  --p-glow-peach: rgba(243, 215, 196, 0.9);
+
+  /* 玻璃与阴影 */
+  --p-glass-bg: rgba(255, 252, 248, 0.72);
+  --p-glass-border: rgba(42, 34, 28, 0.1);
+  --p-glass-blur: 14px;
+  --p-shadow-sm: 0 2px 8px rgba(120, 72, 40, 0.06);
+  --p-shadow-md: 0 8px 28px rgba(120, 72, 40, 0.08);
+  --p-shadow-lg: 0 10px 32px rgba(120, 72, 40, 0.1);
+
+  /* 字体 */
+  --p-font-body: "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --p-font-display: "Segoe UI Semibold", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --p-font-mono: ui-monospace, "Cascadia Code", Consolas, "Courier New", monospace;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --p-cream-0: #241e19;
+  --p-cream-50: #2a221c;
+  --p-cream-100: #302820;
+  --p-cream-200: #3a3028;
+  --p-cream-300: #4a3c32;
+
+  --p-ink-900: #f7ece3;
+  --p-ink-700: #e4d6c8;
+  --p-ink-500: #b5a598;
+  --p-ink-300: #7a6b60;
+  --p-ink-100: #5a4c42;
+
+  --p-peach-400: #e8a070;
+  --p-peach-300: #efc09a;
+  --p-apricot-500: #e09a6a;
+  --p-apricot-600: #d9895b;
+  --p-terracotta-700: #e8b48a;
+  --p-peach-soft: #4a3428;
+  --p-peach-glow: rgba(232, 160, 112, 0.35);
+
+  --p-sage-400: #9bc0a6;
+  --p-sage-600: #b5d0bc;
+  --p-sage-soft: #2c3a32;
+  --p-champagne: #4a4030;
+  --p-champagne-soft: rgba(74, 64, 48, 0.55);
+
+  --p-warn: #e09a7a;
+  --p-warn-soft: #4a3428;
+  --p-danger: #e08a78;
+  --p-danger-soft: #4a2e28;
+
+  --p-glow-peach: rgba(232, 160, 112, 0.18);
+
+  --p-glass-bg: rgba(42, 34, 28, 0.72);
+  --p-glass-border: rgba(247, 236, 227, 0.1);
+  --p-glass-blur: 16px;
+  --p-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --p-shadow-md: 0 8px 28px rgba(0, 0, 0, 0.3);
+  --p-shadow-lg: 0 10px 36px rgba(0, 0, 0, 0.35);
+}
+
+/* ---------------------------------------------------------------------------
+ * Semantic — 组件与业务只依赖本层
+ * ------------------------------------------------------------------------- */
+:root,
+[data-theme="light"],
+[data-theme="dark"] {
+  /* 表面 */
+  --bg: var(--p-cream-100);
+  --bg-elevated: var(--p-cream-0);
+  --bg-glow: var(--p-glow-peach);
+  --panel: var(--p-glass-bg);
+  --panel-solid: var(--p-cream-0);
+  --panel-muted: var(--p-cream-200);
+
+  /* 文字 */
+  --ink: var(--p-ink-900);
+  --ink-secondary: var(--p-ink-700);
+  --muted: var(--p-ink-500);
+  --ink-faint: var(--p-ink-300);
+  --line: var(--p-glass-border);
+  --line-strong: var(--p-cream-300);
+
+  /* 强调 */
+  --accent: var(--p-apricot-500);
+  --accent-strong: var(--p-apricot-600);
+  --accent-soft: var(--p-peach-soft);
+  --accent-ink: #fffaf5;
+  --apricot: var(--p-peach-300);
+  --terracotta: var(--p-terracotta-700);
+  --peach-glow: var(--p-peach-glow);
+
+  /* 状态：完成 / 成功 / 已连接 */
+  --success: var(--p-sage-600);
+  --success-soft: var(--p-sage-soft);
+  --sage: var(--p-sage-400);
+  --champagne: var(--p-champagne);
+  --champagne-soft: var(--p-champagne-soft);
+  --warn: var(--p-warn);
+  --warn-soft: var(--p-warn-soft);
+  --danger: var(--p-danger);
+  --danger-soft: var(--p-danger-soft);
+
+  /* 玻璃 */
+  --glass-bg: var(--p-glass-bg);
+  --glass-border: var(--p-glass-border);
+  --glass-blur: var(--p-glass-blur);
+  --shadow-sm: var(--p-shadow-sm);
+  --shadow-md: var(--p-shadow-md);
+  --shadow-lg: var(--p-shadow-lg);
+  --shadow: var(--p-shadow-md);
+  --blur: blur(var(--p-glass-blur));
+
+  /* 技能树 */
+  --node-off: var(--p-ink-100);
+  --node-on: var(--p-peach-400);
+  --node-glow: 0 0 12px var(--p-peach-glow);
+  --node-half: var(--p-sage-400);
+
+  /* 间距 — 4px 基准 */
+  --space-0: 0;
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
   --space-4: 16px;
-  --space-5: 24px;
-  --space-6: 32px;
-  --font-body: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-  --font-display: "Segoe UI Semibold", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 48px;
+  --space-10: 64px;
+
+  /* 圆角 */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --radius-pill: 999px;
+
+  /* 字体层级 */
+  --font-body: var(--p-font-body);
+  --font-display: var(--p-font-display);
+  --font-mono: var(--p-font-mono);
+
+  --text-2xs: 11px;
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-md: 14px;
+  --text-lg: 16px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+  --text-3xl: 32px;
+  --text-display: 40px;
+
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.65;
+
+  --weight-normal: 400;
+  --weight-medium: 550;
+  --weight-semibold: 650;
+  --weight-bold: 700;
+
+  --tracking-tight: -0.01em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.04em;
+  --tracking-caps: 0.08em;
+
+  /* 动效（轻、圆、暖） */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.3, 0.64, 1);
+  --duration-fast: 120ms;
+  --duration-normal: 200ms;
+  --duration-slow: 320ms;
+  --duration-toast: 2400ms;
+
+  /* 层级 */
+  --z-panel: 10;
+  --z-drawer: 40;
+  --z-modal: 60;
+  --z-toast: 80;
+}
+
+/* ---------------------------------------------------------------------------
+ * Component 局部（仅高频复用，避免把业务写死在这里）
+ * ------------------------------------------------------------------------- */
+:root {
+  --button-primary-bg: var(--accent);
+  --button-primary-bg-hover: var(--accent-strong);
+  --button-primary-ink: var(--accent-ink);
+  --button-ghost-border: var(--line);
+  --button-ghost-bg-hover: var(--accent-soft);
+
+  --card-radius: var(--radius-lg);
+  --card-padding: var(--space-6);
+  --card-bg: var(--glass-bg);
+  --card-border: var(--glass-border);
+  --card-backdrop: blur(var(--glass-blur));
+  --card-shadow: var(--shadow-md);
+
+  --toast-bg: var(--champagne-soft);
+  --toast-border: color-mix(in srgb, var(--accent-strong) 28%, transparent);
+  --toast-radius: var(--radius-lg);
+
+  --input-bg: color-mix(in srgb, var(--panel-solid) 88%, transparent);
+  --input-border: var(--line);
+  --input-border-focus: var(--accent);
+  --input-radius: var(--radius-md);
+}
+
+/* 无障碍：降低动态偏好 */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-normal: 0ms;
+    --duration-slow: 0ms;
+  }
 }

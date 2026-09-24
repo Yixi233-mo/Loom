@@ -1,6 +1,10 @@
 /**
- * FE.1 样式入口 — Token 优先，再挂应用壳样式。
+ * FE.2 样式入口 — Token 优先，再挂组件与应用壳。
  */
 
 @import "./tokens.css";
+@import "./base.css";
+@import "./components.css";
+@import "./pages.css";
+@import "./adapters.css";
 @import "../styles.css";

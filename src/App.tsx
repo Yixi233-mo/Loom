@@ -1,6 +1,12 @@
 import * as React from "react";
 import { SchemaRenderer } from "./shell/schema-renderer.impl.ts";
 import { Workspace, LlmSettingsPanel, McpPanel } from "./views/index.ts";
+import {
+  ChatWorkbench,
+  TaskCenter,
+  SettingsPage,
+} from "./features/index.ts";
+import { useHashRoute, navigate, type AppRoute } from "./hooks/index.ts";
 import { createAppStores, createTask, createAgent } from "./state/index.ts";
 import { createServiceLayer } from "./services/index.ts";
 import { ModelChatClient } from "./services/model-chat.ts";
@@ -93,6 +99,11 @@ export default function App() {
     providerId?: string;
   }>({ name: '', baseUrl: '', apiKey: '' });
   const [llmProviders, setLlmProviders] = React.useState<Array<any>>([]);
+  const [settingsTab, setSettingsTab] = React.useState<"llm" | "mcp">("llm");
+  const [pageLoading, setPageLoading] = React.useState(false);
+  const [pageError, setPageError] = React.useState<string | null>(null);
+  const route = useHashRoute();
+  const activeRoute: AppRoute = route.route;
   const [files, setFiles] = React.useState([
     {
       fileId: "f-demo-1",
@@ -157,6 +168,31 @@ export default function App() {
         )
       ),
       e(
+        "nav",
+        { className: "app-nav", "data-view": "nav", "aria-label": "主导航" },
+        (
+          [
+            ["chat", "对话"],
+            ["tasks", "任务"],
+            ["settings", "设置"],
+          ] as Array<[AppRoute, string]>
+        ).map(([id, label]) =>
+          e(
+            "button",
+            {
+              key: id,
+              type: "button",
+              className:
+                "nav-link" + (activeRoute === id ? " is-active" : ""),
+              "data-route": id,
+              "aria-current": activeRoute === id ? "page" : undefined,
+              onClick: () => navigate(id),
+            },
+            label
+          )
+        )
+      ),
+      e(
         "span",
         { className: "app-badge", "data-platform-badge": "true" },
         `${platform.device.deviceType} · ${platform.layout}${
@@ -164,6 +200,271 @@ export default function App() {
         }`
       )
     ),
+
+    /* FE.3 核心页面：hash 路由 */
+    activeRoute === "chat"
+      ? e(ChatWorkbench, {
+          session,
+          loading: pageLoading,
+          error: pageError,
+          busy: chatBusy,
+          modelLabel: llmProviders.find((p) => p.defaultModel)?.defaultModel,
+          chatSize,
+          onToggleSize: () =>
+            setChatSize((s) => (s === "default" ? "expanded" : "default")),
+          onRetry: () => {
+            setPageError(null);
+            setPageLoading(true);
+            setTimeout(() => setPageLoading(false), 200);
+          },
+          onDraft: (text: string) => stores.session.setDraft(text),
+          onSend: (text: string) => {
+            stores.session.appendMessage({ role: "user", content: text });
+            stores.session.setDraft("");
+            stores.session.setStatus("streaming");
+            setChatBusy(true);
+            const active = llmProviders.find((p) => p.defaultModel && p.baseUrl);
+            void (async () => {
+              try {
+                if (active) {
+                  const reply = await modelChat.complete(
+                    {
+                      providerId: active.providerId,
+                      baseUrl: active.baseUrl,
+                      apiKey:
+                        (active as any).apiKeyPlain || (active as any)._apiKey || "",
+                      model: active.defaultModel,
+                    },
+                    stores.session.get().messages
+                  );
+                  stores.session.appendMessage({ role: "assistant", content: reply });
+                } else {
+                  stores.session.appendMessage({
+                    role: "assistant",
+                    content: "（未配置模型，本地回声）" + text.slice(0, 40),
+                  });
+                }
+              } catch (err) {
+                const msg = err instanceof Error ? err.message : String(err);
+                stores.session.appendMessage({
+                  role: "assistant",
+                  content: msg.startsWith("模型对话失败") || msg.startsWith("请先")
+                    ? msg
+                    : "模型对话失败：" + msg,
+                });
+              } finally {
+                stores.session.setStatus("idle");
+                setChatBusy(false);
+              }
+            })();
+          },
+        })
+      : activeRoute === "tasks"
+        ? e(TaskCenter, {
+            tasks,
+            filter,
+            loading: pageLoading,
+            error: pageError,
+            onFilter: (f: TaskStatus | "all") => setFilter(f),
+            onRetry: () => {
+              setPageError(null);
+              setPageLoading(true);
+              setTimeout(() => setPageLoading(false), 200);
+            },
+            onRefresh: () => {
+              setPageLoading(true);
+              setPageError(null);
+              setTimeout(() => setPageLoading(false), 300);
+            },
+          })
+        : activeRoute === "settings"
+          ? e(SettingsPage, {
+              tab: settingsTab,
+              onTab: (t) => {
+                setSettingsTab(t);
+                navigate("settings", t);
+              },
+              loading: pageLoading,
+              error: pageError,
+              onRetry: () => setPageError(null),
+              llmError,
+              llmTestResult,
+              providers: llmProviders,
+              llmDraft,
+              onLlmDraft: setLlmDraft,
+              onSaveLlm: () => {
+                setLlmProviders((prev) => {
+                  const prevItem = llmDraft.providerId
+                    ? prev.find((x) => x.providerId === llmDraft.providerId)
+                    : undefined;
+                  const plain =
+                    llmDraft.apiKey || (prevItem as any)?.apiKeyPlain || "";
+                  const item = {
+                    providerId: llmDraft.providerId || "p-" + Date.now(),
+                    name: llmDraft.name,
+                    baseUrl: (llmDraft.baseUrl || "")
+                      .trim()
+                      .replace(/\/+$/, ""),
+                    apiKeyMasked: llmDraft.apiKey
+                      ? llmDraft.apiKey.slice(0, 4) +
+                        "***" +
+                        llmDraft.apiKey.slice(-3)
+                      : (prevItem as any)?.apiKeyMasked || "",
+                    hasApiKey: !!plain,
+                    apiKeyPlain: plain,
+                    defaultModel: prevItem?.defaultModel || "",
+                    models: prevItem?.models || [],
+                  };
+                  const idx = prev.findIndex(
+                    (x) => x.providerId === item.providerId
+                  );
+                  if (idx >= 0) {
+                    const next = [...prev];
+                    next[idx] = {
+                      ...next[idx],
+                      ...item,
+                      apiKeyPlain:
+                        (item as any).apiKeyPlain ||
+                        (prev[idx] as any).apiKeyPlain,
+                      models: item.models?.length
+                        ? item.models
+                        : prev[idx].models,
+                    };
+                    return next;
+                  }
+                  return [item, ...prev];
+                });
+                setLlmDraft({ name: "", baseUrl: "", apiKey: "" });
+              },
+              onFetchModels: (pid: string) => {
+                setLlmError("");
+                void (async () => {
+                  const p = llmProviders.find((x) => x.providerId === pid);
+                  if (!p) return;
+                  try {
+                    let models: string[] = [];
+                    try {
+                      const r = await services.llm.fetchModels(pid);
+                      models = r.models || [];
+                    } catch {
+                      /* 浏览器直拉回退 */
+                    }
+                    if (!models.length) {
+                      const key = (p as any).apiKeyPlain || "";
+                      if (!key) {
+                        throw new Error(
+                          "本页缺少 API Key 明文，请重新保存后再拉取"
+                        );
+                      }
+                      models = await fetchProviderModels(p.baseUrl, key);
+                    }
+                    if (!models.length)
+                      throw new Error("服务商未返回任何模型 id");
+                    setLlmProviders((prev) =>
+                      prev.map((x) =>
+                        x.providerId === pid ? { ...x, models } : x
+                      )
+                    );
+                  } catch (err) {
+                    const msg =
+                      err instanceof Error ? err.message : String(err);
+                    setLlmError("拉取模型失败：" + msg);
+                    setLlmProviders((prev) =>
+                      prev.map((x) =>
+                        x.providerId === pid ? { ...x, models: [] } : x
+                      )
+                    );
+                  }
+                })();
+              },
+              onSelectModel: (pid: string, model: string) => {
+                setLlmProviders((prev) =>
+                  prev.map((p) =>
+                    p.providerId === pid ? { ...p, defaultModel: model } : p
+                  )
+                );
+                void services.llm.select(pid, model).catch(() => {});
+              },
+              onDeleteProvider: (pid: string) =>
+                setLlmProviders((prev) =>
+                  prev.filter((p) => p.providerId !== pid)
+                ),
+              onTestChat: (pid: string) => {
+                setLlmError("");
+                setLlmTestResult("");
+                void (async () => {
+                  const p = llmProviders.find((x) => x.providerId === pid);
+                  if (!p || !p.defaultModel) return;
+                  try {
+                    const reply = await modelChat.complete(
+                      {
+                        providerId: pid,
+                        baseUrl: p.baseUrl,
+                        apiKey: (p as any).apiKeyPlain || "",
+                        model: p.defaultModel,
+                      },
+                      [
+                        {
+                          id: "t1",
+                          role: "user",
+                          content: "你好，请用一句话介绍你自己",
+                          createdAt: Date.now(),
+                        },
+                      ]
+                    );
+                    setLlmTestResult(reply.slice(0, 120));
+                  } catch (err) {
+                    const msg =
+                      err instanceof Error ? err.message : String(err);
+                    setLlmError(
+                      msg.startsWith("模型对话失败") || msg.startsWith("请先")
+                        ? msg
+                        : "模型对话失败：" + msg
+                    );
+                  }
+                })();
+              },
+              mcpUrl,
+              onMcpUrl: setMcpUrl,
+              mcpResult,
+              mcpBusy,
+              onMcpProbe: () => {
+                setMcpBusy(true);
+                setMcpResult(null);
+                void (async () => {
+                  try {
+                    const r = await probeMcp(services.rest, mcpUrl);
+                    setMcpResult(r);
+                  } catch (err) {
+                    const msg =
+                      err instanceof Error ? err.message : String(err);
+                    setMcpResult({
+                      ok: false,
+                      url: mcpUrl,
+                      message: msg,
+                      tools: [],
+                      serverInfo: null,
+                    });
+                  } finally {
+                    setMcpBusy(false);
+                  }
+                })();
+              },
+            })
+          : e(
+              "section",
+              { className: "app-section", "data-view": "not-found" },
+              e("h2", null, "未找到页面"),
+              e(
+                "button",
+                {
+                  type: "button",
+                  className: "ui-button ui-button--primary",
+                  onClick: () => navigate("chat"),
+                },
+                "回到对话"
+              )
+            ),
 
     e(Workspace, {
       session,
