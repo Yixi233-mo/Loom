@@ -23,7 +23,6 @@ from device_mesh.protocol import (  # noqa: E402
     build_message,
     parse_message,
 )
-from device_mesh.registry import DeviceMesh  # noqa: E402
 from device_mesh.ws_server import (  # noqa: E402
     HubRuntime,
     create_app,
@@ -301,7 +300,7 @@ class TestWSEdge(unittest.TestCase):
         with client.websocket_connect("/ws") as ws:
             ws.send_text(register_msg("pc-1"))
             recv_json(ws)
-            ok = __import__("asyncio").run(
+            __import__("asyncio").run(
                 rt.cm.send_to_device("pc-1", build_message("task_dispatch", task_id="t1"))
             )
             # TestClient websocket send from same context is awkward;

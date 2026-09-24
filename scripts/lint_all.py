@@ -8,7 +8,6 @@
 from __future__ import annotations
 
 import os
-import py_compile
 import shutil
 import subprocess
 import sys
@@ -29,9 +28,14 @@ def lint_python() -> int:
         if "node_modules" in s or "target" in s or "_fix" in s:
             continue
         try:
-            py_compile.compile(str(p), doraise=True)
-        except py_compile.PyCompileError as e:
+            # 只做语法编译检查，避免写 __pycache__（CI/只读盘上可能 PermissionError）
+            source = Path(p).read_text(encoding="utf-8")
+            compile(source, str(p), "exec", dont_inherit=True)
+        except SyntaxError as e:
             print(f"SYNTAX FAIL {p}: {e}")
+            errors += 1
+        except Exception as e:  # noqa: BLE001
+            print(f"READ FAIL {p}: {e}")
             errors += 1
     # ruff 可选
     ruff = shutil.which("ruff")

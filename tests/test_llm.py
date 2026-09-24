@@ -1,9 +1,7 @@
 """LLM 功能测试：加密 / 配置 / 拉取模型 / API。"""
 
 from __future__ import annotations
-from __future__ import annotations
 
-import asyncio
 import json
 import sys
 import unittest
@@ -130,9 +128,10 @@ class TestLLMClient(unittest.IsolatedAsyncioTestCase):
 
 class TestLlmApi(unittest.TestCase):
     def setUp(self):
-        from api.llm_routes import create_llm_router
         from fastapi import FastAPI
         from fastapi.testclient import TestClient
+
+        from api.llm_routes import create_llm_router
 
         self.path = ROOT / "plugins" / "_llm_api.json"
         self.store = LLMConfigStore(self.path, master_key="m")

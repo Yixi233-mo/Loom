@@ -6,7 +6,6 @@
 
 from __future__ import annotations
 
-import asyncio
 import json
 import sys
 import unittest
@@ -28,7 +27,10 @@ from agent_hub.adapters.work_buddy import (  # noqa: E402
     work_buddy_catalog_entry,
 )
 from agent_hub.graph import build_hub_graph  # noqa: E402
-from agent_hub.mcp_catalog import builtin_mcp_catalog, catalog_download_links  # noqa: E402
+from agent_hub.mcp_catalog import (  # noqa: E402
+    builtin_mcp_catalog,
+    catalog_download_links,
+)
 from agent_hub.registry import AgentRegistry  # noqa: E402
 from api.mcp_routes import create_mcp_router  # noqa: E402
 from scripts.mock_mcp_server import app as mock_mcp_app  # noqa: E402
@@ -138,7 +140,7 @@ class TestToolCallChain(unittest.IsolatedAsyncioTestCase):
         registry.register("work_buddy", buddy, ["buddy.task"])
         graph = build_hub_graph(registry=registry)
         # 规则关键词未覆盖 work buddy → 强制指定 agent 后 dispatch
-        out = await graph.ainvoke(
+        await graph.ainvoke(
             {"user_input": "用助手总结", "intent": "agent_task", "agent": "work_buddy"}
         )
         # classify 会覆盖 intent；直接 invoke registry 更稳

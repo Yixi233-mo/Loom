@@ -11,7 +11,6 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 from dsl.hot_reload import (  # noqa: E402
-    DslCache,
     DslHotReloader,
     apply_cron_to_scheduler,
     apply_tools_to_stack,

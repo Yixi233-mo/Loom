@@ -10,8 +10,8 @@ plugins/_hot_test/
 plugins/_llm_*.json
 plugins/llm_providers.json
 
-# 计划/一次性维护用 py（目录与 scripts）
-目录/*.py
+# 计划
+目录
 scripts/_*.py
 
 # 本机 WorkBuddy 连接（含 token）

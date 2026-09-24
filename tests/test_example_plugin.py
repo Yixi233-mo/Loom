@@ -9,12 +9,15 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
+import yaml  # noqa: E402
+
 from dsl.compiler import DSLCompiler  # noqa: E402
 from dsl.schema import validate_plugin, validate_workflow  # noqa: E402
 from plugins.example.notes_runtime import NotesStore, make_notes_tools  # noqa: E402
-from plugins.example.workflow_runner import WorkflowRunner, run_daily_report  # noqa: E402
-
-import yaml  # noqa: E402
+from plugins.example.workflow_runner import (  # noqa: E402
+    WorkflowRunner,
+    run_daily_report,
+)
 
 EXAMPLE = ROOT / "plugins" / "example"
 

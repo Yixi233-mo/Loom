@@ -70,7 +70,7 @@ class TestE2EClosedLoop(unittest.TestCase):
 
         # 结果已进 Sync（可拉取）
         sync_keys = orch.sync.all_keys()
-        self.assertTrue(any(k.startswith(f"task:") and k.endswith(":result") for k in sync_keys))
+        self.assertTrue(any(k.startswith("task:") and k.endswith(":result") for k in sync_keys))
 
     def test_result_visible_on_tablet(self):
         orch = make_orch()

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import asyncio
 import sys
 import unittest
 from pathlib import Path
@@ -16,6 +15,8 @@ from agent_hub.intent_router import (  # noqa: E402
     RuleIntentClassifier,
     _parse_intent_json,
 )
+
+
 # JS 服务测试在 test_chat_js；此处覆盖 Python 意图路由
 class TestRuleIntent(unittest.TestCase):
     def test_code_and_rag_and_workflow(self):

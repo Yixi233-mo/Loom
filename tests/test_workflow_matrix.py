@@ -9,13 +9,15 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
+import yaml  # noqa: E402
+
 from dsl.compiler import DSLCompiler  # noqa: E402
 from dsl.schema import validate_workflow  # noqa: E402
 from plugins.example.notes_runtime import NotesStore  # noqa: E402
 from plugins.example.workflow_matrix import run_workflow_file  # noqa: E402
-from plugins.example.workflow_runner import WorkflowRunner, run_daily_report  # noqa: E402
-
-import yaml  # noqa: E402
+from plugins.example.workflow_runner import (  # noqa: E402
+    run_daily_report,
+)
 
 WORKFLOWS = ROOT / "plugins" / "example" / "workflows"
 LEGACY = ROOT / "plugins" / "example" / "workflow.yaml"

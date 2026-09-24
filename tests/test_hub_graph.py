@@ -13,7 +13,6 @@ sys.path.insert(0, str(ROOT))
 from agent_hub.graph import (  # noqa: E402
     AGENT_CODE,
     AGENT_RAG,
-    HubState,
     build_hub_graph,
     classify_intent,
     route_by_intent,

@@ -9,7 +9,7 @@ degradation_level（方案）：
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Awaitable, Callable, List, Optional, Sequence
+from typing import Any, Awaitable, Callable, Dict, List, Optional, Sequence
 
 from observability.cost import CircuitOpenError, CostMeter
 from observability.logging import (

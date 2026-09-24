@@ -14,8 +14,12 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 from api.auth_routes import create_auth_router  # noqa: E402
-from auth.oauth import AuthError, OAuthService, TokenExpired, extract_bearer  # noqa: E402
-from device_mesh.ws_server import _verify_signature, make_signature  # noqa: E402
+from auth.oauth import (  # noqa: E402
+    AuthError,
+    OAuthService,
+    TokenExpired,
+    extract_bearer,
+)
 
 
 class TestTokenIssueVerify(unittest.TestCase):

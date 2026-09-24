@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 import sys
-import time
 import unittest
 from pathlib import Path
 
@@ -15,9 +14,7 @@ from observability.cost import TOKEN_LIMIT_PER_TASK, CostMeter  # noqa: E402
 from observability.logging import (  # noqa: E402
     DEG_RULES,
     StructuredLogger,
-    get_logger,
     new_trace_id,
-    set_logger,
 )
 from scripts.run_hub_server import build_demo_stack  # noqa: E402
 

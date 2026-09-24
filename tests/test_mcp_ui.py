@@ -2,14 +2,12 @@
 
 from __future__ import annotations
 
-import json
 import sys
 import unittest
 from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-import httpx
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))

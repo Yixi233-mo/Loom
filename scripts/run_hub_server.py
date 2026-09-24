@@ -55,7 +55,11 @@ def build_demo_stack() -> HubStack:
     stack.submit_workflow_async = submit_and_run  # type: ignore[method-assign]
 
     # N8 DSL 热加载：监听 workflows/plugins，工具与 cron 热更
-    from dsl.hot_reload import DslHotReloader, apply_cron_to_scheduler, apply_tools_to_stack
+    from dsl.hot_reload import (
+        DslHotReloader,
+        apply_cron_to_scheduler,
+        apply_tools_to_stack,
+    )
     from task_orchestrator.scheduler import TriggerScheduler
 
     sch = TriggerScheduler(

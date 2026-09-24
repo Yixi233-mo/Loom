@@ -12,7 +12,6 @@ sys.path.insert(0, str(ROOT))
 
 from agent_hub.degrade import (  # noqa: E402
     DegradationChain,
-    DegradeResult,
     Provider,
     default_chain,
     rules_provider,
@@ -104,7 +103,7 @@ class TestDegradationChain(unittest.IsolatedAsyncioTestCase):
                     Provider("ollama", DEG_FALLBACK_AGENT, ok_ollama),
                 ]
             )
-            r = await chain.run("x", trace_id="n4-log")
+            await chain.run("x", trace_id="n4-log")
             events = log.chain_for("n4-log")
             self.assertIn("degrade.attempt", events)
             self.assertIn("degrade.switch", events)

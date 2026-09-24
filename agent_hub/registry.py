@@ -6,7 +6,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Awaitable, Callable, Dict, List, Optional
+from typing import Any, Awaitable, Callable, Dict, List
 
 # adapter 协议：async (prompt, **kwargs) -> Any
 AgentAdapter = Callable[..., Awaitable[Any]]
