@@ -81,7 +81,7 @@ class TestSingleTaskTraceability(unittest.TestCase):
         stack.log = log
 
         tid = new_trace_id()
-        task_id = stack.submit_workflow(
+        stack.submit_workflow(
             {"name": "daily_report", "device": "pc"}, trace_id=tid
         )
         recs = log.records_for(tid)
