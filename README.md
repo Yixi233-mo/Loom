@@ -1,5 +1,7 @@
 # Loom · 织巢
 
+![CI](https://github.com/Yixi233-mo/Loom/actions/workflows/ci.yml/badge.svg) ![status](https://img.shields.io/badge/status-开发中-orange)
+
 > **状态：开发中（WIP）** · `0.1.0` · 请勿当生产依赖  
 > 跨端协作 · Agent 联邦 · DSL 驱动的可生长工作台
 

@@ -7,6 +7,8 @@ import {
   DeviceHubPage,
   HelpPage,
   PromptsPage,
+  FilesPage,
+  AgentsPage,
   RecommendPage,
   type AgentApp,
 } from "./features/index.ts";
@@ -181,6 +183,8 @@ export default function App() {
             ["chat", "对话"],
             ["prompts", "提示词"],
             ["tasks", "任务"],
+            ["files", "文件"],
+            ["agents", "Agent"],
           ] as Array<[AppRoute, string]>
         ).map(([id, label]) =>
           e(
@@ -412,6 +416,21 @@ export default function App() {
               setActivePrompt(p);
               stores.session.setDraft(p.body);
               navigate("chat");
+            },
+          })
+      : activeRoute === "files"
+        ? e(FilesPage, {
+            services,
+            
+          })
+      : activeRoute === "agents"
+        ? e(AgentsPage, {
+            agents,
+            onRefresh: () => setTick((x) => x + 1),
+            onTest: (name: string) => {
+              stores.agents.recordCall(name, { lastLatencyMs: 42, lastTokensUsed: 10 });
+              stores.agents.setStatus(name, "busy");
+              setTimeout(() => stores.agents.setStatus(name, "online"), 400);
             },
           })
       : activeRoute === "tasks"

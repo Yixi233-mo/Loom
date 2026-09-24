@@ -462,3 +462,101 @@
   background: linear-gradient(90deg, var(--sage), var(--accent));
   transition: width var(--duration-normal) var(--ease-out);
 }
+
+
+/* --- 文件页 --- */
+.files-page { display: grid; gap: 14px; }
+.file-upload-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius-lg);
+}
+.file-upload-btn { cursor: pointer; }
+.file-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.file-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+}
+.file-name { font-weight: 650; min-width: 120px; }
+.file-meta { flex: 1; color: var(--muted); font-size: 12px; word-break: break-all; }
+
+/* --- Agent 页 --- */
+.agents-page { display: grid; gap: 12px; }
+.agent-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
+.agent-help {
+  padding: 16px 18px;
+  border-radius: var(--radius-lg);
+  margin-bottom: 4px;
+}
+.agent-help h3 { margin: 0 0 8px; }
+.agent-help p { margin: 0 0 8px; font-size: 13.5px; color: var(--ink-secondary); }
+.agent-help ul { margin: 0 0 8px; padding-left: 18px; display: grid; gap: 4px; font-size: 13px; }
+.agent-title { font-size: 15px; }
+.agent-desc { margin: 2px 0 0 !important; }
+.agent-row-meta { color: var(--muted); font-size: 12.5px; }
+/* Agent 列表排版 */
+.agent-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+.agent-row {
+  display: grid;
+  gap: 10px;
+  padding: 16px 18px;
+  border-radius: var(--radius-lg);
+}
+.agent-row-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+.agent-row-head > div { min-width: 0; flex: 1; }
+.agent-title {
+  display: block;
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+.agent-desc {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.45;
+  white-space: normal;
+}
+.agent-row .plugin-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.agent-row-meta {
+  color: var(--muted);
+  font-size: 12px;
+}
+.agent-row .ui-button { justify-self: start; }
+.agent-help {
+  padding: 16px 18px;
+  border-radius: var(--radius-lg);
+  display: grid;
+  gap: 6px;
+}
+.agent-help p, .agent-help li { font-size: 13px; color: var(--ink-secondary); }
