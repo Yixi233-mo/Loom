@@ -1,0 +1,27 @@
+# Loom — 目标技术栈依赖
+# Hub: Python 3.11+ · FastAPI · Uvicorn · LangGraph · Pydantic
+# DSL: PyYAML · jsonschema
+# Agent: MCP SDK · httpx
+# Device: WebSocket
+# Store: SQLite（标准库）
+
+# Hub
+fastapi>=0.115
+uvicorn>=0.30
+pydantic>=2.0
+langgraph>=0.2
+websockets>=12.0
+
+# DSL
+pyyaml>=6.0
+jsonschema>=4.0
+
+# Agent
+httpx>=0.27
+# MCP 官方 SDK（方案允许；当前传输层为兼容 JSON-RPC，可切换）
+mcp>=1.0
+
+# 测试 / 工具（DEV）
+pytest>=8.0
+pytest-asyncio>=0.24
+ruff>=0.6

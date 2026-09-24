@@ -1,0 +1,22 @@
+name: notes
+version: 1.0.0
+ui:
+  type: list
+  props:
+    title: "笔记列表"
+    source: "notes.list"
+tools:
+  - name: notes.list
+    description: 列出所有笔记
+    parameters:
+      type: object
+      properties: {}
+  - name: notes.create
+    description: 创建笔记
+    parameters:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string

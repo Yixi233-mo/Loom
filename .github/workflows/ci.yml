@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: python
+          - name: js
+          - name: rust
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        if: matrix.name == 'python'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up Node
+        if: matrix.name == 'js'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Set up Rust
+        if: matrix.name == 'rust'
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Python deps
+        if: matrix.name == 'python'
+        run: pip install pyyaml httpx fastapi uvicorn
+
+      - name: Install JS deps
+        if: matrix.name == 'js'
+        run: npm install
+
+      - name: Python tests
+        if: matrix.name == 'python'
+        run: python -m pytest
+
+      - name: JS tests
+        if: matrix.name == 'js'
+        run: npm run test:ui
+
+      - name: Rust tests
+        if: matrix.name == 'rust'
+        working-directory: src-tauri
+        run: cargo test
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - run: pip install -r requirements.txt
+      - name: Lint
+        run: python scripts/lint_all.py

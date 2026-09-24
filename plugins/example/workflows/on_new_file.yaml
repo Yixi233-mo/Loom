@@ -1,0 +1,16 @@
+name: on_new_file
+trigger:
+  type: file
+  path: "{{ env.WATCH_DIR }}"
+device: pc
+steps:
+  - id: list
+    tool: notes.list
+  - id: parse
+    agent: builtin_rag
+    prompt: "解析新文件并归档：{{ env.FILE_PATH }}"
+  - id: archive
+    tool: notes.create
+    args:
+      title: "文件归档"
+      content: "{{ steps.parse.output }}"

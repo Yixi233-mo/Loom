@@ -1,0 +1,16 @@
+name: on_feishu_keyword
+trigger:
+  type: webhook
+  source: feishu
+  filter:
+    keyword: ["周报", "报告"]
+device: any
+steps:
+  - id: capture
+    tool: notes.create
+    args:
+      title: "飞书消息"
+      content: "{{ env.FEISHU_TEXT }}"
+  - id: summarize
+    agent: builtin_rag
+    prompt: "整理周报要点：{{ steps.capture.output }}"

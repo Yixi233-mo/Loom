@@ -1,0 +1,13 @@
+{
+  "name": "notes",
+  "version": "1.0.0",
+  "description": "笔记插件 — 最小可跑示例",
+  "ui": {
+    "type": "list",
+    "props": {
+      "title": "笔记列表",
+      "source": "notes.list"
+    }
+  },
+  "tools": ["notes.list", "notes.create", "notes.daily_report"]
+}

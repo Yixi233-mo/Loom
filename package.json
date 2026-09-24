@@ -1,0 +1,33 @@
+{
+  "name": "loom-shell",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Loom Shell 前端应用",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:ui": "node --experimental-strip-types tests/js/test_schema_renderer.mjs && node --experimental-strip-types tests/js/test_dsl_editor.mjs && node --experimental-strip-types tests/js/test_example_plugin.mjs && node --experimental-strip-types tests/js/test_state_stores.mjs && node --experimental-strip-types tests/js/test_services.mjs && node --experimental-strip-types tests/js/test_views.mjs && node --experimental-strip-types tests/js/test_platform.mjs && node --experimental-strip-types tests/js/test_chat.mjs && node --experimental-strip-types tests/js/test_model_chat_fix.mjs && node --experimental-strip-types tests/js/test_fetch_models.mjs && node --experimental-strip-types tests/js/test_models_endpoints.mjs && node --experimental-strip-types tests/js/test_save_key_plain.mjs && node --experimental-strip-types tests/js/test_v1beta_models.mjs && node --experimental-strip-types tests/js/test_fe_framework.mjs",
+    "start:hub": "python scripts/run_hub_server.py",
+    "start": "powershell -ExecutionPolicy Bypass -File scripts/start.ps1",
+    "build:single": "npm run build && python scripts/build_single_html.py",
+    "mcp:demo": "python scripts/mock_mcp_server.py",
+    "test": "python scripts/test_all.py",
+    "test:py": "python -m unittest discover -s tests",
+    "test:rust": "cd src-tauri && cargo test",
+    "lint": "python scripts/lint_all.py",
+    "ci": "python scripts/lint_all.py && python scripts/test_all.py"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "typescript": "^5.6.0",
+    "vite": "^6.0.0"
+  }
+}

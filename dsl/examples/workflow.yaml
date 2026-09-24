@@ -1,0 +1,18 @@
+name: weekly_report
+trigger:
+  type: cron
+  cron: "0 9 * * 1"
+device: pc
+steps:
+  - id: fetch
+    tool: excel.read
+    args:
+      path: "{{ env.REPORT_PATH }}"
+  - id: summarize
+    agent: claude_code
+    prompt: "总结：{{ steps.fetch.output }}"
+  - id: push
+    tool: feishu.send
+    args:
+      chat: "team"
+      content: "{{ steps.summarize.output }}"

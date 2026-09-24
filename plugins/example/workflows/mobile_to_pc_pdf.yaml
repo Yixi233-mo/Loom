@@ -1,0 +1,19 @@
+name: mobile_to_pc_pdf
+trigger:
+  type: webhook
+  source: mobile
+device: pc
+steps:
+  - id: inbox
+    tool: notes.create
+    args:
+      title: "手机提交"
+      content: "{{ env.PDF_PATH }}"
+  - id: extract
+    agent: builtin_rag
+    prompt: "把 PDF 转 Markdown 并总结：{{ steps.inbox.output }}"
+  - id: store
+    tool: notes.create
+    args:
+      title: "PDF 总结"
+      content: "{{ steps.extract.output }}"

@@ -1,0 +1,8 @@
+name: code_reviewer
+base: claude_code
+system_prompt: |
+  你是代码审查专家。只输出 JSON：
+  {"issues": [...], "severity": "high|medium|low"}
+tools:
+  - filesystem.read
+  - git.diff

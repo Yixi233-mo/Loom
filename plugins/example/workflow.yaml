@@ -1,0 +1,11 @@
+name: daily_report
+trigger:
+  type: cron
+  cron: "0 9 * * *"
+device: pc
+steps:
+  - id: fetch
+    tool: notes.list
+  - id: summarize
+    agent: builtin_rag
+    prompt: "总结今日笔记：{{ steps.fetch.output }}"

@@ -1,0 +1,15 @@
+node_modules/
+dist/
+target/
+__pycache__/
+*.pyc
+.pytest_cache/
+.llm/
+plugins/_n9_out/
+plugins/_hot_test/
+plugins/_llm_*.json
+plugins/llm_providers.json
+
+# 计划/一次性维护用 py（目录与 scripts）
+目录/*.py
+scripts/_*.py

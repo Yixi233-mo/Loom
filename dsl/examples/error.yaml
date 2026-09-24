@@ -1,0 +1,9 @@
+name: broken_workflow
+device: pc
+steps:
+  - id: only_tool
+    tool: excel.read
+  - id: both_tool_and_agent
+    tool: feishu.send
+    agent: claude_code
+    prompt: bad

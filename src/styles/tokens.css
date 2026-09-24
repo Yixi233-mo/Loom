@@ -1,0 +1,49 @@
+/**
+ * FE.1 设计 Token — 暖白毛玻璃 / 暖杏蜜桃强调 / 鼠尾草状态色。
+ * FE.2 将在此扩展完整色板、间距、圆角、阴影、字体层级。
+ */
+
+:root {
+  /* 底色与质感 */
+  --bg: #f7f1ea;
+  --bg-glow: #f3d7c4;
+  --panel: rgba(255, 252, 248, 0.72);
+  --panel-solid: #fffcf8;
+  --ink: #2a221c;
+  --muted: #7a6b60;
+  --line: rgba(42, 34, 28, 0.1);
+  --shadow: 0 8px 28px rgba(120, 72, 40, 0.08);
+  --blur: blur(14px);
+
+  /* 主强调：蜜桃橘 / 暖杏 / 陶土 */
+  --accent: #d9895b;
+  --accent-soft: #f6e2d4;
+  --accent-strong: #c56d42;
+  --apricot: #e8b48a;
+  --terracotta: #c56d42;
+
+  /* 辅助 / 状态：鼠尾草、香槟 */
+  --sage: #8faf9a;
+  --sage-soft: #e4efe7;
+  --champagne: #efe2c8;
+  --warn: #c4785a;
+  --danger: #b85c4a;
+
+  /* 游戏化技能树 */
+  --node-off: #cfc6bd;
+  --node-on: #e8a070;
+  --node-glow: 0 0 12px rgba(232, 160, 112, 0.45);
+
+  /* 间距 / 圆角 / 字体（FE.2 细化） */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --font-body: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-display: "Segoe UI Semibold", "PingFang SC", "Microsoft YaHei", sans-serif;
+}

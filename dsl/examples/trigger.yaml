@@ -1,0 +1,8 @@
+name: on_feishu_message
+type: webhook
+source: feishu
+filter:
+  chat_id: "oc_xxx"
+  keyword: ["周报", "报告"]
+action:
+  workflow: weekly_report

@@ -1,0 +1,8 @@
+# ruff — Python lint（若已安装 ruff 则 scripts/lint_all.py 会调用）
+[lint]
+select = ["E", "F", "I", "W"]
+ignore = ["E501"]
+
+[lint.per-file-ignores]
+"tests/*" = ["E402"]
+"scripts/*" = ["E402"]

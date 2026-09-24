@@ -1,0 +1,6 @@
+/**
+ * FE.1 样式入口 — Token 优先，再挂应用壳样式。
+ */
+
+@import "./tokens.css";
+@import "../styles.css";
