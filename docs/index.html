@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Loom · 织巢 — 开发中</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="glow" aria-hidden="true"></div>
+
+  <header class="top">
+    <div class="brand">
+      <span class="mark">织</span>
+      <div>
+        <h1>Loom · 织巢</h1>
+        <p class="tag">跨端 Agent 工作台</p>
+      </div>
+    </div>
+    <span class="badge wip">开发中 · WIP</span>
+  </header>
+
+  <main>
+    <section class="hero glass">
+      <p class="kicker">可生长 · 可编织 · 可声明</p>
+      <h2>把多端编织成一台电脑，<br />把手边 Agent 编织成一个团队。</h2>
+      <p class="lead">
+        Windows / 平板 / 手机自动协调，内置 Agent 联邦（Claude Code · MCP），
+        用 YAML DSL 声明功能——改声明即扩展，尽量不改主程序。
+      </p>
+      <div class="cta-row">
+        <a class="btn primary" href="https://github.com/Yixi233-mo/Loom" target="_blank" rel="noreferrer">查看仓库</a>
+        <a class="btn ghost" href="../目录/项目介绍.md">阅读文档</a>
+      </div>
+      <p class="wip-note">⚠️ 项目<strong>开发中</strong>，接口与目录可能随时变更，请勿用于生产。</p>
+    </section>
+
+    <section class="skills glass">
+      <h3>能力技能树</h3>
+      <p class="hint">点亮即解锁 · 灰色节点表示待连接 / 待完善</p>
+      <ul class="tree">
+        <li class="node on"><span>对话</span><small>Hub 在线</small></li>
+        <li class="node on"><span>任务</span><small>编排 / 队列</small></li>
+        <li class="node on"><span>文件</span><small>Hub 存储</small></li>
+        <li class="node on"><span>自定义 LLM</span><small>加密 Key</small></li>
+        <li class="node on"><span>MCP</span><small>检测连接</small></li>
+        <li class="node on"><span>DSL</span><small>热加载</small></li>
+        <li class="node half"><span>Win 壳</span><small>Tauri 2</small></li>
+        <li class="node off"><span>Android / 平板</span><small>打包中</small></li>
+      </ul>
+    </section>
+
+    <section class="grid">
+      <article class="card glass">
+        <h3>Hub-and-Spoke</h3>
+        <p>本地 Hub 做意图识别与任务路由，具体活分发给专业 Agent 或指定设备。</p>
+      </article>
+      <article class="card glass">
+        <h3>DSL 驱动</h3>
+        <p>Workflow / Plugin / Agent / Trigger 四类 YAML，校验后保存，约 2 秒热生效。</p>
+      </article>
+      <article class="card glass">
+        <h3>跨端协同</h3>
+        <p>手机触发 → Hub 路由 → PC 执行 → 多端查看；离线排队，上线自动分发。</p>
+      </article>
+      <article class="card glass">
+        <h3>可观测 / 安全</h3>
+        <p>trace_id 全链路、降级链、Token 熔断、OAuth 风格鉴权（初版）。</p>
+      </article>
+    </section>
+
+    <section class="stack glass">
+      <h3>技术栈</h3>
+      <div class="chips">
+        <span>Tauri 2.0</span><span>React</span><span>TypeScript</span><span>Vite</span>
+        <span>Python</span><span>FastAPI</span><span>LangGraph</span><span>YAML DSL</span>
+        <span>WebSocket</span><span>SQLite</span><span>Docker</span>
+      </div>
+    </section>
+
+    <section class="quick glass">
+      <h3>快速开始</h3>
+      <pre><code>npm install
+npm run start:hub    # Hub :8765
+npm run dev          # 前端 :5173
+# 或 npm run start 一键同时启动
+# npm run build:single → 打开 app.html 可离线预览</code></pre>
+    </section>
+  </main>
+
+  <footer>
+    <p>Loom · 织巢 — <strong>开发中</strong> · 文档见仓库 <code>目录/</code></p>
+    <p class="muted">不提供生产担保 · 请勿提交真实 API 密钥</p>
+  </footer>
+</body>
+</html>
