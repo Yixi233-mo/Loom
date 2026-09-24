@@ -1,5 +1,5 @@
 /**
- * LLM 设置面板 — 配置 API（密钥输入）、拉取模型、选择模型、测试对话。
+ * LLM 设置面板 — 配置 API、拉取模型、**选用/切换当前配置**、测试对话。
  */
 
 import * as React from "react";
@@ -21,6 +21,9 @@ export interface LlmProviderView {
 export function LlmSettingsPanel(props: {
   providers: LlmProviderView[];
   draft: { name: string; baseUrl: string; apiKey: string; providerId?: string };
+  /** 当前生效的配置（可切换） */
+  activeProviderId?: string | null;
+  onActiveProvider?: (providerId: string) => void;
   onDraft?: (d: {
     name: string;
     baseUrl: string;
@@ -37,6 +40,8 @@ export function LlmSettingsPanel(props: {
   testResult?: string;
 }) {
   const { providers, draft, busy } = props;
+  const activeId = props.activeProviderId ?? null;
+
   return e(
     "section",
     { className: "app-section", "data-view": "llm-settings" },
@@ -44,13 +49,56 @@ export function LlmSettingsPanel(props: {
     e(
       "p",
       { className: "hint" },
-      "配置 OpenAI 兼容 API（密钥加密存储）；拉取服务商真实模型列表并选择，可用「测试对话」验证。"
+      "配置 OpenAI 兼容 API（密钥加密存储）；拉取真实模型列表并**选用某条配置**，对话/测试都走当前选用项。"
+    ),
+
+    /* —— 当前配置选择 —— */
+    e(
+      "div",
+      { className: "llm-active-bar glass", "data-view": "llm-active" },
+      e("strong", { className: "llm-active-label" }, "当前模型配置"),
+      e(
+        "select",
+        {
+          className: "ui-input llm-active-select",
+          "data-field": "active-provider-select",
+          value: activeId ?? "",
+          disabled: providers.length === 0,
+          onChange: (ev: { target: { value: string } }) =>
+            props.onActiveProvider?.(ev.target.value),
+        },
+        providers.length === 0
+          ? e("option", { value: "" }, "（尚未保存配置）")
+          : e("option", { value: "" }, "选择要使用的配置…"),
+        ...providers.map((p) =>
+          e(
+            "option",
+            { key: p.providerId, value: p.providerId },
+            `${p.name}${p.defaultModel ? " · " + p.defaultModel : " · 未选模型"}`
+          )
+        )
+      ),
+      (() => {
+        const cur = providers.find((p) => p.providerId === activeId);
+        return cur
+          ? e(
+              "span",
+              {
+                className: "llm-active-badge",
+                "data-active-provider": cur.providerId,
+                "data-active-model": cur.defaultModel || "",
+              },
+              cur.defaultModel ? `使用中：${cur.name} / ${cur.defaultModel}` : `使用中：${cur.name}（未选模型）`
+            )
+          : e("span", { className: "llm-active-badge is-empty" }, "未选用配置");
+      })()
     ),
 
     e(
       "div",
       { className: "llm-form" },
       e("input", {
+        className: "ui-input",
         "data-field": "llm-name",
         placeholder: "名称（如 DeepSeek）",
         value: draft.name,
@@ -58,6 +106,7 @@ export function LlmSettingsPanel(props: {
           props.onDraft?.({ ...draft, name: ev.target.value }),
       }),
       e("input", {
+        className: "ui-input",
         "data-field": "llm-base-url",
         placeholder: "Base URL（https://api.deepseek.com/v1）",
         value: draft.baseUrl,
@@ -65,6 +114,7 @@ export function LlmSettingsPanel(props: {
           props.onDraft?.({ ...draft, baseUrl: ev.target.value }),
       }),
       e("input", {
+        className: "ui-input",
         "data-field": "llm-api-key",
         type: "password",
         placeholder: "API Key（加密保存）",
@@ -76,11 +126,12 @@ export function LlmSettingsPanel(props: {
         "button",
         {
           type: "button",
+          className: "ui-button ui-button--primary",
           "data-action": "save-llm",
           disabled: busy,
           onClick: () => props.onSave?.(),
         },
-        "保存配置"
+        busy ? "保存中…" : "保存配置"
       )
     ),
 
@@ -112,13 +163,16 @@ export function LlmSettingsPanel(props: {
       { className: "llm-list", "data-provider-count": providers.length },
       providers.length === 0
         ? e("p", { className: "empty-hint" }, "尚未配置 LLM 服务商")
-        : providers.map((p) =>
-            e(
+        : providers.map((p) => {
+            const isActive = p.providerId === activeId;
+            return e(
               "li",
               {
                 key: p.providerId,
-                className: "llm-item",
+                className:
+                  "llm-item glass" + (isActive ? " is-active" : ""),
                 "data-provider-id": p.providerId,
+                "data-active": isActive ? "true" : "false",
               },
               e(
                 "div",
@@ -126,8 +180,12 @@ export function LlmSettingsPanel(props: {
                 e("strong", null, p.name),
                 e(
                   "span",
-                  { className: "badge" },
-                  p.defaultModel ? `模型: ${p.defaultModel}` : "未选模型"
+                  { className: "badge" + (isActive ? " ok" : "") },
+                  isActive
+                    ? "当前使用"
+                    : p.defaultModel
+                      ? `模型: ${p.defaultModel}`
+                      : "未选模型"
                 )
               ),
               e(
@@ -142,6 +200,21 @@ export function LlmSettingsPanel(props: {
                   "button",
                   {
                     type: "button",
+                    className:
+                      "ui-button " +
+                      (isActive ? "ui-button--primary" : "ui-button--ghost"),
+                    "data-action": "use-provider",
+                    "data-provider-id": p.providerId,
+                    disabled: isActive,
+                    onClick: () => props.onActiveProvider?.(p.providerId),
+                  },
+                  isActive ? "使用中" : "选用此配置"
+                ),
+                e(
+                  "button",
+                  {
+                    type: "button",
+                    className: "ui-button ui-button--ghost",
                     "data-action": "fetch-models",
                     disabled: busy,
                     onClick: () => props.onFetchModels?.(p.providerId),
@@ -151,18 +224,26 @@ export function LlmSettingsPanel(props: {
                 e(
                   "select",
                   {
+                    className: "ui-input llm-model-select",
                     "data-field": "model-select",
+                    "data-provider-id": p.providerId,
                     value: p.defaultModel || "",
+                    disabled: p.models.length === 0,
                     onChange: (ev: { target: { value: string } }) =>
                       props.onSelectModel?.(p.providerId, ev.target.value),
                   },
-                  e("option", { value: "" }, "选择模型"),
+                  e(
+                    "option",
+                    { value: "" },
+                    p.models.length ? "选择模型" : "先拉取模型"
+                  ),
                   ...p.models.map((m) => e("option", { key: m, value: m }, m))
                 ),
                 e(
                   "button",
                   {
                     type: "button",
+                    className: "ui-button ui-button--primary",
                     "data-action": "test-chat",
                     disabled: busy || !p.defaultModel,
                     onClick: () => props.onTestChat?.(p.providerId),
@@ -173,6 +254,7 @@ export function LlmSettingsPanel(props: {
                   "button",
                   {
                     type: "button",
+                    className: "ui-button ui-button--danger",
                     "data-action": "delete-llm",
                     onClick: () => props.onDelete?.(p.providerId),
                   },
@@ -183,11 +265,27 @@ export function LlmSettingsPanel(props: {
                 ? e(
                     "div",
                     { className: "plugin-tools" },
-                    p.models.slice(0, 12).map((m) => e("code", { key: m }, m))
+                    p.models.slice(0, 12).map((m) =>
+                      e(
+                        "code",
+                        {
+                          key: m,
+                          style: {
+                            cursor: "pointer",
+                            outline:
+                              p.defaultModel === m ? "2px solid var(--accent)" : undefined,
+                          },
+                          "data-model": m,
+                          onClick: () =>
+                            props.onSelectModel?.(p.providerId, m),
+                        },
+                        m
+                      )
+                    )
                   )
                 : null
-            )
-          )
+            );
+          })
     )
   );
 }

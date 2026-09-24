@@ -8,6 +8,11 @@ export type AppRoute =
   | "tasks"
   | "files"
   | "settings"
+  | "mcp"
+  | "devices"
+  | "prompts"
+  | "help"
+  | "recommend"
   | "dsl"
   | "skills";
 
@@ -25,6 +30,11 @@ const VALID_ROUTES: readonly AppRoute[] = [
   "tasks",
   "files",
   "settings",
+  "mcp",
+  "devices",
+  "prompts",
+  "help",
+  "recommend",
   "dsl",
   "skills",
 ];

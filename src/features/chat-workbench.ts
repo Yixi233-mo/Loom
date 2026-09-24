@@ -13,7 +13,11 @@ import {
   phaseOf,
 } from "./page-states.ts";
 import { UI } from "../components/index.ts";
+
+
 import { memo } from "../perf/index.ts";
+
+export type PromptChip = { id: string; title: string; body: string; updatedAt?: number };
 
 const e = React.createElement;
 
@@ -44,6 +48,57 @@ function MessageRowImpl(props: { message: SessionMessage }) {
 
 export const MessageRow = memo(MessageRowImpl);
 
+export function PromptChips(props: {
+  items: PromptChip[];
+  activeId?: string | null;
+  onPick?: (p: PromptChip) => void;
+  onClear?: () => void;
+  onManage?: () => void;
+}) {
+  return e(
+    "div",
+    { className: "prompt-chips", "data-view": "prompt-chips" },
+    e("span", { className: "prompt-chips-label" }, "提示词"),
+    props.items.slice(0, 6).map((p) =>
+      e(
+        "button",
+        {
+          key: p.id,
+          type: "button",
+          className:
+            "chip" + (props.activeId === p.id ? " is-on" : ""),
+          "data-prompt-id": p.id,
+          "data-action": "pick-prompt",
+          onClick: () => props.onPick?.(p),
+        },
+        p.title
+      )
+    ),
+    props.activeId
+      ? e(
+          "button",
+          {
+            type: "button",
+            className: "chip chip-clear",
+            "data-action": "clear-prompt",
+            onClick: () => props.onClear?.(),
+          },
+          "清除"
+        )
+      : null,
+    e(
+      "button",
+      {
+        type: "button",
+        className: "chip chip-manage",
+        "data-action": "manage-prompts",
+        onClick: () => props.onManage?.(),
+      },
+      "管理"
+    )
+  );
+}
+
 export function ChatWorkbench(props: {
   session: SessionState;
   loading?: boolean;
@@ -55,6 +110,12 @@ export function ChatWorkbench(props: {
   onDraft?: (text: string) => void;
   onToggleSize?: () => void;
   onRetry?: () => void;
+  prompts?: PromptChip[];
+  activePromptId?: string | null;
+  activePromptTitle?: string;
+  onPickPrompt?: (p: PromptChip) => void;
+  onClearPrompt?: () => void;
+  onManagePrompts?: () => void;
 }) {
   const phase = phaseOf({
     loading: props.loading,
@@ -81,14 +142,14 @@ export function ChatWorkbench(props: {
           "data-action": "toggle-chat-size",
           onClick: () => props.onToggleSize?.(),
         },
-        props.chatSize === "expanded" ? "固定滑窗" : "放大对话"
+        props.chatSize === "expanded" ? "收起" : "放大"
       ),
     },
     e(
       "div",
       {
-        className: `chat-workbench chat-workbench--${props.chatSize ?? "default"}`,
-        "data-chat-size": props.chatSize ?? "default",
+        className: `chat-workbench chat-workbench--${props.chatSize ?? "expanded"}`,
+        "data-chat-size": props.chatSize ?? "expanded",
         "data-phase": phase,
       },
       phase === "loading"
@@ -116,6 +177,13 @@ export function ChatWorkbench(props: {
                   e(MessageRow, { key: m.id, message: m })
                 )
               ),
+      e(PromptChips, {
+        items: props.prompts ?? [],
+        activeId: props.activePromptId,
+        onPick: props.onPickPrompt,
+        onClear: props.onClearPrompt,
+        onManage: props.onManagePrompts,
+      }),
       e(
         "form",
         {

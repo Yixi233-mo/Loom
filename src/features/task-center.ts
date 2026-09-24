@@ -71,6 +71,45 @@ function ResultCardImpl(props: { task: TaskState }) {
 
 export const ResultCard = memo(ResultCardImpl);
 
+export function TaskProgressBar(props: {
+  pending?: number;
+  running?: number;
+  done?: number;
+  failed?: number;
+  total?: number;
+}) {
+  const pending = props.pending ?? 0;
+  const running = props.running ?? 0;
+  const done = props.done ?? 0;
+  const failed = props.failed ?? 0;
+  const total = props.total ?? pending + running + done + failed;
+  const pct = (n: number) => (total <= 0 ? 0 : Math.round((n / total) * 100));
+  return e(
+    "div",
+    {
+      className: "task-progress glass",
+      "data-view": "task-progress",
+      "data-total": String(total),
+    },
+    e(
+      "div",
+      { className: "task-progress-track" },
+      e("span", { className: "seg done", style: { width: pct(done) + "%" }, "data-seg": "done" }),
+      e("span", { className: "seg running", style: { width: pct(running) + "%" }, "data-seg": "running" }),
+      e("span", { className: "seg pending", style: { width: pct(pending) + "%" }, "data-seg": "pending" }),
+      e("span", { className: "seg failed", style: { width: pct(failed) + "%" }, "data-seg": "failed" })
+    ),
+    e(
+      "div",
+      { className: "task-progress-legend" },
+      e("span", { "data-count": "pending" }, `排队 ${pending}`),
+      e("span", { "data-count": "running" }, `执行中 ${running}`),
+      e("span", { "data-count": "done" }, `完成 ${done}`),
+      e("span", { "data-count": "failed" }, `失败 ${failed}`)
+    )
+  );
+}
+
 export function TaskCenter(props: {
   tasks: TaskState[];
   filter?: TaskStatus | "all";
@@ -118,6 +157,13 @@ export function TaskCenter(props: {
         props.loading ? "刷新中…" : "刷新"
       ),
     },
+    e(TaskProgressBar, {
+      pending: props.tasks.filter((t) => t.status === "pending").length,
+      running: props.tasks.filter((t) => t.status === "running").length,
+      done: props.tasks.filter((t) => t.status === "done").length,
+      failed: props.tasks.filter((t) => t.status === "failed").length,
+      total: props.tasks.length,
+    }),
     e(
       "div",
       {

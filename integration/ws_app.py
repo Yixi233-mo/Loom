@@ -10,6 +10,7 @@ from contextlib import asynccontextmanager
 from typing import Any, Dict, Optional
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.middleware.cors import CORSMiddleware
 
 from device_mesh.protocol import (
     ErrorCode,
@@ -50,6 +51,14 @@ def create_integrated_app(stack: HubStack) -> FastAPI:
         await stack.monitor.stop()
 
     app = FastAPI(lifespan=lifespan)
+    # 开发前端 (Vite :5173) 跨源访问 Hub（浏览器 Failed to fetch 根因）
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=False,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
     app.state.runtime = rt
     app.state.stack = stack
 

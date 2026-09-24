@@ -27,11 +27,15 @@ class McpJsonRpcClient:
         endpoint: str,
         timeout: float = DEFAULT_TIMEOUT,
         transport: Optional[httpx.AsyncBaseTransport] = None,
+        auth_token: Optional[str] = None,
+        extra_headers: Optional[Dict[str, str]] = None,
     ) -> None:
         self.endpoint = endpoint.rstrip("/")
         self.timeout = timeout
         self._transport = transport
         self._session_id: Optional[str] = None
+        self._auth_token = auth_token
+        self._extra_headers = dict(extra_headers or {})
 
     async def request(
         self, method: str, params: Optional[Dict[str, Any]] = None
@@ -45,7 +49,10 @@ class McpJsonRpcClient:
         headers = {
             "Content-Type": "application/json",
             "Accept": "application/json, text/event-stream",
+            **self._extra_headers,
         }
+        if self._auth_token:
+            headers["Authorization"] = f"Bearer {self._auth_token}"
         if self._session_id:
             headers["Mcp-Session-Id"] = self._session_id
         async with httpx.AsyncClient(

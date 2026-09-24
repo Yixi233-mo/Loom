@@ -20,6 +20,11 @@ export {
 export { ChatWorkbench } from "./chat-workbench.ts";
 export { TaskCenter, ResultCard } from "./task-center.ts";
 export { SettingsPage, type SettingsTab } from "./settings-page.ts";
+export { McpWorkspace } from "./mcp-page.ts";
+export { DeviceHubPage, type DeviceCard } from "./device-hub.ts";
+export { HelpPage, HELP_SECTIONS } from "./help-page.ts";
+export { PromptsPage } from "./prompts-page.ts";
+export { RecommendPage, RECOMMENDED_AGENTS, type AgentApp } from "./recommend-page.ts";
 
 export type FeatureId =
   | "chat"

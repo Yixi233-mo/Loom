@@ -224,3 +224,131 @@
   - [x] 交付清单齐全
   - [x] `npm run test:ui` 全绿 · `test:py` 296 OK · `tsc` / `lint` / `build` 通过
 - 遗留：人工三端点验未勾选（清单 §5 空项）；移动端正式打包未做
+
+## [2026-09-24][MCP] 工具调用全链路 + Work Buddy 内置
+
+- 状态：✅ 完成
+- 问题：MCP 板块不清；工具调用未测；需内置 Work Buddy 与下载内链
+- 变更文件：
+  - `agent_hub/adapters/work_buddy.py` — Work Buddy MCP 适配 + 下载推荐条目
+  - `agent_hub/mcp_catalog.py` — 内置目录（demo / Claude Code / Work Buddy）
+  - `api/mcp_routes.py` — GET `/api/mcp/catalog` · POST `/api/mcp/tools-call`
+  - `scripts/mock_mcp_server.py` — 增加 `buddy_task` 工具
+  - `src/views/mcp-panel.ts` · `src/services/mcp-tools.ts` · `App.tsx` · `settings-page.ts` — 目录 / 下载 Work Buddy / 试调用
+  - `tests/test_tool_call_e2e.py` — 意图→Registry→tools/call · Work Buddy · catalog
+  - `目录/MCP_工具调用说明.md` — 链路与接口说明
+- 验收：
+  - [x] 工具调用 E2E（含 Claude Code / Work Buddy / 演示 MCP）
+  - [x] `/api/mcp/tools-call` 真实 JSON-RPC tools/call
+  - [x] 内置 Work Buddy + 「下载 Work Buddy」内链
+  - [x] pytest / test:ui / tsc 全绿
+- 环境变量：`LOOM_WORK_BUDDY_MCP` · `LOOM_WORK_BUDDY_DOWNLOAD_URL` · `LOOM_WORK_BUDDY_TOOL`
+
+## [2026-09-24][MCP-UI] 前端清晰化 + 修 404 + 启动 Web
+
+- 状态：✅ 完成
+- 变更：
+  - `scripts/mock_mcp_server.py` — GET `/` 说明页 + favicon，避免浏览器 404
+  - `src/features/mcp-page.ts` — 独立「MCP」页：三步引导 + 链路说明 + 目录/下载/试调用
+  - `src/hooks/use-router.ts` / `App.tsx` — 导航增加「MCP」`#/mcp`
+  - `src/styles/pages.css` — MCP 步骤样式
+- 验收：mock `/` 可打开；Web `#/mcp` 独立页；tsc / test:ui 通过；已拉起 Hub+Vite+Mock 并打开浏览器
+
+## [2026-09-24][UI-BTN] 毛玻璃按钮统一 + 模型配置可选切换
+
+- 状态：✅ 完成
+- 变更：
+  - `src/styles/controls.css` — 导航/按钮/输入/LLM 卡片毛玻璃化（与暖色玻璃一致）
+  - `src/views/llm-settings-panel.ts` — 「当前模型配置」下拉 + 选用此配置 + 模型下拉可选
+  - `src/App.tsx` / `settings-page.ts` — activeProviderId，对话优先用当前配置
+  - `tests/js/test_llm_select.mjs`
+- 验收：tsc / test:ui 全绿；可切换配置，不再只能反复保存
+
+## [2026-09-24][WORKBUDDY] 连接本机 WorkBuddy
+
+- 状态：✅ 已连通
+- 发现：WorkBuddy=CodeBuddy Desktop（`D:\Workbuddy\WorkBuddy.exe`）；MCP 入口 `http://127.0.0.1:54916/mcp`（connector-proxy，25 工具）
+- 变更：
+  - `scripts/connect_work_buddy.py` — 握手 / tools/list / tools/call 并写入 `plugins/work_buddy_connection.json`
+  - `agent_hub/adapters/mcp_protocol.py` — 支持 `Authorization: Bearer`
+  - `agent_hub/adapters/work_buddy.py` — 默认 endpoint 改为 54916，注入 token（修 auth_token 未传入 client）
+  - `api/mcp_routes.py` / 前端 `mcp-tools.ts` `llm-api.ts` `App.tsx` — probe/tools-call 带 token
+- 验收：
+  - [x] `initialize` + `tools/list` 25 个工具（agent-mail_* 等）
+  - [x] Hub `/api/mcp/probe` ok=true，server=connector-proxy
+  - [x] Hub `/api/mcp/tools-call` ok=true
+  - [x] WorkBuddyAdapter 调用返回工具结果
+- 注意：token 来自 WorkBuddy 侧注入，可用 `LOOM_WORK_BUDDY_TOKEN` 覆盖；agent-mail 需在 WorkBuddy 开通后才是完整邮箱能力
+
+## [2026-09-24][CROSS-UI] MCP 404 修复 + 跨端架构说明 + 三端布局重做
+
+- 状态：✅ 完成
+- **404 根因**：前端 REST `baseUrl=""` 打到 Vite(:5173)，未指向 Hub(:8765) → 已改为 `http://127.0.0.1:8765`；probe/tools-call 带 WorkBuddy token
+- **架构结论**：
+  - MCP / 工具 / LLM Key / DSL：只在 **PC/Hub** 配置一次
+  - 手机/平板：看任务、分发/触发、对话下任务、文件上传、通知与技能树；**不做** MCP 配置
+  - 信息与任务：SyncEngine 版本号 + 增量广播，多端同一 trace_id，离线排队上线分发
+- **布局**（参考 WorkBuddy / Claude / MiMo Desktop）：
+  - 桌面：左侧栏导航 + 主工作区（`src/styles/layout.css`）
+  - 窄屏：底部 Tab（对话/任务/跨端/设置/MCP）
+  - 新增「跨端」页 `src/features/device-hub.ts`：同步摘要 + 设备卡 + PC/手机能力矩阵
+- 验收：Hub probe WorkBuddy ok=true tools=25；tsc / test:ui 全绿
+
+## [2026-09-24][LAYOUT-CLEAN] 左侧导航 + 右侧仅当前页
+
+- 状态：✅ 完成
+- 变更：移除路由页下方堆叠的 Workspace / LLM / MCP / Agent / 示例插件面板
+- 结果：左侧栏导航；右侧 `app-main` 只渲染 activeRoute 对应模块（对话/任务/跨端/设置/MCP）
+- 验收：tsc / test:ui 全绿
+
+## [2026-09-24][CHAT-FILL] 对话工作台默认铺满 + 滑动消息窗
+
+- 状态：✅ 完成
+- 变更：`chatSize` 默认 `expanded`；`.chat-workbench` 高度自适应窗口（calc 100vh）；`.chat-stream` flex 撑满并 `overflow-y: auto`；输入条 sticky 底部
+- 效果：打开即最大尺寸；消息区独立滑动，窗口变高变矮自动跟随
+- 验收：tsc / test:ui 全绿
+
+## [2026-09-24][HELP-SOP] 使用说明 SOP
+
+- 状态：✅ 完成
+- 变更：
+  - `目录/使用说明SOP.md` — 项目功能与用法完整 SOP
+  - `src/features/help-page.ts` — 应用内「使用说明」页（10 节：启动/导航/对话/任务/LLM/MCP/跨端/DSL/速查/索引）
+  - 侧栏与底部 Tab 增加「使用说明」`#/help`
+- 验收：tsc / test:ui 全绿
+
+## [2026-09-24][RECOMMEND] 推荐 Agent 页
+
+- 状态：✅ 完成
+- 变更：
+  - `src/features/recommend-page.ts` — Claude Code / Work Buddy / DeepSeek / Codex / Gemini CLI / Cursor 毛玻璃卡片
+  - 点击「启动应用」：自定义协议唤起（workbuddy:// 等）；无路径/协议 → 未安装无效
+  - 「展开详情」：官网链接 + MCP 地址 + 本机路径
+  - 侧栏/底栏增加「推荐」`#/recommend`
+  - `tests/js/test_recommend.mjs`
+- 验收：tsc / test:ui 全绿
+
+## [2026-09-24][RECOMMEND-EX] 推荐页扩充热门 Agent
+
+- 状态：✅ 完成
+- 新增：ChatGPT · 通义千问 Qwen · Trea/Trae · Pi · Kimi · 豆包 · GitHub Copilot · Windsurf · Cline · Aider · Grok · 文心一言 · 智谱 ChatGLM · Manus（保留 Claude Code / Work Buddy / DeepSeek / Codex / Gemini / Cursor）
+- 合计 20 个毛玻璃卡片；展开显示官网 + MCP/API 地址；启动走自定义协议，无则标记未安装
+
+## [2026-09-24][PROMPTS-IA] 提示词 + 任务进度 + 侧栏分组
+
+- 状态：✅ 完成
+- **提示词页** `#/prompts`：CRUD + localStorage 持久化 + 「用于对话」预填
+- **对话 chips**：输入框上方快速套用提示词，可管理/清除
+- **任务中心**：顶部进度条（排队/执行/完成/失败）
+- **右上角进度胶囊**：任意页 `完成/总数` + 底条，点击进任务中心
+- **侧栏分组**：工作区（对话/提示词/任务）· 设置·跨端 · MCP·推荐 · 使用说明
+- 验收：tsc / test:ui / test_prompts 全绿
+
+## [2026-09-24][MCP-CORS] 修复前端「Failed to fetch」
+
+- 根因：浏览器从 :5173 请求 Hub :8765 被 CORS 拦截（PowerShell 无此问题故直连一直成功）
+- 修复：
+  - Hub `CORSMiddleware`（allow_origins=*）
+  - Vite `server.proxy`：`/api` `/ws` `/health` → :8765
+  - 前端 `baseUrl=""`（同源走代理，避免跨域）
+- 验收：via-vite catalog/probe 200；Hub Access-Control-Allow-Origin: *

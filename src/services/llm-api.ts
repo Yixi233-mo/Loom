@@ -182,11 +182,12 @@ export async function fetchProviderModels(
 export async function probeMcp(
   rest: RestClient,
   url: string,
-  timeout = 8
+  timeout = 8,
+  token?: string
 ): Promise<McpProbeResult> {
   return rest.requestPublic("/api/mcp/probe", {
     method: "POST",
-    body: { url, timeout },
+    body: { url, timeout, token },
   });
 }
 

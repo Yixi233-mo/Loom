@@ -1,4 +1,4 @@
-﻿/**
+/**
  * FE.3 设置页 — LLM + MCP 子页壳 + 完整页面状态
  */
 
@@ -25,6 +25,8 @@ export function SettingsPage(props: {
   error?: string | null;
   onRetry?: () => void;
   /* LLM — 原样透传现有面板 */
+  activeProviderId?: string | null;
+  onActiveProvider?: (id: string) => void;
   llmError?: string;
   llmTestResult?: string;
   providers?: LlmProviderView[];
@@ -46,6 +48,11 @@ export function SettingsPage(props: {
   onDeleteProvider?: (providerId: string) => void;
   onTestChat?: (providerId: string) => void;
   /* MCP */
+  mcpCatalog?: import("../views/mcp-panel.ts").McpCatalogItem[];
+  mcpToolResult?: string | null;
+  mcpToolBusy?: boolean;
+  onMcpToolsCall?: (tool: string) => void;
+  onMcpUseEndpoint?: (url: string) => void;
   mcpUrl?: string;
   onMcpUrl?: (u: string) => void;
   onMcpProbe?: () => void;
@@ -123,6 +130,8 @@ export function SettingsPage(props: {
                     })
                   : null,
                 e(LlmSettingsPanel, {
+                  activeProviderId: props.activeProviderId,
+                  onActiveProvider: props.onActiveProvider,
                   error: props.llmError,
                   testResult: props.llmTestResult,
                   providers: props.providers ?? [],
@@ -144,6 +153,11 @@ export function SettingsPage(props: {
                   onProbe: props.onMcpProbe,
                   result: props.mcpResult,
                   busy: props.mcpBusy,
+                  catalog: props.mcpCatalog,
+                  toolCallResult: props.mcpToolResult,
+                  toolCallBusy: props.mcpToolBusy,
+                  onToolsCall: props.onMcpToolsCall,
+                  onUseEndpoint: props.onMcpUseEndpoint,
                 })
               )
     )

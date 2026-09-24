@@ -5,6 +5,8 @@
 @import "./tokens.css";
 @import "./base.css";
 @import "./components.css";
+@import "./controls.css";
+@import "./layout.css";
 @import "./pages.css";
 @import "./adapters.css";
 @import "../styles.css";

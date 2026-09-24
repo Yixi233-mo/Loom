@@ -14,6 +14,7 @@ export { SseTransport } from "./sse-transport.ts";
 export { FileService, type UploadProgress } from "./file-service.ts";
 export { LlmApi, type LlmProviderDto } from "./llm-api.ts";
 export { ModelChatClient } from "./model-chat.ts";
+export { fetchMcpCatalog, callMcpTool, primaryDownloadUrl, type McpCatalogItem, type McpCatalogResponse, type McpToolsCallResult } from "./mcp-tools.ts";
 
 import { RestClient } from "./rest.ts";
 import { EventBus } from "./event-bus.ts";

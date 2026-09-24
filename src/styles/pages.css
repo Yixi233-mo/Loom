@@ -1,4 +1,4 @@
-﻿/**
+/**
  * FE.3 核心页面样式 — 页壳 / 状态 / 对话 / 任务 / 设置
  */
 
@@ -109,31 +109,53 @@
   .fe-skeleton { animation: none; }
 }
 
-/* --- 对话工作台 --- */
+/* --- 对话工作台：默认铺满主区，消息区可滚动 --- */
 .chat-workbench {
-  display: grid;
-  gap: var(--space-4);
-  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  /* 铺满 app-main 可视高度，去掉顶栏/底栏后自适应 */
+  height: calc(100vh - 140px);
+  min-height: 320px;
+}
+
+.layout-narrow .chat-workbench {
+  height: calc(100vh - 160px);
 }
 
 .chat-workbench--expanded .chat-stream {
-  min-height: 360px;
-  max-height: 480px;
+  min-height: 0;
+  max-height: none;
+  flex: 1 1 auto;
+}
+
+.chat-workbench--default .chat-stream {
+  min-height: 200px;
+  max-height: 280px;
 }
 
 .chat-stream {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  max-height: 360px;
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: var(--space-2);
+  /* 滑动窗口 */
+  scrollbar-gutter: stable;
 }
 
 .chat-composer {
   display: flex;
   gap: var(--space-2);
   align-items: center;
+  flex-shrink: 0;
+  position: sticky;
+  bottom: 0;
+  padding-top: var(--space-2);
+  background: color-mix(in srgb, var(--panel-solid) 80%, transparent);
 }
 
 .chat-composer .ui-input {
@@ -214,4 +236,229 @@
     flex-direction: column;
     align-items: stretch;
   }
+}
+.mcp-workspace { display: grid; gap: 16px; }
+.mcp-steps {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+}
+.mcp-step {
+  display: flex; gap: 10px; padding: 12px;
+  border: 1px solid var(--line); border-radius: 14px;
+  background: color-mix(in srgb, var(--panel-solid) 55%, transparent);
+}
+.mcp-step-n {
+  width: 28px; height: 28px; border-radius: 999px; flex-shrink: 0;
+  display: grid; place-items: center;
+  background: var(--accent); color: #fffaf5; font-weight: 700; font-size: 13px;
+}
+.mcp-step .hint { margin: 2px 0 0; font-size: 12px; }
+.mcp-flow-hint {
+  padding: 10px 12px; border-radius: 12px;
+  background: var(--sage-soft); color: var(--sage);
+  font-size: 13px; font-weight: 600;
+}
+.mcp-catalog { display: grid; gap: 10px; }
+.mcp-catalog-card {
+  padding: 12px 14px; border: 1px solid var(--line); border-radius: 14px;
+  background: color-mix(in srgb, var(--panel-solid) 60%, transparent);
+  display: grid; gap: 6px;
+}
+.mcp-catalog-card .hint { margin: 0; }
+@media (max-width: 720px) { .mcp-steps { grid-template-columns: 1fr; } }
+
+
+/* --- 使用说明 SOP --- */
+.help-page { display: grid; gap: 14px; }
+.help-card {
+  padding: 18px 20px;
+  border-radius: var(--radius-lg);
+}
+.help-card h3 { margin: 0 0 8px; }
+.help-summary {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.help-steps {
+  margin: 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 6px;
+  font-size: 13.5px;
+}
+.help-tips {
+  margin: 12px 0 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 4px;
+  font-size: 12.5px;
+  color: var(--sage);
+}
+.help-foot { margin: 8px 0 0; }
+
+
+/* --- 推荐 Agent 卡片 --- */
+.recommend-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+.agent-card {
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  display: grid;
+  gap: 10px;
+  transition: box-shadow var(--duration-normal) var(--ease-out);
+}
+.agent-card.is-open {
+  box-shadow: var(--node-glow);
+}
+.agent-card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: flex-start;
+}
+.agent-card-head h3 { margin: 0; }
+.agent-vendor { margin: 2px 0 0; color: var(--muted); font-size: 12px; }
+.agent-tagline { margin: 0; color: var(--ink-secondary); font-size: 13.5px; }
+.agent-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.agent-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.agent-detail {
+  border-top: 1px dashed var(--line);
+  padding-top: 10px;
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+}
+.agent-row {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 8px;
+  align-items: baseline;
+}
+.agent-row b { color: var(--muted); font-weight: 600; }
+.agent-row a { color: var(--accent-strong); word-break: break-all; }
+.agent-mcp-hint { margin: 0; }
+
+
+/* --- 提示词 --- */
+.prompts-page { display: grid; gap: 14px; }
+.prompt-editor {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border-radius: var(--radius-lg);
+}
+.prompt-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+.prompt-card {
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  display: grid;
+  gap: 8px;
+}
+.prompt-card header {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: center;
+}
+.prompt-body {
+  margin: 0;
+  white-space: pre-wrap;
+  color: var(--ink-secondary);
+  font-size: 13.5px;
+}
+.prompt-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.prompt-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  flex-shrink: 0;
+}
+.prompt-chips-label {
+  font-size: 11px;
+  color: var(--muted);
+  margin-right: 2px;
+}
+.chip {
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  border-radius: var(--radius-pill);
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--ink-secondary);
+  cursor: pointer;
+}
+.chip.is-on {
+  background: var(--accent-soft);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  color: var(--accent-strong);
+}
+.chip-clear { color: var(--danger); }
+
+/* --- 任务进度条 --- */
+.task-progress {
+  display: grid;
+  gap: 8px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  border-radius: var(--radius-lg);
+}
+.task-progress-track {
+  display: flex;
+  height: 10px;
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  background: var(--panel-muted);
+}
+.task-progress-track .seg { display: block; height: 100%; }
+.task-progress-track .seg.done { background: var(--sage); }
+.task-progress-track .seg.running { background: var(--accent); }
+.task-progress-track .seg.pending { background: var(--champagne); }
+.task-progress-track .seg.failed { background: var(--danger); }
+.task-progress-meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* --- 右上角进度胶囊 --- */
+.task-progress-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: var(--card-backdrop);
+  border-radius: var(--radius-pill);
+  padding: 6px 14px;
+  cursor: pointer;
+  font-weight: 650;
+  font-size: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.task-progress-pill .pill-label { color: var(--muted); }
+.task-progress-pill .pill-count { color: var(--accent-strong); }
+.task-progress-pill .pill-bar {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--sage), var(--accent));
+  transition: width var(--duration-normal) var(--ease-out);
 }
