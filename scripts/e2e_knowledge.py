@@ -89,7 +89,7 @@ def main() -> int:
     ok("扩展名识别 markdown/text", "markdown" in kinds and "text" in kinds, str(kinds))
 
     print("\n[3] 路径导入")
-    tmp = ROOT / "plugins" / "_e2e_wiki"
+    tmp = ROOT / "apps" / "hub" / "plugins" / "_e2e_wiki"
     tmp.mkdir(exist_ok=True)
     (tmp / "deploy.md").write_text("使用 docker compose up hub 启动服务", encoding="utf-8")
     code, body = req("POST", "/api/knowledge/import/path", {"path": str(tmp), "kb": "e2e库", "max_files": 10})

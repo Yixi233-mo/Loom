@@ -35,7 +35,7 @@ class TestCrypto(unittest.TestCase):
 
 class TestConfigStore(unittest.TestCase):
     def setUp(self):
-        self.path = ROOT / "plugins" / "_llm_cfg.json"
+        self.path = ROOT / "apps" / "hub" / "plugins" / "_llm_cfg.json"
         self.store = LLMConfigStore(self.path, master_key="m")
 
     def tearDown(self):
@@ -133,7 +133,7 @@ class TestLlmApi(unittest.TestCase):
         from fastapi import FastAPI
         from fastapi.testclient import TestClient
 
-        self.path = ROOT / "plugins" / "_llm_api.json"
+        self.path = ROOT / "apps" / "hub" / "plugins" / "_llm_api.json"
         self.store = LLMConfigStore(self.path, master_key="m")
 
         class FakeHttp:

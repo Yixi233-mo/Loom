@@ -10,8 +10,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 BASE = os.environ.get("E2E_BASE", "http://127.0.0.1:8765")
-KB_PATH = ROOT / "plugins" / "_e2e_kb.json"
-TMP = ROOT / "plugins" / "_e2e_tmp"
+KB_PATH = ROOT / "apps" / "hub" / "plugins" / "_e2e_kb.json"
+TMP = ROOT / "apps" / "hub" / "plugins" / "_e2e_tmp"
 
 
 def req(method: str, path: str, body=None, timeout=15):

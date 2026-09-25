@@ -28,7 +28,7 @@ def write(p: Path, text: str) -> None:
 
 class TestDslHotReload(unittest.TestCase):
     def setUp(self):
-        self.root = ROOT / "plugins" / "_hot_test"
+        self.root = ROOT / "apps" / "hub" / "plugins" / "_hot_test"
         if self.root.exists():
             import shutil
 

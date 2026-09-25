@@ -32,10 +32,10 @@ def build_demo_stack() -> HubStack:
     store.create("想法", "把设备、Agent、任务编织成一体")
     tools = make_notes_tools(store)
 
-    kb = KnowledgeStore(ROOT / "plugins" / "knowledge.json")
+    kb = KnowledgeStore(ROOT / "apps" / "hub" / "plugins" / "knowledge.json")
     from knowledge.federated import FederatedKnowledge
 
-    fed = FederatedKnowledge(kb, sources_path=ROOT / "plugins" / "knowledge_sources.json")
+    fed = FederatedKnowledge(kb, sources_path=ROOT / "apps" / "hub" / "plugins" / "knowledge_sources.json")
 
     def builtin_rag(prompt: str):
         return fed.answer(prompt)
@@ -48,7 +48,7 @@ def build_demo_stack() -> HubStack:
     # 虚拟 PC：保证 device:pc 的工作流可被路由，由服务端执行
     stack.mesh.register("hub-pc-1", "pc", ["file.read", "shell.exec"])
     stack.auto_execute = True
-    stack.workflow_dir = ROOT / "plugins" / "example" / "workflows"
+    stack.workflow_dir = ROOT / "apps" / "hub" / "plugins" / "example" / "workflows"
 
     orig_submit = stack.submit_workflow_async
 
@@ -74,7 +74,7 @@ def build_demo_stack() -> HubStack:
         fire=lambda name, payload: stack.submit_workflow(payload or {"name": name, "device": "any"})
     )
     reloader = DslHotReloader(
-        ROOT / "plugins",
+        ROOT / "apps" / "hub" / "plugins",
         on_reload=lambda cache: (
             apply_tools_to_stack(cache, stack),
             apply_cron_to_scheduler(cache, sch),

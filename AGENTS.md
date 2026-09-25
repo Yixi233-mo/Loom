@@ -12,7 +12,9 @@
 | `src/` `src-tauri/` `api/` … | 业务代码 | ✅ |
 | `tests/` | 测试 | ✅ |
 | `docs/` | 工程文档与 **showcase 预览** | ✅ |
-| `docs/showcase/` | 总控台 / 响应式 / 生产就绪 / 交付台 | ✅ |
+| `docs/` | 文档 + showcase 预览 | ✅ |
+| `deploy/` | Dockerfile / compose | ✅ |
+| `apps/hub/plugins/` | 插件与知识数据 | ✅ |
 | `scripts/` | 正式脚本（build/lint/test） | ✅ |
 | `scripts/_archive/` | 历史一次性脚本 | 尽量不提交内容 |
 | `目录/` | 产品/设计长文档 | ❌ **不进 git** |

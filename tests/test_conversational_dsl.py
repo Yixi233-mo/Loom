@@ -34,7 +34,7 @@ class TestRuleBasedGenerator(unittest.TestCase):
 
 class TestConversationalFlow(unittest.TestCase):
     def setUp(self):
-        self.out = ROOT / "plugins" / "_n9_out"
+        self.out = ROOT / "apps" / "hub" / "plugins" / "_n9_out"
         self.svc = ConversationalDslService(workspace_root=self.out)
 
     def tearDown(self):

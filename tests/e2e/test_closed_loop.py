@@ -13,7 +13,7 @@ sys.path.insert(0, str(ROOT / "apps" / "hub"))
 from plugins.example.notes_runtime import NotesStore, make_notes_tools  # noqa: E402
 from tests.e2e.orchestrator import E2EOrchestrator  # noqa: E402
 
-WORKFLOW = ROOT / "plugins" / "example" / "workflows" / "mobile_to_pc_pdf.yaml"
+WORKFLOW = ROOT / "apps" / "hub" / "plugins" / "example" / "workflows" / "mobile_to_pc_pdf.yaml"
 
 
 def make_orch() -> E2EOrchestrator:

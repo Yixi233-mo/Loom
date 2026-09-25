@@ -22,12 +22,12 @@ from knowledge.store import KnowledgeStore  # noqa: E402
 
 class TestImporter(unittest.TestCase):
     def setUp(self):
-        self.store = KnowledgeStore(ROOT / "plugins" / "_test_import_kb.json")
+        self.store = KnowledgeStore(ROOT / "apps" / "hub" / "plugins" / "_test_import_kb.json")
         self.store.docs.clear()
         self.store.save()
 
     def tearDown(self):
-        p = ROOT / "plugins" / "_test_import_kb.json"
+        p = ROOT / "apps" / "hub" / "plugins" / "_test_import_kb.json"
         if p.exists():
             p.unlink()
 
@@ -67,7 +67,7 @@ class TestImporter(unittest.TestCase):
         self.assertTrue(item["skipped"])
 
     def test_import_path(self):
-        tmp = ROOT / "plugins" / "_test_import_dir"
+        tmp = ROOT / "apps" / "hub" / "plugins" / "_test_import_dir"
         tmp.mkdir(exist_ok=True)
         (tmp / "note.txt").write_text("怎么部署 docker compose", encoding="utf-8")
         (tmp / "skip.png").write_bytes(b"\x89PNG")

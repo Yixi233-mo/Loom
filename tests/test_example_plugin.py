@@ -20,7 +20,7 @@ from plugins.example.workflow_runner import (  # noqa: E402
     run_daily_report,
 )
 
-EXAMPLE = ROOT / "plugins" / "example"
+EXAMPLE = ROOT / "apps" / "hub" / "plugins" / "example"
 
 
 class TestPluginDsl(unittest.TestCase):

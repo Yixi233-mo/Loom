@@ -78,7 +78,7 @@ class TestSchedulerFire(unittest.TestCase):
 
 class TestN6Integration(unittest.TestCase):
     def test_load_cron_from_workflows(self):
-        jobs = load_workflows_cron(str(ROOT / "plugins" / "example" / "workflows"))
+        jobs = load_workflows_cron(str(ROOT / "apps" / "hub" / "plugins" / "example" / "workflows"))
         names = {j.name for j in jobs}
         self.assertIn("daily_report", names)
         dr = next(j for j in jobs if j.name == "daily_report")

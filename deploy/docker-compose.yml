@@ -1,6 +1,8 @@
 services:
   hub:
-    build: .
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
     image: loom/hub:0.1.0
     ports:
       - "8765:8765"
@@ -12,8 +14,8 @@ services:
       - LOOM_AUTH_SECRET=${LOOM_AUTH_SECRET:?请设置 LOOM_AUTH_SECRET}
       - LOOM_MASTER_KEY=${LOOM_MASTER_KEY:?请设置 LOOM_MASTER_KEY}
     volumes:
-      - ./plugins:/app/plugins
-      - ./data:/app/data
+      - ./apps/hub/plugins:/app/plugins
+      - ./apps/hub/data:/app/data
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8765/health', timeout=3)"]

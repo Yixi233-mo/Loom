@@ -19,15 +19,15 @@ from knowledge.store import KnowledgeStore, answer_from_kb  # noqa: E402
 
 class TestKnowledgeStore(unittest.TestCase):
     def setUp(self):
-        self.store = KnowledgeStore(ROOT / "plugins" / "_test_kb.json")
+        self.store = KnowledgeStore(ROOT / "apps" / "hub" / "plugins" / "_test_kb.json")
         self.store.docs.clear()
         self.store.save()
 
     def tearDown(self):
         try:
-            (ROOT / "plugins" / "_test_kb.json").unlink(missing_ok=True)
+            (ROOT / "apps" / "hub" / "plugins" / "_test_kb.json").unlink(missing_ok=True)
         except TypeError:
-            p = ROOT / "plugins" / "_test_kb.json"
+            p = ROOT / "apps" / "hub" / "plugins" / "_test_kb.json"
             if p.exists():
                 p.unlink()
 
@@ -57,10 +57,10 @@ class TestKnowledgeStore(unittest.TestCase):
 
 class TestKnowledgeApi(unittest.TestCase):
     def setUp(self):
-        self.store = KnowledgeStore(ROOT / "plugins" / "_test_kb_api.json")
+        self.store = KnowledgeStore(ROOT / "apps" / "hub" / "plugins" / "_test_kb_api.json")
         self.store.docs.clear()
         self.store.save()
-        self.sources_path = ROOT / "plugins" / "_test_kb_sources.json"
+        self.sources_path = ROOT / "apps" / "hub" / "plugins" / "_test_kb_sources.json"
         if self.sources_path.exists():
             self.sources_path.unlink()
         self.app = FastAPI()
@@ -70,7 +70,7 @@ class TestKnowledgeApi(unittest.TestCase):
         self.client = TestClient(self.app)
 
     def tearDown(self):
-        p = ROOT / "plugins" / "_test_kb_api.json"
+        p = ROOT / "apps" / "hub" / "plugins" / "_test_kb_api.json"
         if p.exists():
             p.unlink()
         if self.sources_path.exists():

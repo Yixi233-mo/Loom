@@ -20,8 +20,8 @@ from plugins.example.workflow_runner import (  # noqa: E402
     run_daily_report,
 )
 
-WORKFLOWS = ROOT / "plugins" / "example" / "workflows"
-LEGACY = ROOT / "plugins" / "example" / "workflow.yaml"
+WORKFLOWS = ROOT / "apps" / "hub" / "plugins" / "example" / "workflows"
+LEGACY = ROOT / "apps" / "hub" / "plugins" / "example" / "workflow.yaml"
 
 # 矩阵：文件名 → (trigger_type, device)
 MATRIX = {

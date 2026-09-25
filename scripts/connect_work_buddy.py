@@ -102,7 +102,7 @@ def main() -> int:
             "tools": [t.get("name") for t in tools],
             "connected": r.status_code == 200 and len(tools) > 0,
         }
-        out = ROOT / "plugins" / "work_buddy_connection.json"
+        out = ROOT / "apps" / "hub" / "plugins" / "work_buddy_connection.json"
         out.write_text(json.dumps(conf, ensure_ascii=False, indent=2), encoding="utf-8")
         print("saved", out)
         return 0 if conf["connected"] else 1
