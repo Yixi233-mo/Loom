@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Loom · 全模块自适应规范预览</title>
+<style>
+:root {
+  --bg: #faf6f1;
+  --ink: #2b211c;
+  --muted: #7a6b60;
+  --accent: #d4785a;
+  --sage: #7fa88b;
+  --line: rgba(43, 33, 28, 0.12);
+  --surface: rgba(255, 255, 255, 0.8);
+  --radius: 14px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.6;
+}
+header {
+  padding: 28px 20px 12px;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+h1 { font-size: clamp(22px, 4vw, 32px); letter-spacing: -0.02em; }
+.sub { color: var(--muted); margin-top: 8px; font-size: 14px; }
+.wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 12px 20px 48px;
+  display: grid;
+  gap: 16px;
+}
+section {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
+}
+h2 { font-size: 16px; margin-bottom: 10px; }
+.rules { display: grid; gap: 10px; }
+.rule {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: 12px;
+  align-items: start;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(212, 120, 90, 0.08);
+}
+.rule .n {
+  width: 28px; height: 28px; border-radius: 8px;
+  display: grid; place-items: center;
+  background: var(--accent); color: #fff; font-weight: 700; font-size: 12px;
+}
+.bps { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+.bp {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff;
+  min-width: 0;
+}
+.bp strong { display: block; font-size: 13px; }
+.bp span { color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+.cols { display: grid; gap: 10px; }
+@media (min-width: 768px) {
+  .cols { grid-template-columns: 1fr 1fr; }
+}
+.card {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px;
+  background: #fff;
+  min-width: 0;
+}
+.card h3 { font-size: 14px; margin-bottom: 6px; }
+.card ul { margin-left: 18px; color: var(--muted); font-size: 13px; }
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 100%;
+}
+input, select, button {
+  min-height: 44px;
+  width: 100%;
+  max-width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  padding: 10px 12px;
+  font-size: 16px;
+  background: #fff;
+}
+button {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  border: 0;
+  cursor: pointer;
+}
+.table-wrap { overflow-x: auto; width: 100%; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 0; }
+th, td { padding: 10px 8px; border-bottom: 1px solid var(--line); text-align: left; overflow-wrap: anywhere; }
+@media (max-width: 767.98px) {
+  table thead { display: none; }
+  table tr {
+    display: grid;
+    gap: 4px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  table td {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    border: 0;
+    padding: 2px 0;
+  }
+  table td::before {
+    content: attr(data-label);
+    color: var(--muted);
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+  .device-tag::after { content: " · 单列/卡片/底 Tab"; }
+}
+@media (min-width: 768px) {
+  .device-tag::after { content: " · 双栏/可折侧栏"; }
+}
+@media (min-width: 1024px) {
+  .device-tag::after { content: " · 多栏并行"; }
+}
+.tag {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  background: rgba(127, 168, 139, 0.18);
+  color: #3f6b4a;
+  font-weight: 600;
+}
+footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+  padding: 16px 20px 32px;
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="tag device-tag" id="bpTag">当前断点</div>
+  <h1>Loom 全模块自适应 · 规范预览</h1>
+  <p class="sub">拖动窗口宽度或用手机打开：375px 无横向滚动 · 触控 ≥44px · 表单单列 · 弹窗改抽屉</p>
+</header>
+
+<div class="wrap">
+  <section>
+    <h2>三条铁律</h2>
+    <div class="rules">
+      <div class="rule"><div class="n">1</div><div><strong>不允许横向滚动</strong><br />内容溢出即 bug；pre/table 限宽。</div></div>
+      <div class="rule"><div class="n">2</div><div><strong>不允许固定像素宽度</strong><br />用 % / flex / minmax / 100vw 约束。</div></div>
+      <div class="rule"><div class="n">3</div><div><strong>不允许 PC 专属交互</strong><br />hover/右键/拖拽 → 长按 / 常显按钮 / 手势。</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>断点</h2>
+    <div class="bps">
+      <div class="bp"><strong>&lt; 768px</strong><span>手机竖屏 · 单列 · 底 Tab · 抽屉弹窗</span></div>
+      <div class="bp"><strong>768–1023px</strong><span>平板/横屏 · 单列 + 折叠侧栏</span></div>
+      <div class="bp"><strong>≥ 1024px</strong><span>PC · 侧栏 + 主内容 + 详情</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>表单（强制单列 · 触控 44px）</h2>
+    <div class="form">
+      <input placeholder="主机 IP 或 192.168.x.x" />
+      <input placeholder="端口 8765" />
+      <select><option>DeepSeek</option><option>Ollama</option></select>
+      <button type="button">连接</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>数据展示（表格 → 移动卡片）</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>任务</th><th>状态</th><th>设备</th></tr></thead>
+        <tbody>
+          <tr><td data-label="任务">周报汇总</td><td data-label="状态">已完成</td><td data-label="设备">PC</td></tr>
+          <tr><td data-label="任务">PDF → Markdown</td><td data-label="状态">执行中</td><td data-label="设备">PC</td></tr>
+          <tr><td data-label="任务">知识库导入</td><td data-label="状态">排队</td><td data-label="设备">手机</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>模块改造摘要</h2>
+    <div class="cols">
+      <div class="card"><h3>任务列表 / 详情</h3><ul>
+        <li>表格 → 卡片；筛选下拉</li>
+        <li>双栏详情 → 纵向堆叠</li>
+        <li>步骤 → 时间轴 / 折叠</li>
+      </ul></div>
+      <div class="card"><h3>知识库 / 设置</h3><ul>
+        <li>目录树 → 侧滑抽屉</li>
+        <li>设置分组折叠</li>
+        <li>危险操作二次确认</li>
+      </ul></div>
+      <div class="card"><h3>导航 / 弹窗</h3><ul>
+        <li>底 Tab ≤5 + 更多</li>
+        <li>顶栏只留 1–2 状态</li>
+        <li>弹窗 → 底部抽屉 ≤80vh</li>
+      </ul></div>
+      <div class="card"><h3>接入 · 扫码</h3><ul>
+        <li>手机<strong>相机扫</strong>电脑二维码</li>
+        <li>配对码 / 手动 IP 备选</li>
+        <li>安全区 + 44px 按钮</li>
+      </ul></div>
+    </div>
+  </section>
+</div>
+
+<footer>Loom · 响应式体系预览 · 实装见 src/styles/responsive.css</footer>
+<script>
+(function () {
+  var tag = document.getElementById("bpTag");
+  function sync() {
+    var w = window.innerWidth;
+    var name = w < 768 ? "sm · 手机" : w < 1024 ? "md · 平板" : w < 1280 ? "lg · 小 PC" : "xl · 宽屏";
+    tag.textContent = "当前断点 " + name + " · " + w + "px";
+  }
+  window.addEventListener("resize", sync);
+  sync();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Loom · 织巢 — 交接总览</title>
+<style>
+  :root {
+    --bg: #faf6f0;
+    --card: rgba(255, 255, 255, 0.72);
+    --ink: #2c2824;
+    --ink-2: #6b6560;
+    --peach: #e8a87c;
+    --clay: #c4785a;
+    --sage: #7a947a;
+    --line: rgba(44, 40, 36, 0.1);
+    --radius: 12px;
+    --shadow: 0 8px 24px rgba(60, 40, 20, 0.08);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 14px/1.6 -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+  body {
+    min-height: 100dvh;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 10% -10%, rgba(232, 168, 124, 0.18), transparent),
+      radial-gradient(ellipse 60% 40% at 90% 0%, rgba(122, 148, 122, 0.12), transparent);
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 32px 20px 64px; }
+  header { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-bottom: 28px; }
+  .logo {
+    width: 56px; height: 56px; border-radius: 16px;
+    background: linear-gradient(145deg, #fff, #f3e6d8);
+    box-shadow: var(--shadow); display: grid; place-items: center;
+    font-size: 22px; font-weight: 700; color: var(--clay);
+    border: 1px solid var(--line);
+  }
+  h1 { margin: 0; font-size: 24px; font-weight: 700; letter-spacing: 0.02em; }
+  .tag {
+    display: inline-block; padding: 2px 10px; border-radius: 999px;
+    background: rgba(122, 148, 122, 0.15); color: var(--sage);
+    font-size: 12px; margin-left: 8px; vertical-align: middle;
+  }
+  .sub { color: var(--ink-2); margin: 4px 0 0; max-width: 52ch; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px; margin: 20px 0 28px;
+  }
+  .card {
+    background: var(--card); backdrop-filter: blur(12px);
+    border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 16px 18px; box-shadow: var(--shadow);
+  }
+  .card h2 {
+    margin: 0 0 8px; font-size: 14px; font-weight: 600;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--peach); flex: 0 0 auto; }
+  .dot.ok { background: var(--sage); }
+  .dot.wait { background: var(--peach); }
+  .card p, .card li { margin: 0; color: var(--ink-2); font-size: 13px; }
+  .card ul { margin: 6px 0 0; padding-left: 18px; }
+  .card li { margin: 4px 0; }
+  .stat {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 6px 0; border-bottom: 1px dashed var(--line); font-size: 13px;
+  }
+  .stat:last-child { border-bottom: 0; }
+  .stat b { font-size: 16px; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .ok-text { color: var(--sage); }
+  .wait-text { color: var(--clay); }
+  section h3 { font-size: 16px; margin: 28px 0 12px; font-weight: 600; }
+  table {
+    width: 100%; border-collapse: collapse; background: var(--card);
+    border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line);
+    box-shadow: var(--shadow); font-size: 13px;
+  }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { background: rgba(232, 168, 124, 0.12); font-weight: 600; font-size: 12px; color: var(--ink-2); }
+  tr:last-child td { border-bottom: 0; }
+  code {
+    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+    font-size: 12px; background: rgba(44, 40, 36, 0.06);
+    padding: 1px 6px; border-radius: 6px;
+  }
+  .docs a {
+    color: var(--clay); text-decoration: none;
+    border-bottom: 1px dashed rgba(196, 120, 90, 0.4);
+  }
+  .docs a:hover { color: var(--ink); border-bottom-color: var(--ink); }
+  .flow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 12px 0 0; }
+  .step {
+    padding: 8px 12px; border-radius: 10px;
+    background: rgba(255, 255, 255, 0.8); border: 1px solid var(--line);
+    font-size: 12px; color: var(--ink);
+  }
+  .arrow { color: var(--peach); font-weight: 700; }
+  footer {
+    margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--line);
+    color: var(--ink-2); font-size: 12px;
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">巢</div>
+      <div>
+        <h1>Loom · 织巢 <span class="tag">0.1.0 WIP</span></h1>
+        <p class="sub">跨端 Agent 工作台 · Hub 路由 · Agent 联邦 · YAML DSL 扩展。把设备与 Agent 编织成一台电脑、一个团队。</p>
+      </div>
+    </header>
+
+    <div class="grid">
+      <div class="card">
+        <h2><span class="dot ok"></span>进度快照</h2>
+        <div class="stat"><span>P0–P7 主线</span><b class="ok-text">完成</b></div>
+        <div class="stat"><span>N13 知识库全链路</span><b class="ok-text">完成</b></div>
+        <div class="stat"><span>N14 Win 打包</span><b class="ok-text">完成</b></div>
+        <div class="stat"><span>U1–U4 前端优化</span><b class="wait-text">规划中</b></div>
+      </div>
+      <div class="card">
+        <h2><span class="dot ok"></span>质量与产物</h2>
+        <div class="stat"><span>Python 测试</span><b>321 OK</b></div>
+        <div class="stat"><span>知识库 E2E</span><b>17/17</b></div>
+        <div class="stat"><span>MSI / NSIS</span><b>2.79 / 1.87 MB</b></div>
+        <div class="stat"><span>Git main</span><b>a59f403</b></div>
+      </div>
+      <div class="card">
+        <h2><span class="dot wait"></span>下一步优先</h2>
+        <ul>
+          <li>前端优化 U1 布局锁定（无全局滚动）</li>
+          <li>MSI 真机安装点验</li>
+          <li>Android apk（需 SDK）</li>
+          <li>Notion 正文 / 真实向量嵌入</li>
+        </ul>
+      </div>
+    </div>
+
+    <section>
+      <h3>知识库页操作流</h3>
+      <div class="flow">
+        <div class="step">选库 / 新建库</div><span class="arrow">→</span>
+        <div class="step">添加知识</div><span class="arrow">→</span>
+        <div class="step">检索</div><span class="arrow">→</span>
+        <div class="step">外部源 / 导入</div><span class="arrow">→</span>
+        <div class="step">本地文档列表</div>
+      </div>
+      <p class="sub" style="margin-top:12px">
+        外部源支持<strong>像打开文件一样导入</strong>（扩展名自动识别），并可粘贴链接自动判断 Notion / 文档站 / 向量库。
+        详细 Spec 见 <code>目录/05-任务Spec/PLAN_外部源管理卡片.md</code>。
+      </p>
+    </section>
+
+    <section>
+      <h3>前端优化 · U 系列（待实施）</h3>
+      <table>
+        <thead>
+          <tr><th>编号</th><th>阶段</th><th>目标</th><th>状态</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>U1</td>
+            <td>窗口适配 + 布局锁定</td>
+            <td>页面永不滚动；960×640 不崩</td>
+            <td class="wait-text">待做</td>
+          </tr>
+          <tr>
+            <td>U2</td>
+            <td>侧边栏 + 主区 + 顶栏</td>
+            <td>新建对话入口；气泡区分；模型/附件</td>
+            <td class="wait-text">待做</td>
+          </tr>
+          <tr>
+            <td>U3</td>
+            <td>交互细节 + 三端</td>
+            <td>chips 悬停；4 档断点；移动端 Tab</td>
+            <td class="wait-text">待做</td>
+          </tr>
+          <tr>
+            <td>U4</td>
+            <td>视觉收敛</td>
+            <td>圆角 8/12/16；字体 24/16/14/12</td>
+            <td class="wait-text">待做</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h3>文档索引</h3>
+      <div class="card docs">
+        <p>
+          <a href="目录/06-交接/上下文压缩交接.md">上下文压缩交接</a> ·
+          <a href="目录/02-项目概览/项目介绍.md">项目介绍</a> ·
+          <a href="目录/06-交接/交接手册.md">交接手册</a> ·
+          <a href="目录/05-任务Spec/PLAN_外部源管理卡片.md">外部源任务 Spec</a> ·
+          <a href="目录/05-任务Spec/前端优化规划.md">前端优化规划</a> ·
+          <a href="目录/04-进度与路线/plan.md">plan 进度</a> ·
+          <a href="目录/04-进度与路线/ROADMAP.md">ROADMAP</a>
+        </p>
+        <p style="margin-top:10px">
+          本页是<strong>交接总览入口</strong>（浏览器打开 <code>交接总览.html</code>）。完整材料以 <code>目录/</code> 内 Markdown 为准。
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <h3>本地命令</h3>
+      <div class="card">
+        <p><code>npm run start</code> — Hub :8765 + 前端 :5173</p>
+        <p style="margin-top:6px"><code>npm run test</code> · <code>npm run lint</code> · <code>npm run build:windows</code></p>
+        <p style="margin-top:6px"><code>python scripts/e2e_knowledge_chain.py</code> — 知识库全链路</p>
+      </div>
+    </section>
+
+    <footer>
+      <span>身份：Loom 执行工程师 · 先 Spec 后代码 · 逐任务验收 · 回写 plan.md</span>
+      <span>红线：不编造 API · 不写死功能 · 不跳过验收 · 禁真实密钥</span>
+    </footer>
+  </div>
+</body>
+</html>

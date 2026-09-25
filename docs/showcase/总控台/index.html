@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Loom · 你的 AI 总控台</title>
+<meta name="description" content="不做能力，做连接。不做 Agent，做你所有 Agent 的总控台。" />
+<style>
+:root {
+  --bg: #faf6f1;
+  --bg-deep: #f3ebe3;
+  --surface: rgba(255, 255, 255, 0.72);
+  --ink: #2b211c;
+  --muted: #7a6b60;
+  --line: rgba(43, 33, 28, 0.1);
+  --accent: #d4785a;
+  --accent-2: #e8a87c;
+  --sage: #7fa88b;
+  --shadow: 0 12px 40px rgba(80, 50, 30, 0.08);
+  --radius: 16px;
+  --font: -apple-system, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background:
+    radial-gradient(1200px 600px at 10% -10%, #f7e4d4 0%, transparent 55%),
+    radial-gradient(900px 500px at 100% 0%, #e7efe8 0%, transparent 50%),
+    var(--bg);
+  color: var(--ink);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+.wrap { width: min(1080px, calc(100% - 40px)); margin: 0 auto; }
+
+/* Nav */
+.nav {
+  position: sticky; top: 0; z-index: 40;
+  backdrop-filter: blur(16px);
+  background: rgba(250, 246, 241, 0.78);
+  border-bottom: 1px solid var(--line);
+}
+.nav-in {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+}
+.brand {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 700; letter-spacing: 0.02em;
+}
+.logo {
+  width: 32px; height: 32px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent-2), var(--accent));
+  display: grid; place-items: center;
+  color: #fff; font-size: 14px; font-weight: 700;
+}
+.nav-links { display: flex; gap: 22px; font-size: 14px; color: var(--muted); }
+.nav-links a:hover { color: var(--ink); }
+.nav-cta {
+  padding: 8px 16px; border-radius: 999px; font-size: 13px; font-weight: 600;
+  background: var(--ink); color: #fff;
+}
+@media (max-width: 720px) { .nav-links { display: none; } }
+
+/* Hero */
+.hero { padding: 72px 0 40px; }
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 12px; border-radius: 999px;
+  background: var(--surface); border: 1px solid var(--line);
+  font-size: 12px; color: var(--muted); margin-bottom: 20px;
+}
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--sage); }
+h1 {
+  font-size: clamp(36px, 6vw, 56px);
+  line-height: 1.15; letter-spacing: -0.02em; font-weight: 700;
+  max-width: 16ch;
+}
+h1 .hl { color: var(--accent); }
+.lead {
+  margin-top: 18px; font-size: clamp(16px, 2.2vw, 19px);
+  color: var(--muted); max-width: 38ch;
+}
+.hero-row {
+  display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 36px; align-items: center;
+}
+@media (max-width: 860px) { .hero-row { grid-template-columns: 1fr; } }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 600;
+  border: 1px solid transparent; cursor: pointer;
+}
+.btn-primary { background: var(--accent); color: #fff; box-shadow: 0 8px 24px rgba(212, 120, 90, 0.28); }
+.btn-primary:hover { filter: brightness(1.05); }
+.btn-ghost { background: var(--surface); border-color: var(--line); }
+.kpis {
+  display: flex; flex-wrap: wrap; gap: 18px; margin-top: 28px;
+  font-size: 13px; color: var(--muted);
+}
+.kpis strong { display: block; color: var(--ink); font-size: 22px; letter-spacing: -0.02em; }
+
+/* Hub diagram card */
+.hub-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 22px;
+}
+.hub-card h3 { font-size: 13px; color: var(--muted); font-weight: 600; margin-bottom: 8px; }
+.hub-svg { width: 100%; height: auto; display: block; }
+
+/* Sections */
+section { padding: 56px 0; }
+.section-label {
+  font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--accent); font-weight: 700; margin-bottom: 10px;
+}
+h2 {
+  font-size: clamp(26px, 3.5vw, 36px); line-height: 1.25;
+  letter-spacing: -0.02em; margin-bottom: 12px;
+}
+.sub { color: var(--muted); max-width: 52ch; margin-bottom: 28px; }
+
+.grid-3 {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+}
+@media (max-width: 860px) { .grid-3 { grid-template-columns: 1fr; } }
+.card {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow);
+}
+.card .n {
+  width: 28px; height: 28px; border-radius: 8px;
+  display: grid; place-items: center; font-size: 12px; font-weight: 700;
+  background: rgba(212, 120, 90, 0.12); color: var(--accent); margin-bottom: 12px;
+}
+.card h3 { font-size: 17px; margin-bottom: 8px; }
+.card p { color: var(--muted); font-size: 14px; }
+.card ul { margin: 10px 0 0 18px; color: var(--muted); font-size: 13px; }
+
+/* Pain table */
+.table {
+  width: 100%; border-collapse: collapse; font-size: 14px;
+  background: var(--surface); border-radius: var(--radius); overflow: hidden;
+  border: 1px solid var(--line);
+}
+.table th, .table td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--line); }
+.table th { background: rgba(255,255,255,0.5); font-size: 12px; color: var(--muted); font-weight: 600; }
+.table tr:last-child td { border-bottom: 0; }
+.pill {
+  display: inline-block; padding: 2px 10px; border-radius: 999px;
+  font-size: 12px; font-weight: 600;
+}
+.pill-sage { background: rgba(127,168,139,0.18); color: #3f6b4a; }
+.pill-clay { background: rgba(212,120,90,0.12); color: var(--accent); }
+
+/* Chat mock */
+.chat {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden;
+}
+.chat-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 16px; border-bottom: 1px solid var(--line);
+  font-size: 12px; color: var(--muted);
+}
+.chat-body { padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+.bubble {
+  max-width: 88%; padding: 12px 14px; border-radius: 14px; font-size: 14px;
+}
+.bubble.user {
+  align-self: flex-end; background: var(--ink); color: #fff;
+  border-bottom-right-radius: 4px;
+}
+.bubble.bot {
+  align-self: flex-start; background: rgba(255,255,255,0.9);
+  border: 1px solid var(--line); border-bottom-left-radius: 4px;
+}
+.preview {
+  margin-top: 8px; padding: 12px; border-radius: 10px;
+  background: var(--bg-deep); border: 1px dashed var(--line); font-size: 13px;
+}
+.preview b { color: var(--accent); }
+.confirm {
+  margin-top: 10px; display: flex; gap: 8px;
+}
+.confirm span {
+  padding: 8px 14px; border-radius: 10px; font-size: 13px; font-weight: 600;
+}
+.confirm .yes { background: var(--sage); color: #fff; }
+.confirm .no { background: transparent; border: 1px solid var(--line); color: var(--muted); }
+
+/* Layers */
+.layers { display: grid; gap: 10px; }
+.layer {
+  display: grid; grid-template-columns: 140px 1fr auto; gap: 12px; align-items: center;
+  padding: 14px 16px; border-radius: 12px; border: 1px solid var(--line);
+  background: var(--surface); font-size: 14px;
+}
+.layer .tag { font-size: 12px; font-weight: 700; color: var(--muted); }
+.layer.on { border-color: rgba(212,120,90,0.45); background: rgba(255,255,255,0.88); }
+.layer.on .tag { color: var(--accent); }
+@media (max-width: 640px) {
+  .layer { grid-template-columns: 1fr; gap: 4px; }
+}
+
+/* Redline */
+.redline {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
+}
+@media (max-width: 860px) { .redline { grid-template-columns: repeat(2, 1fr); } }
+.no-card {
+  text-align: center; padding: 18px 12px; border-radius: 12px;
+  background: rgba(43,33,28,0.04); border: 1px solid var(--line);
+  font-size: 13px; color: var(--muted);
+}
+.no-card strong { display: block; color: var(--ink); margin-bottom: 4px; font-size: 14px; }
+
+/* Moat */
+.moat {
+  display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px;
+}
+@media (max-width: 860px) { .moat { grid-template-columns: 1fr; } }
+.quote {
+  padding: 28px; border-radius: var(--radius);
+  background: linear-gradient(145deg, #2b211c, #4a342a);
+  color: #f8f1ea; font-size: clamp(18px, 2.5vw, 24px); line-height: 1.5;
+}
+.quote small { display: block; margin-top: 14px; color: #d4b8a8; font-size: 13px; }
+
+/* Footer */
+footer {
+  padding: 36px 0 48px; border-top: 1px solid var(--line);
+  color: var(--muted); font-size: 13px;
+}
+.foot-row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+
+/* Reveal */
+.reveal { opacity: 0; transform: translateY(12px); transition: opacity .5s ease, transform .5s ease; }
+.reveal.in { opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-in">
+    <div class="brand">
+      <div class="logo">织</div>
+      <div>Loom <span style="font-weight:500;color:var(--muted);font-size:13px">· 你的 AI 总控台</span></div>
+    </div>
+    <nav class="nav-links">
+      <a href="#three">三件事</a>
+      <a href="#why">为什么</a>
+      <a href="#talk">说话即任务</a>
+      <a href="#layer">定位</a>
+      <a href="#red">红线</a>
+    </nav>
+    <a class="nav-cta" href="#three">30 秒看懂</a>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-row">
+      <div>
+        <div class="eyebrow"><span class="dot"></span> 聚合层 · 不是能力层</div>
+        <h1>不做能力，做连接。<br />不做 Agent，做你所有 Agent 的<span class="hl">总控台</span>。</h1>
+        <p class="lead">大厂各自造 Agent。Loom 把它们全部接进来，让你在一个地方用完所有 AI。</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="#talk">看说话即任务</a>
+          <a class="btn btn-ghost" href="#red">明确不做什么</a>
+        </div>
+        <div class="kpis">
+          <div><strong>3</strong>接入方式：扫码 · 授权 · 贴 Key</div>
+          <div><strong>1</strong>个入口，而不是 N 个 App</div>
+          <div><strong>0</strong>YAML —— 用户永远看不到</div>
+        </div>
+      </div>
+      <div class="hub-card">
+        <h3>一个 Loom，接住所有 AI</h3>
+        <svg class="hub-svg" viewBox="0 0 480 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Agent 接入 Loom 总控台示意">
+          <defs>
+            <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M0 0 L10 5 L0 10" fill="none" stroke="#d4785a" stroke-width="1.5" />
+            </marker>
+          </defs>
+          <!-- left agents -->
+          <g font-size="11" fill="#2b211c" text-anchor="middle">
+            <rect x="16" y="28" width="100" height="36" rx="10" fill="#fff" stroke="rgba(43,33,28,0.12)"/>
+            <text x="66" y="51">Claude Code</text>
+            <rect x="16" y="92" width="100" height="36" rx="10" fill="#fff" stroke="rgba(43,33,28,0.12)"/>
+            <text x="66" y="115">Operit / 小艺</text>
+            <rect x="16" y="156" width="100" height="36" rx="10" fill="#fff" stroke="rgba(43,33,28,0.12)"/>
+            <text x="66" y="179">Ollama</text>
+            <rect x="16" y="220" width="100" height="36" rx="10" fill="#fff" stroke="rgba(43,33,28,0.12)"/>
+            <text x="66" y="243">DeepSeek</text>
+            <rect x="16" y="268" width="100" height="36" rx="10" fill="#fff" stroke="rgba(43,33,28,0.12)"/>
+            <text x="66" y="291">你的 API</text>
+          </g>
+          <!-- arrows to hub -->
+          <g stroke="#d4785a" stroke-width="1.2" fill="none" marker-end="url(#arr)" opacity="0.85">
+            <path d="M118 46 C160 46 180 130 210 150"/>
+            <path d="M118 110 C160 110 180 140 210 155"/>
+            <path d="M118 174 C160 174 180 165 210 162"/>
+            <path d="M118 238 C160 238 180 185 210 172"/>
+            <path d="M118 286 C160 286 185 210 210 180"/>
+          </g>
+          <!-- hub -->
+          <rect x="210" y="118" width="110" height="84" rx="16" fill="#d4785a"/>
+          <text x="265" y="152" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">Loom</text>
+          <text x="265" y="174" text-anchor="middle" font-size="11" fill="#ffe8dc">总控台</text>
+          <!-- to experience -->
+          <path d="M322 160 H360" stroke="#7fa88b" stroke-width="1.5" marker-end="url(#arr)"/>
+          <rect x="362" y="112" width="100" height="96" rx="14" fill="#fff" stroke="rgba(127,168,139,0.5)"/>
+          <text x="412" y="142" text-anchor="middle" font-size="12" fill="#3f6b4a" font-weight="600">统一入口</text>
+          <text x="412" y="162" text-anchor="middle" font-size="11" fill="#7a6b60">手机 · PC · 平板</text>
+          <text x="412" y="182" text-anchor="middle" font-size="11" fill="#7a6b60">降级不崩</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY -->
+  <section id="why">
+    <div class="wrap">
+      <div class="section-label reveal">用户痛点</div>
+      <h2 class="reveal">大厂 Agent 再好，用起来仍然碎。</h2>
+      <p class="sub reveal">Loom 不和它们比谁更聪明，而是解决「怎么用好所有 AI」。</p>
+      <div class="reveal" style="overflow-x:auto">
+        <table class="table">
+          <thead>
+            <tr><th>痛点</th><th>大厂方案</th><th>Loom 的答案</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>入口分散</td><td>每个 AI 一个 App</td><td><span class="pill pill-sage">一个入口</span></td></tr>
+            <tr><td>数据割裂</td><td>历史散落各平台</td><td><span class="pill pill-sage">本地统一 · 跨端同步</span></td></tr>
+            <tr><td>绑定生态</td><td>只能用自家</td><td><span class="pill pill-sage">想用谁用谁</span></td></tr>
+            <tr><td>不会用</td><td>要学 Prompt / 配置</td><td><span class="pill pill-sage">说人话就行</span></td></tr>
+            <tr><td>不放心</td><td>数据在别人服务器</td><td><span class="pill pill-sage">本地优先 · 自己管</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- THREE -->
+  <section id="three">
+    <div class="wrap">
+      <div class="section-label reveal">产品</div>
+      <h2 class="reveal">Loom 只做三件事</h2>
+      <p class="sub reveal">接进来 · 编排起来 · 用得舒服。除此之外，不造能力。</p>
+      <div class="grid-3">
+        <div class="card reveal">
+          <div class="n">1</div>
+          <h3>接进来 · Connect</h3>
+          <p>Claude Code、Operit、Cursor、华为小艺、百度搭子、Ollama、DeepSeek、公司内部 API——都接。</p>
+          <ul>
+            <li>扫码连接</li>
+            <li>一键授权</li>
+            <li>粘贴 API Key</li>
+          </ul>
+          <p style="margin-top:10px;font-size:13px"><strong>用户不用学 MCP / DSL。</strong></p>
+        </div>
+        <div class="card reveal">
+          <div class="n">2</div>
+          <h3>编排起来 · Orchestrate</h3>
+          <p>不说 YAML，只说需求。Loom 自动识别 Agent、编译工作流、生成预览。</p>
+          <ul>
+            <li>自然语言描述</li>
+            <li>预览等你确认</li>
+            <li>确认后才执行</li>
+          </ul>
+        </div>
+        <div class="card reveal">
+          <div class="n">3</div>
+          <h3>用得舒服 · Experience</h3>
+          <p>真正护城河在体验层，而不是再做一个模型或 Agent。</p>
+          <ul>
+            <li>一次说清，永远记住</li>
+            <li>跨端无感</li>
+            <li>降级不崩</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TALK -->
+  <section id="talk">
+    <div class="wrap">
+      <div class="section-label reveal">第二层体验</div>
+      <h2 class="reveal">说话即任务，用户永远看不到 YAML</h2>
+      <p class="sub reveal">从「帮我做」到「已确认」，中间只有预览和确认按钮。</p>
+      <div class="chat reveal">
+        <div class="chat-bar">
+          <span class="dot"></span> Loom · 对话编排
+          <span style="margin-left:auto">跨端同步中</span>
+        </div>
+        <div class="chat-body">
+          <div class="bubble user">帮我每周一早上汇总周报，发到飞书研发群。</div>
+          <div class="bubble bot">
+            好的，我将创建以下任务：
+            <div class="preview">
+              <div><b>触发</b>　每周一 9:00</div>
+              <div><b>步骤</b>　抓取飞书周报 → LLM 汇总 → 发送到「研发群」</div>
+              <div><b>执行</b>　PC 端 · 失败自动切备选 Agent</div>
+            </div>
+            <div class="confirm">
+              <span class="yes">确认</span>
+              <span class="no">再改改</span>
+            </div>
+          </div>
+          <div class="bubble user">确认。</div>
+          <div class="bubble bot">已固化为模板。下次直接点「运行」，或对我说「跑周报」。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LAYER -->
+  <section id="layer">
+    <div class="wrap">
+      <div class="section-label reveal">战略定位</div>
+      <h2 class="reveal">聚合与调度 · 体验层</h2>
+      <p class="sub reveal">类比 Zapier 连接 SaaS、Raycast 做启动器、浏览器做入口。Loom 不造 Agent，只做 Agent 的家。</p>
+      <div class="layers reveal">
+        <div class="layer"><div class="tag">模型层</div><div>OpenAI / DeepSeek / 阿里</div><div class="pill pill-clay">不做</div></div>
+        <div class="layer"><div class="tag">Agent 层</div><div>Claude Code / Operit / 小艺 / 搭子</div><div class="pill pill-clay">不做</div></div>
+        <div class="layer"><div class="tag">能力层</div><div>各家 MCP / API / 插件</div><div class="pill pill-clay">不做</div></div>
+        <div class="layer on"><div class="tag">聚合与调度</div><div>接入 · 路由 · 编排 · 降级</div><div class="pill pill-sage">Loom 在这里</div></div>
+        <div class="layer on"><div class="tag">体验层</div><div>统一入口 · 跨端 · 说话即任务 · 记忆</div><div class="pill pill-sage">Loom 也在这里</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RED -->
+  <section id="red">
+    <div class="wrap">
+      <div class="section-label reveal">红线</div>
+      <h2 class="reveal">明确不做什么</h2>
+      <p class="sub reveal">避免与大厂正面竞争。只把已有 AI 聚合起来，编排好，用得舒服。</p>
+      <div class="redline reveal">
+        <div class="no-card"><strong>不造大模型</strong>没必要拼百亿投入</div>
+        <div class="no-card"><strong>不造专业 Agent</strong>Claude / Operit 已经很好</div>
+        <div class="no-card"><strong>不造垂直应用</strong>不做笔记 / IDE / IM</div>
+        <div class="no-card"><strong>不做 SaaS</strong>本地优先，不碰数据</div>
+        <div class="no-card"><strong>不做多租户</strong>个人 / 小团队，轻量</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MOAT -->
+  <section>
+    <div class="wrap moat">
+      <div class="quote reveal">
+        「大厂做更好的 AI，Loom 做更好的 <em>用 AI</em> 的方式。」
+        <small>开放性 · 本地优先 · 用户的自动化资产——Workflow 越多，越离不开。</small>
+      </div>
+      <div class="grid-3 reveal" style="grid-template-columns:1fr">
+        <div class="card">
+          <h3>为什么不是又一个 Agent？</h3>
+          <p>因为痛点不在「AI 不够强」，而在入口碎、数据散、生态绑、用法难、不放心。Loom 把选择权还给用户。</p>
+        </div>
+        <div class="card">
+          <h3>用户记住了什么？</h3>
+          <p>不是模型名字，而是「我的 AI 都在 Loom 里」。定义 20 个任务之后，迁移成本就是护城河。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot-row">
+    <div>
+      <strong style="color:var(--ink)">Loom · 织巢</strong> — 大厂做能力，Loom 做体验。大厂做 Agent，Loom 做 Agent 的家。
+    </div>
+    <div>本地优先 · 开放一切 · 开发中 WIP</div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var els = document.querySelectorAll(".reveal");
+  if (!("IntersectionObserver" in window)) {
+    els.forEach(function (e) { e.classList.add("in"); });
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) {
+      if (en.isIntersecting) {
+        en.target.classList.add("in");
+        io.unobserve(en.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  els.forEach(function (e) { io.observe(e); });
+})();
+</script>
+</body>
+</html>

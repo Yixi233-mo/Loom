@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#faf6f0" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<title>Loom v0.1 · 生产就绪</title>
+<style>
+  :root {
+    --bg: #faf6f0;
+    --card: #fffdf9;
+    --ink: #2c2824;
+    --ink2: #6b6560;
+    --peach: #e8a070;
+    --clay: #c56d42;
+    --sage: #5f7f6a;
+    --line: rgba(44,40,36,0.1);
+    --ok: #5f7f6a;
+    --warn: #c4785a;
+    --r: 12px;
+    --safe-b: env(safe-area-inset-bottom, 0px);
+    --safe-t: env(safe-area-inset-top, 0px);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; height: 100%; overflow: hidden;
+    font: 14px/1.5 -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg); color: var(--ink);
+  }
+  body {
+    background-image:
+      radial-gradient(ellipse 80% 40% at 10% 0%, rgba(232,160,112,0.18), transparent),
+      radial-gradient(ellipse 60% 40% at 100% 0%, rgba(95,127,106,0.12), transparent);
+  }
+  #app {
+    height: 100dvh; display: flex; flex-direction: column;
+    padding-top: var(--safe-t);
+    overflow: hidden;
+  }
+  header {
+    flex-shrink: 0; padding: 12px 16px 10px;
+    background: rgba(255,253,249,0.88);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .logo {
+    width: 40px; height: 40px; border-radius: 12px;
+    background: linear-gradient(145deg, var(--peach), var(--clay));
+    color: #fffaf5; display: grid; place-items: center;
+    font-weight: 700; font-size: 18px;
+  }
+  h1 { margin: 0; font-size: 17px; font-weight: 700; }
+  .sub { margin: 2px 0 0; font-size: 12px; color: var(--ink2); }
+  .stat-row {
+    display: flex; gap: 8px; margin-top: 10px;
+  }
+  .stat {
+    flex: 1; background: var(--card); border: 1px solid var(--line);
+    border-radius: 10px; padding: 8px 10px; text-align: center;
+  }
+  .stat b { display: block; font-size: 18px; font-variant-numeric: tabular-nums; }
+  .stat span { font-size: 11px; color: var(--ink2); }
+  .bar {
+    height: 6px; border-radius: 99px; background: var(--line);
+    margin-top: 10px; overflow: hidden;
+  }
+  .bar i {
+    display: block; height: 100%; width: 0;
+    background: linear-gradient(90deg, var(--sage), var(--peach));
+    border-radius: 99px; transition: width 0.25s;
+  }
+  .verdict {
+    margin-top: 8px; font-size: 12px; font-weight: 650;
+    padding: 6px 10px; border-radius: 8px; display: inline-block;
+  }
+  .v-low { background: #f3ddd6; color: var(--warn); }
+  .v-mid { background: #efe2c8; color: var(--clay); }
+  .v-high { background: #e4efe7; color: var(--ok); }
+
+  nav.tabs {
+    flex-shrink: 0; display: flex; gap: 6px; padding: 10px 12px 6px;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  nav.tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex-shrink: 0; border: 1px solid var(--line); background: var(--card);
+    border-radius: 999px; padding: 6px 12px; font-size: 12px; font-weight: 650;
+    color: var(--ink2); cursor: pointer;
+  }
+  .tab.on {
+    background: var(--ink); color: #fffaf5; border-color: var(--ink);
+  }
+
+  main {
+    flex: 1; min-height: 0; overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 8px 12px calc(16px + var(--safe-b));
+    scrollbar-width: thin;
+  }
+
+  .panel {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--r); padding: 14px 14px 8px;
+    margin-bottom: 10px; box-shadow: 0 2px 10px rgba(120,72,40,0.05);
+  }
+  .panel h2 {
+    margin: 0 0 6px; font-size: 15px;
+  }
+  .panel p { margin: 0 0 8px; color: var(--ink2); font-size: 13px; }
+
+  .ch {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 6px;
+  }
+  .ch-title { font-size: 13px; font-weight: 700; flex: 1; }
+  .ch-count {
+    font-size: 11px; color: var(--ink2); font-variant-numeric: tabular-nums;
+    background: rgba(232,160,112,0.18); padding: 2px 8px; border-radius: 99px;
+  }
+
+  .item {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 10px 2px; border-top: 1px dashed var(--line);
+  }
+  .item:first-of-type { border-top: 0; }
+  .cb {
+    width: 22px; height: 22px; flex-shrink: 0; margin-top: 1px;
+    border: 2px solid var(--ink2); border-radius: 6px;
+    background: transparent; cursor: pointer;
+    display: grid; place-items: center;
+  }
+  .cb.on {
+    background: var(--sage); border-color: var(--sage); color: #fff;
+    font-size: 13px; font-weight: 700;
+  }
+  .item-txt { flex: 1; min-width: 0; }
+  .item-txt b { display: block; font-size: 13px; font-weight: 650; }
+  .item.done .item-txt b { text-decoration: line-through; color: var(--ink2); }
+  .item-txt small {
+    display: block; margin-top: 2px; font-size: 11px; color: var(--ink2);
+    white-space: normal; word-break: break-word;
+  }
+
+  .kv { width: 100%; border-collapse: collapse; font-size: 12px; margin: 6px 0 10px; }
+  .kv th, .kv td {
+    text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line);
+  }
+  .kv th { color: var(--ink2); font-weight: 650; width: 38%; }
+  code {
+    font-family: ui-monospace, Consolas, monospace; font-size: 11px;
+    background: rgba(44,40,36,0.06); padding: 1px 5px; border-radius: 5px;
+  }
+  .cmd {
+    background: #2a221c; color: #f7ece3; border-radius: 8px;
+    padding: 10px 12px; font-family: ui-monospace, Consolas, monospace;
+    font-size: 11px; overflow-x: auto; margin: 6px 0 10px;
+    white-space: pre;
+  }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 4px; }
+  .btn {
+    border: 1px solid var(--line); background: var(--card); color: var(--ink);
+    border-radius: 10px; padding: 9px 14px; font-size: 13px; font-weight: 650;
+    cursor: pointer;
+  }
+  .btn.primary {
+    background: linear-gradient(145deg, var(--peach), var(--clay));
+    border: none; color: #fffaf5;
+  }
+  footer {
+    flex-shrink: 0; padding: 8px 16px calc(8px + var(--safe-b));
+    border-top: 1px solid var(--line); background: rgba(255,253,249,0.9);
+    font-size: 11px; color: var(--ink2); text-align: center;
+  }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="brand">
+      <div class="logo">巢</div>
+      <div>
+        <h1>Loom v0.1 · 生产就绪</h1>
+        <p class="sub">跨端 Agent 工作台 · 97 项检查 · 打勾才算完成</p>
+      </div>
+    </div>
+    <div class="stat-row">
+      <div class="stat"><b id="nDone">0</b><span>已完成</span></div>
+      <div class="stat"><b id="nTotal">97</b><span>总项数</span></div>
+      <div class="stat"><b id="nPct">0%</b><span>完成度</span></div>
+    </div>
+    <div class="bar"><i id="bar"></i></div>
+    <div class="verdict v-low" id="verdict">判定：&lt;80 不可上线</div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab on" data-v="home">产品介绍</button>
+    <button class="tab" data-v="use">使用说明</button>
+    <button class="tab" data-v="check">生产检查</button>
+    <button class="tab" data-v="stats">统计</button>
+  </nav>
+
+  <main id="main">
+    <!-- 产品介绍 -->
+    <section id="v-home">
+      <div class="panel">
+        <h2>Loom · 织巢</h2>
+        <p>把 Windows / 平板 / 手机编织成一台电脑，把 Claude Code、Work Buddy 等 AI 编织成一个团队。用 YAML DSL 声明扩展——改声明即扩展。</p>
+        <p><b>链路</b>：对话 → 意图识别 → 选端/设备 → 工具 / 外部 Agent / 知识库 RAG → 任务结果多端同步。</p>
+      </div>
+      <div class="panel">
+        <h2>核心功能</h2>
+        <table class="kv">
+          <tr><th>对话工作台</th><td>LLM 对话、提示词、复制/重试</td></tr>
+          <tr><th>任务中心</th><td>进度、tokens、延迟、降级</td></tr>
+          <tr><th>知识库</th><td>多库 · 导入 · 外部源 · 联邦 RAG</td></tr>
+          <tr><th>Agent 联邦</th><td>Claude Code / Work Buddy / 内置</td></tr>
+          <tr><th>自定义 LLM</th><td>OpenAI 兼容 · 加密 Key · 测试</td></tr>
+          <tr><th>MCP</th><td>检测 · 工具列表 · tools/call</td></tr>
+          <tr><th>DSL</th><td>四类 YAML · 热加载 · 对话式生成</td></tr>
+          <tr><th>跨端</th><td>手机触发 → PC 执行 → 多端查看</td></tr>
+          <tr><th>三端安装</th><td>Win MSI · Android APK · Web</td></tr>
+        </table>
+      </div>
+      <div class="panel">
+        <h2>产物</h2>
+        <table class="kv">
+          <tr><th>Windows</th><td><code>Loom Shell_0.1.0_x64_en-US.msi</code></td></tr>
+          <tr><th>Android</th><td><code>Loom-0.1.0-arm64-release.apk</code>（已签名）</td></tr>
+          <tr><th>Hub</th><td>Docker <code>docker compose up -d</code></td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- 使用说明 -->
+    <section id="v-use" class="hidden">
+      <div class="panel">
+        <h2>Windows 安装使用</h2>
+        <div class="cmd">1. 双击 dist-bundle/Loom Shell_0.1.0_x64_en-US.msi
+2. 启动 Hub：
+   docker compose up -d
+   # 或开发：npm run start
+3. 打开 Loom，左侧导航操作</div>
+      </div>
+      <div class="panel">
+        <h2>知识库最快上手</h2>
+        <div class="cmd">知识库 → 新建库
+  → 导入本地文件（自动识别类型）
+  → 对话问「查资料，xxx」
+  → 看引用来源</div>
+        <p>外部源可粘贴链接（Notion/文档站/向量库自动识别），支持路径批量导入。</p>
+      </div>
+      <div class="panel">
+        <h2>自定义模型</h2>
+        <div class="cmd">设置 · 跨端 → 自定义 LLM
+  → Base URL + API Key（加密）
+  → 拉取模型 → 选模型 → 测试对话</div>
+      </div>
+      <div class="panel">
+        <h2>开发者</h2>
+        <div class="cmd">npm install
+npm run start
+npm run test
+npm run build:windows
+python scripts/build_android.py --release</div>
+        <p>环境：Node 20+ · Python 3.11+ · Rust ·（Android）JDK 21 + SDK/NDK</p>
+      </div>
+      <div class="panel">
+        <h2>生产部署 Hub</h2>
+        <div class="cmd"># 复制 .env.example → .env 并填写
+WS_SECRET / LOOM_AUTH_SECRET / LOOM_MASTER_KEY
+docker compose up -d
+curl http://127.0.0.1:8765/health</div>
+        <p>密钥勿提交仓库；生产必须修改默认 WS_SECRET。</p>
+      </div>
+    </section>
+
+    <!-- 生产检查 -->
+    <section id="v-check" class="hidden"><div id="check-list"></div></section></section>
+
+    <!-- 统计 -->
+    <section id="v-stats" class="hidden">
+      <div class="panel">
+        <h2>验收判定</h2>
+        <table class="kv">
+          <tr><th>97 / 97</th><td>v0.1 生产就绪</td></tr>
+          <tr><th>80–96</th><td>可上线，标注已知风险</td></tr>
+          <tr><th>&lt; 80</th><td>不可上线，先补缺口</td></tr>
+        </table>
+      </div>
+      <div class="panel" id="chapter-stats">
+        <h2>分章进度</h2>
+      </div>
+      <div class="panel">
+        <h2>本地数据</h2>
+        <p>勾选状态保存在本机浏览器（localStorage），不上传。</p>
+        <div class="actions">
+          <button class="btn" id="btn-export">导出进度 JSON</button>
+          <button class="btn" id="btn-reset">全部重置</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>Loom 生产就绪检查 · 本地 App · 不联网也可用</footer>
+</div>
+
+<script>
+/* 11 章 97 项 —— id, chapter, title, how */
+const DATA = [
+  ["1-1","1 基础设施","Hub Dockerfile 可 build","docker build -t loom/hub:0.1.0 ."],
+  ["1-2","1 基础设施","镜像固定 tag，不用 latest","compose/文档写死 0.1.0"],
+  ["1-3","1 基础设施","docker-compose 一条命令起","docker compose up -d"],
+  ["1-4","1 基础设施","数据卷 ./data ./plugins","compose volumes"],
+  ["1-5","1 基础设施","restart: unless-stopped","compose"],
+  ["1-6","1 基础设施",".env.example 含注释必填项","文件存在"],
+  ["1-7","1 基础设施","首次启动零人工","清环境冷启动"],
+  ["1-8","1 基础设施","down/up 数据不丢","写数据重启"],
+  ["1-9","1 基础设施","INSTALL.md 十分钟装好","陌生人按文档"],
+
+  ["2-1","2 密钥凭据","密钥全走环境变量","rg 扫硬编码"],
+  ["2-2","2 密钥凭据",".env 在 gitignore","git check-ignore"],
+  ["2-3","2 密钥凭据","WS_SECRET 默认仅开发","启动警告"],
+  ["2-4","2 密钥凭据","缺模型密钥明确报错","缺省启动"],
+  ["2-5","2 密钥凭据","日志不打印密钥","扫日志/traceback"],
+  ["2-6","2 密钥凭据","密钥轮换说明","改 .env→重启"],
+  ["2-7","2 密钥凭据","生产必须改默认 WS_SECRET","文档强制"],
+  ["2-8","2 密钥凭据","泄露应急 SECURITY.md","文件存在"],
+
+  ["3-1","3 CI/CD","release.yml 存在",".github/workflows/"],
+  ["3-2","3 CI/CD","tag v* 自动触发","on.push.tags"],
+  ["3-3","3 CI/CD","Win .msi 自动构建上传","windows-msi job"],
+  ["3-4","3 CI/CD","Android .apk 自动构建上传","android job"],
+  ["3-5","3 CI/CD","Hub Docker 推 registry","docker job"],
+  ["3-6","3 CI/CD","Release 附 CHANGELOG/INSTALL","files"],
+  ["3-7","3 CI/CD","构建失败有通知","Issue/邮件"],
+  ["3-8","3 CI/CD","版本号三处一致","package/Cargo/pyproject"],
+  ["3-9","3 CI/CD","回滚流程文档化","旧 MSI+镜像回退"],
+
+  ["4-1","4 应用层","/health 200+状态 JSON","curl"],
+  ["4-2","4 应用层","/ready 查 SQLite/模型","curl"],
+  ["4-3","4 应用层","SIGTERM 优雅停机≤30s","kill 测试"],
+  ["4-4","4 应用层","外部调用超时配置","HTTP≥30s LLM≥120s"],
+  ["4-5","4 应用层","指数退避重试≤3","代码"],
+  ["4-6","4 应用层","未捕获异常不崩进程","全局 handler"],
+  ["4-7","4 应用层","单任务失败隔离","测试"],
+  ["4-8","4 应用层","依赖未就绪明确日志","启动日志"],
+
+  ["5-1","5 数据层","SQLite WAL","PRAGMA journal_mode"],
+  ["5-2","5 数据层","DB 路径可配默认 ./data/loom.db","配置"],
+  ["5-3","5 数据层","备份脚本","scripts/backup_db.py"],
+  ["5-4","5 数据层","首次启动自动建表","冷启动"],
+  ["5-5","5 数据层","Schema 迁移脚本","migrations/"],
+  ["5-6","5 数据层","并发写锁保护","asyncio.Lock"],
+  ["5-7","5 数据层","数据目录自动创建","删目录启动"],
+  ["5-8","5 数据层","损坏可从备份恢复","RUNBOOK"],
+  ["5-9","5 数据层","查询<5s 有索引","慢查询"],
+
+  ["6-1","6 接口契约","OpenAPI /docs","浏览器"],
+  ["6-2","6 接口契约","错误码 4xxx/5xxx","抽查"],
+  ["6-3","6 接口契约","统一错误体 code/message/trace_id","契约"],
+  ["6-4","6 接口契约","SSE delta/final 事件","流式"],
+  ["6-5","6 接口契约","前端加载/错误/空态","UI"],
+  ["6-6","6 接口契约","降级明确提示","UI 文案"],
+  ["6-7","6 接口契约",">10s 处理中提示","UI"],
+  ["6-8","6 接口契约","提交防重复","按钮 disable"],
+  ["6-9","6 接口契约","时间 ISO8601 含时区","字段"],
+
+  ["7-1","7 模型服务","DeepSeek/Ollama 双方案","配置"],
+  ["7-2","7 模型服务","降级链三档","测试"],
+  ["7-3","7 模型服务","触发条件明确","30s/连续3败"],
+  ["7-4","7 模型服务","降级日志 WARNING","event=degradation"],
+  ["7-5","7 模型服务","Token 上限可配默认 8000","配置"],
+  ["7-6","7 模型服务","超限熔断","测试"],
+  ["7-7","7 模型服务","记录 prompt/completion tokens","结果"],
+  ["7-8","7 模型服务","换模型不重启","热加载"],
+  ["7-9","7 模型服务","Prompt 版本化","prompts/v1.md"],
+
+  ["8-1","8 编排工具","LangGraph 可编译 print_ascii","脚本"],
+  ["8-2","8 编排工具","最大迭代≤10","代码"],
+  ["8-3","8 编排工具","重复动作检测","3次同工具同参"],
+  ["8-4","8 编排工具","单任务超时≤120s","代码"],
+  ["8-5","8 编排工具","未注册工具报错","测试"],
+  ["8-6","8 编排工具","工具参数 Pydantic","Schema"],
+  ["8-7","8 编排工具","MCP tools/list 发现","已有"],
+  ["8-8","8 编排工具","工具失败降级不盲重试","代码"],
+  ["8-9","8 编排工具","多 Agent 裁决/确认","机制"],
+
+  ["9-1","9 输出契约","LLM 输出 JSON Schema","Pydantic"],
+  ["9-2","9 输出契约","解析失败重试1次","代码"],
+  ["9-3","9 输出契约","仍失败明确错误","契约"],
+  ["9-4","9 输出契约","超长截断留头尾","代码"],
+  ["9-5","9 输出契约","敏感字段脱敏","手机号/证件/Key"],
+  ["9-6","9 输出契约","Markdown XSS 过滤","渲染前"],
+  ["9-7","9 输出契约","引用 chunk_id","输出"],
+  ["9-8","9 输出契约","关键事实二次校验","金额/日期"],
+  ["9-9","9 输出契约","输出符合业务语义","人工样例"],
+
+  ["10-1","10 可观测","结构化 JSON 日志","样例"],
+  ["10-2","10 可观测","trace_id/timestamp/level/module","字段"],
+  ["10-3","10 可观测","trace_id 全链路","E2E"],
+  ["10-4","10 可观测","任务/成功率/P95/Token","指标"],
+  ["10-5","10 可观测","错误堆栈（脱敏）","日志"],
+  ["10-6","10 可观测","日志轮转保留30天","配置"],
+  ["10-7","10 可观测","/metrics Prometheus","可预留"],
+  ["10-8","10 可观测","RUNBOOK.md","文件"],
+  ["10-9","10 可观测","告警阈值成功率<90%","文档"],
+
+  ["11-1","11 安全","输入长度≤2000","校验"],
+  ["11-2","11 安全","Prompt Injection 分离","架构"],
+  ["11-3","11 安全","HMAC-SHA256 设备注册","已有"],
+  ["11-4","11 安全","时间戳偏差>60s 拒绝","代码"],
+  ["11-5","11 安全","WS 消息≤1MB","限制"],
+  ["11-6","11 安全","连接数≤1000","限制"],
+  ["11-7","11 安全","工具最小权限","权限矩阵"],
+  ["11-8","11 安全","高风险人工确认","UI/流程"],
+  ["11-9","11 安全","审计日志四要素","谁/何时/调用/结果"]
+];
+
+const KEY = "loom-ready-v01";
+let state = JSON.parse(localStorage.getItem(KEY) || "{}");
+
+function save() {
+  localStorage.setItem(KEY, JSON.stringify(state));
+}
+
+function doneCount(ids) {
+  return ids.filter((id) => state[id]).length;
+}
+
+function renderCheck() {
+  const root = document.getElementById("check-list");
+  root.innerHTML = "";
+  const chapters = [];
+  for (const [, ch] of DATA) {
+    if (!chapters.includes(ch)) chapters.push(ch);
+  }
+  for (const ch of chapters) {
+    const items = DATA.filter((r) => r[1] === ch);
+    const d = doneCount(items.map((r) => r[0]));
+    const wrap = document.createElement("div");
+    wrap.className = "panel";
+    wrap.innerHTML =
+      '<div class="ch"><div class="ch-title">' +
+      ch +
+      '</div><div class="ch-count">' +
+      d +
+      "/" +
+      items.length +
+      "</div></div>";
+    for (const [id, , title, how] of items) {
+      const on = !!state[id];
+      const row = document.createElement("div");
+      row.className = "item" + (on ? " done" : "");
+      row.innerHTML =
+        '<button class="cb' +
+        (on ? " on" : "") +
+        '" data-id="' +
+        id +
+        '" aria-label="切换">' +
+        (on ? "✓" : "") +
+        '</button><div class="item-txt"><b>' +
+        title +
+        "</b><small>" +
+        how +
+        "</small></div>";
+      wrap.appendChild(row);
+    }
+    root.appendChild(wrap);
+  }
+  root.onclick = (e) => {
+    const btn = e.target.closest(".cb");
+    if (!btn) return;
+    const id = btn.getAttribute("data-id");
+    state[id] = !state[id];
+    save();
+    renderCheck();
+    renderStats();
+  };
+}
+
+function renderStats() {
+  const total = DATA.length;
+  const done = DATA.filter((r) => state[r[0]]).length;
+  const pct = Math.round((done / total) * 100);
+  document.getElementById("nDone").textContent = String(done);
+  document.getElementById("nTotal").textContent = String(total);
+  document.getElementById("nPct").textContent = pct + "%";
+  document.getElementById("bar").style.width = pct + "%";
+  const v = document.getElementById("verdict");
+  if (done >= 97) {
+    v.className = "verdict v-high";
+    v.textContent = "判定：v0.1 生产就绪";
+  } else if (done >= 80) {
+    v.className = "verdict v-mid";
+    v.textContent = "判定：可上线，须标注已知风险";
+  } else {
+    v.className = "verdict v-low";
+    v.textContent = "判定：<80 不可上线，先补缺口";
+  }
+  const cs = document.getElementById("chapter-stats");
+  const chapters = [];
+  for (const [, ch] of DATA) if (!chapters.includes(ch)) chapters.push(ch);
+  let html = "<h2>分章进度</h2><table class='kv'>";
+  for (const ch of chapters) {
+    const items = DATA.filter((r) => r[1] === ch);
+    html +=
+      "<tr><th>" +
+      ch +
+      "</th><td>" +
+      doneCount(items.map((r) => r[0])) +
+      " / " +
+      items.length +
+      "</td></tr>";
+  }
+  html += "</table>";
+  cs.innerHTML = html;
+}
+
+/* tabs */
+document.getElementById("tabs").onclick = (e) => {
+  const t = e.target.closest(".tab");
+  if (!t) return;
+  document.querySelectorAll(".tab").forEach((x) => x.classList.remove("on"));
+  t.classList.add("on");
+  const v = t.getAttribute("data-v");
+  for (const id of ["home", "use", "check", "stats"]) {
+    document.getElementById("v-" + id).classList.toggle("hidden", id !== v);
+  }
+  if (v === "check") renderCheck();
+  if (v === "stats") renderStats();
+  document.getElementById("main").scrollTop = 0;
+};
+
+document.getElementById("btn-export").onclick = () => {
+  const blob = new Blob([JSON.stringify(state, null, 2)], {
+    type: "application/json",
+  });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "loom-ready-progress.json";
+  a.click();
+};
+document.getElementById("btn-reset").onclick = () => {
+  if (!confirm("确定清空本机全部勾选？")) return;
+  state = {};
+  save();
+  renderCheck();
+  renderStats();
+};
+
+renderCheck();
+renderStats();
+</script>
+</body>
+</html>

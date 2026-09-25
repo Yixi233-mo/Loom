@@ -1,41 +1,51 @@
-node_modules/
-dist/
-target/
-__pycache__/
-*.pyc
-.pytest_cache/
-.llm/
-plugins/_n9_out/
-plugins/_hot_test/
-plugins/_llm_*.json
-plugins/llm_providers.json
+node_modules/
+dist/
+target/
+__pycache__/
+*.pyc
+.pytest_cache/
+.llm/
+plugins/_n9_out/
+plugins/_hot_test/
+plugins/_llm_*.json
+plugins/llm_providers.json
+
+# è®¡å
+ç®å½
+scripts/_*.py
+
+# æ¬æº WorkBuddy è¿æ¥ï¼å« tokenï¼
+plugins/work_buddy_connection.json
+# E2E / è¿è¡æ¶ä¸´æ¶
+e2e_hub.*
+plugins/_e2e_*
+plugins/_test_*
+plugins/_smoke*
+
+dist-bundle/
+
+# Android æåäº§ç© / æ¬å° SDK
+dist-bundle/
+src-tauri/gen/android/app/src/main/jniLibs/
+src-tauri/gen/android/.gradle/
+src-tauri/gen/android/**/build/
+
+# Android ç­¾åï¼æ¬æºï¼
+src-tauri/gen/android/keystore.properties
+*.jks
+*.keystore
 
-# 计划
-目录
-scripts/_*.py
-
-# 本机 WorkBuddy 连接（含 token）
-plugins/work_buddy_connection.json
-# E2E / 运行时临时
-e2e_hub.*
-plugins/_e2e_*
-plugins/_test_*
-plugins/_smoke*
-
-dist-bundle/
-
-# Android 打包产物 / 本地 SDK
-dist-bundle/
-src-tauri/gen/android/app/src/main/jniLibs/
-src-tauri/gen/android/.gradle/
-src-tauri/gen/android/**/build/
-
-# Android 签名（本机）
-src-tauri/gen/android/keystore.properties
-*.jks
-*.keystore
-
-# ��Կ��2.2��
+# ÃÜÔ¿£¨2.2£©
 .env
 .env.*
 !.env.example
+
+# 产品长文档（按约定不进 git）
+目录/
+目录/**
+
+# 调试与本地
+docs/*.png
+scripts/_archive/
+*.log
+tmp/
