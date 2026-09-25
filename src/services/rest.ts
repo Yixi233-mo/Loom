@@ -56,12 +56,42 @@ export class RestClient {
       init.body = JSON.stringify(options.body);
     }
 
-    const res = await f(this.baseUrl + path, init);
-    if (!res.ok) {
-      const text = await res.text();
-      throw new Error(`HTTP ${res.status}: ${text}`);
+    // S5：网络/5xx 自动重试一次（幂等 GET；写操作仅网络错误重试）
+    const method = (init.method ?? "GET").toUpperCase();
+    let lastErr: unknown;
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      try {
+        const res = await f(this.baseUrl + path, init);
+        if (res.ok) {
+          return (await res.json()) as T;
+        }
+        const text = await res.text();
+        let message = `HTTP ${res.status}`;
+        try {
+          const j = JSON.parse(text);
+          if (j && (j.message || j.detail)) {
+            message = String(j.message ?? j.detail);
+            if (j.trace_id) message += ` (trace ${j.trace_id})`;
+          }
+        } catch {
+          if (text) message += ": " + text.slice(0, 200);
+        }
+        // 4xx 不重试；5xx GET/HEAD 重试一次
+        if (res.status >= 500 && attempt === 0 && (method === "GET" || method === "HEAD")) {
+          await new Promise((r) => setTimeout(r, 300));
+          continue;
+        }
+        throw new Error(message);
+      } catch (err) {
+        lastErr = err;
+        if (attempt === 0 && (method === "GET" || method === "HEAD")) {
+          await new Promise((r) => setTimeout(r, 250));
+          continue;
+        }
+        throw err instanceof Error ? err : new Error(String(err));
+      }
     }
-    return (await res.json()) as T;
+    throw lastErr instanceof Error ? lastErr : new Error(String(lastErr));
   }
 
   listSessions(): Promise<SessionState[]> {

@@ -120,6 +120,19 @@ def main() -> None:
     from api.routes import mount_api
     mount_api(app, stack)
     logger.info("Loom Hub 启动: ws://%s:%s/ws  health=/health  ready=/ready", host, port)
+    from auth.secrets import audit_secrets
+    from observability.resilience import check_dependencies
+
+    sec = audit_secrets()
+    ready = check_dependencies(
+        db_ok=True,
+        model_ok=bool(stack.agents),
+        secrets_ok=sec.ok,
+    )
+    if ready.ok:
+        logger.info("依赖就绪: %s", ready.checks)
+    else:
+        logger.warning("依赖未就绪: %s", ready.checks)
 
     # 4.3 优雅停机：SIGTERM 时清理热加载/调度器
     from observability.resilience import GracefulShutdown

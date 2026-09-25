@@ -114,7 +114,7 @@ def create_api_router(stack: HubStack, store: Optional[ApiStore] = None) -> APIR
 
     # ---- 任务 ----
     @router.get("/api/tasks")
-    def list_tasks() -> List[Dict[str, Any]]:
+    def list_tasks(limit: int = 100) -> List[Dict[str, Any]]:
         out = []
         for t in stack.orch.list_tasks():
             out.append(
@@ -133,7 +133,7 @@ def create_api_router(stack: HubStack, store: Optional[ApiStore] = None) -> APIR
                     "error": t.get("error"),
                 }
             )
-        return out
+        return out[-limit:] if limit and limit > 0 else out
 
     @router.get("/api/tasks/{task_id}")
     def get_task(task_id: str) -> Dict[str, Any]:
@@ -229,6 +229,9 @@ def create_api_router(stack: HubStack, store: Optional[ApiStore] = None) -> APIR
 
 
 def mount_api(app: FastAPI, stack: HubStack) -> None:
+    from api.errors import install_error_contract
+
+    install_error_contract(app)
     from api.llm_routes import create_llm_router
     from llm.config import LLMConfigStore
 

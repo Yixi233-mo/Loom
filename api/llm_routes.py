@@ -61,7 +61,10 @@ def create_llm_router(
         try:
             models = await http_client.fetch_models(prov.base_url, api_key)
         except Exception as e:  # noqa: BLE001
-            raise HTTPException(502, f"拉取模型失败: {e}") from e
+            raise HTTPException(
+                502,
+                {"message": f"拉取模型失败: {e}", "code": "UPSTREAM_ERROR"},
+            ) from e
         store.set_models(provider_id, models)
         return {"providerId": provider_id, "models": models}
 
