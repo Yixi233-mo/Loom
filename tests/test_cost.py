@@ -52,10 +52,10 @@ class TestTokenCircuitBreaker(unittest.TestCase):
         with self.assertRaises(CircuitOpenError):
             m.add_tokens(1)
 
-    def test_default_limit_is_10000(self):
-        self.assertEqual(TOKEN_LIMIT_PER_TASK, 10000)
+    def test_default_limit_is_8000(self):
+        self.assertEqual(TOKEN_LIMIT_PER_TASK, 8000)
         m = CostMeter()
-        self.assertEqual(m.limit, 10000)
+        self.assertEqual(m.limit, 8000)
 
     def test_report_fields(self):
         """验收：输出 tokens_used / latency_ms / degradation_level。"""

@@ -1,12 +1,14 @@
 """成本 / 降级追踪 — Token 熔断 + 成本输出。
 
-单任务 Token 上限 10000（方案 · 成本）：
+单任务 Token 上限可配（N16 7.5，默认 8000）：
+  LOOM_TOKEN_LIMIT 环境变量覆盖
   tokens_used + latency_ms + degradation_level 必输出
   超限熔断：CircuitOpen，后续调用拒绝
 """
 
 from __future__ import annotations
 
+import os
 import time
 from dataclasses import dataclass, field
 from typing import Any, Dict
@@ -17,13 +19,32 @@ from observability.logging import (
     DEG_RULES,
 )
 
-TOKEN_LIMIT_PER_TASK = 10000
+# 7.5 默认 8000，可用 LOOM_TOKEN_LIMIT 覆盖
+DEFAULT_TOKEN_LIMIT = 8000
+ENV_TOKEN_LIMIT = "LOOM_TOKEN_LIMIT"
+
+
+def get_token_limit() -> int:
+    """可配 Token 上限（7.5）。"""
+    raw = os.environ.get(ENV_TOKEN_LIMIT, "").strip()
+    if raw:
+        try:
+            return max(1, int(raw))
+        except ValueError:
+            pass
+    return DEFAULT_TOKEN_LIMIT
+
+
+# 兼容旧引用：模块级常量（测试/历史代码）
+TOKEN_LIMIT_PER_TASK = DEFAULT_TOKEN_LIMIT
 
 __all__ = [
     "CostMeter",
     "CostReport",
     "CircuitOpenError",
     "TOKEN_LIMIT_PER_TASK",
+    "DEFAULT_TOKEN_LIMIT",
+    "get_token_limit",
     "DEG_FULL",
     "DEG_FALLBACK_AGENT",
     "DEG_RULES",
@@ -52,11 +73,15 @@ class CostReport:
     degradation_level: int
     estimated_cost_cny: float = 0.0
     breaker_open: bool = False
+    prompt_tokens: int = 0
+    completion_tokens: int = 0
 
     def to_dict(self) -> Dict[str, Any]:
         return {
             "task_id": self.task_id,
             "tokens_used": self.tokens_used,
+            "prompt_tokens": self.prompt_tokens,
+            "completion_tokens": self.completion_tokens,
             "latency_ms": round(self.latency_ms, 3),
             "degradation_level": self.degradation_level,
             "estimated_cost_cny": self.estimated_cost_cny,
@@ -75,15 +100,19 @@ class CostMeter:
     task_id: str = ""
     tokens_used: int = 0
     degradation_level: int = DEG_FULL
-    limit: int = TOKEN_LIMIT_PER_TASK
+    limit: int = field(default_factory=get_token_limit)
     started_at: float = field(default_factory=time.time)
     breaker_open: bool = False
+    prompt_tokens: int = 0
+    completion_tokens: int = 0
 
-    def add_tokens(self, n: int) -> None:
-        """记账；超限则熔断（后续 add/guard 均失败）。"""
+    def add_tokens(self, n: int, *, prompt: int = 0, completion: int = 0) -> None:
+        """记账；超限则熔断（7.6）。支持 7.7 prompt/completion 分项。"""
         if self.breaker_open:
             raise CircuitOpenError(self.tokens_used, self.limit, self.task_id)
         self.tokens_used += max(0, int(n))
+        self.prompt_tokens += max(0, int(prompt))
+        self.completion_tokens += max(0, int(completion))
         if self.tokens_used > self.limit:
             self.breaker_open = True
             raise CircuitOpenError(self.tokens_used, self.limit, self.task_id)
@@ -117,4 +146,6 @@ class CostMeter:
             degradation_level=self.degradation_level,
             estimated_cost_cny=round(cost, 6),
             breaker_open=self.breaker_open,
+            prompt_tokens=self.prompt_tokens,
+            completion_tokens=self.completion_tokens,
         )
