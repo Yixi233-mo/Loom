@@ -14,6 +14,10 @@ path = "src/lib.rs"
 name = "loom-shell-app"
 path = "src/main.rs"
 
+[features]
+# 生产包必须开：用包内 dist，而不是 devUrl=localhost:5173
+custom-protocol = ["tauri/custom-protocol"]
+
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
 

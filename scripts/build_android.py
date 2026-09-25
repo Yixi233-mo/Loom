@@ -87,7 +87,8 @@ def main() -> int:
             "aarch64-linux-android",
             "--lib",
         ]
-        + (["--release"] if args.release else []),
+        + (["--release"] if args.release else [])
+        + (["--features", "custom-protocol"] if args.release else []),
         ROOT / "src-tauri",
     )
 
