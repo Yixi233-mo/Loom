@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import json
 import sys
-import time
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -178,7 +177,7 @@ def main() -> int:
         p.unlink()
     tmp.rmdir()
 
-    print(f"\n========== E2E SUMMARY ==========")
+    print("\n========== E2E SUMMARY ==========")
     print(f"PASS {PASS}  FAIL {FAIL}")
     return 0 if FAIL == 0 else 1
 
