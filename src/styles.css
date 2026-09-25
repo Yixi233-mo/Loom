@@ -1,43 +1,5 @@
-/* Loom Shell 应用壳样式 */
-
-.app-shell {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 24px 20px 48px;
-}
-
-.app-header {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 8px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--line);
-}
-
-.app-title {
-  font-size: 28px;
-  font-weight: 650;
-  letter-spacing: 0.02em;
-  margin: 0;
-}
-
-.app-subtitle {
-  margin: 4px 0 0;
-  color: var(--muted);
-  font-size: 14px;
-}
-
-.app-badge {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: var(--accent-soft);
-  color: var(--accent);
-  font-size: 12px;
-  font-weight: 600;
-}
+/* Loom Shell 应用壳样式
+   布局壳（.app-shell / .app-header）以 src/styles/layout.css 为准，此处只保留组件级补丁。 */
 
 .app-section {
   background: var(--panel);

@@ -17,6 +17,10 @@
         --warn: #b33a2b;
       }
       * { box-sizing: border-box; }
+      html, body {
+        height: 100%;
+        overflow: hidden;
+      }
       body {
         margin: 0;
         font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
@@ -24,7 +28,12 @@
         color: var(--ink);
         line-height: 1.5;
       }
-      #root { min-height: 100vh; }
+      /* U1：根节点锁视口，禁止全局滚动 */
+      #root {
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
+      }
     </style>
   </head>
   <body>

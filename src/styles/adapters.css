@@ -10,10 +10,8 @@
 }
 
 body {
-  padding-top: var(--safe-top);
-  padding-right: var(--safe-right);
-  padding-bottom: var(--safe-bottom);
-  padding-left: var(--safe-left);
+  /* 安全区内边距收进壳层，body 不撑出滚动 */
+  padding: 0;
 }
 
 /* Web / 三栏断点 */

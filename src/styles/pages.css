@@ -109,18 +109,20 @@
   .fe-skeleton { animation: none; }
 }
 
-/* --- 对话工作台：默认铺满主区，消息区可滚动 --- */
+/* --- 对话工作台：填满父容器，消息区可滚动、输入框贴底 --- */
 .chat-workbench {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  /* 铺满 app-main 可视高度，去掉顶栏/底栏后自适应 */
-  height: calc(100vh - 140px);
-  min-height: 320px;
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+  overflow: hidden;
 }
 
 .layout-narrow .chat-workbench {
-  height: calc(100vh - 160px);
+  height: 100%;
+  min-height: 0;
 }
 
 .chat-workbench--expanded .chat-stream {
