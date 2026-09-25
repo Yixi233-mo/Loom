@@ -232,6 +232,15 @@ def create_integrated_app(stack: HubStack) -> FastAPI:
             "tasks": [t["task_id"] for t in stack.orch.list_tasks()],
         }
 
+    @app.get("/metrics")
+    async def metrics():
+        """10.7 Prometheus 文本指标。"""
+        from fastapi.responses import PlainTextResponse
+
+        from observability.metrics import get_metrics
+
+        return PlainTextResponse(get_metrics().to_prometheus(), media_type="text/plain; version=0.0.4")
+
     @app.get("/ready")
     async def ready() -> Dict[str, Any]:
         """4.2 就绪：检查存储 / 任务引擎 / 密钥配置。"""

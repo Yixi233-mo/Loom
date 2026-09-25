@@ -341,7 +341,7 @@ export function ChatWorkbench(props: {
         e("input", {
           className: UI.input,
           "data-field": "chat-draft",
-          placeholder: "输入消息，Enter 发送…",
+          placeholder: props.busy ? "处理中…可继续输入，稍后发送" : "输入消息，Enter 发送…",
           value: draft,
           disabled: props.busy || phase === "loading",
           onChange: (ev: { target: { value: string } }) =>

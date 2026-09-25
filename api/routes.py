@@ -10,6 +10,7 @@ from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, FastAPI, HTTPException
 from pydantic import BaseModel, Field, field_validator
 
+from api.stream_routes import iso_ts
 from integration.stack import HubStack
 from observability.audit import get_audit
 from observability.security import MAX_INPUT_CHARS
@@ -127,8 +128,8 @@ def create_api_router(stack: HubStack, store: Optional[ApiStore] = None) -> APIR
                     else str(t["status"]),
                     "assignedTo": t.get("assigned_to"),
                     "traceId": t.get("task_id"),
-                    "createdAt": t.get("created_at"),
-                    "updatedAt": t.get("created_at"),
+                    "createdAt": iso_ts(float(t.get("created_at") or 0)),
+                    "updatedAt": iso_ts(float(t.get("created_at") or 0)),
                     "result": t.get("result"),
                     "error": t.get("error"),
                 }

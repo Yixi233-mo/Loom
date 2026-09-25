@@ -118,7 +118,10 @@ def main() -> None:
     app = create_integrated_app(stack)
     # REST 全套：/api/* + /api/llm/*
     from api.routes import mount_api
+    from api.stream_routes import mount_stream_api
+
     mount_api(app, stack)
+    mount_stream_api(app)
     logger.info("Loom Hub 启动: ws://%s:%s/ws  health=/health  ready=/ready", host, port)
     from auth.secrets import audit_secrets
     from observability.resilience import check_dependencies

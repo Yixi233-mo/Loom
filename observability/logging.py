@@ -67,6 +67,8 @@ class LogRecord:
             v = getattr(self, k)
             if v is not None:
                 d[k] = v
+        d.setdefault("level", self.extra.get("level", "info"))
+        d.setdefault("module", self.extra.get("module", "loom"))
         if self.extra:
             d.update(self.extra)
         return d
@@ -184,3 +186,38 @@ def set_logger(logger: StructuredLogger) -> None:
 
 def log_event(event: str, trace_id: str, **fields: Any) -> LogRecord:
     return _default_logger.emit(event, trace_id, **fields)
+
+
+# 10.6 日志轮转（文件输出时使用）：30 天或 10MB
+LOG_ROTATE_MAX_BYTES = int(__import__("os").environ.get("LOG_ROTATE_MAX_BYTES", str(10 * 1024 * 1024)))
+LOG_ROTATE_BACKUP_DAYS = int(__import__("os").environ.get("LOG_ROTATE_BACKUP_COUNT", "30"))
+
+
+def attach_file_handler(
+    logger: Optional[object] = None,
+    path: str = "logs/loom.log",
+    max_bytes: int = LOG_ROTATE_MAX_BYTES,
+    backup_count: int = LOG_ROTATE_BACKUP_DAYS,
+) -> Optional[object]:
+    """挂接轮转文件日志（10.6）。"""
+    import logging as _logging
+    from logging.handlers import RotatingFileHandler
+    from pathlib import Path as _P
+
+    _P(path).parent.mkdir(parents=True, exist_ok=True)
+    target = logger or _logging.getLogger()
+    handler = RotatingFileHandler(path, maxBytes=max_bytes, backupCount=backup_count)
+    handler.setFormatter(
+        _logging.Formatter("%(asctime)s %(levelname)s %(name)s %(message)s")
+    )
+    if isinstance(target, _logging.Logger):
+        target.addHandler(handler)
+        return handler
+    return None
+
+
+def redact_traceback(tb_text: str) -> str:
+    """10.5 错误堆栈脱敏。"""
+    from observability.security import redact_secrets
+
+    return redact_secrets(tb_text)
