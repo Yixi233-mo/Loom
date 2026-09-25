@@ -16,6 +16,31 @@ import { memo, VirtualList } from "../perf/index.ts";
 
 const e = React.createElement;
 
+const STATUS_TXT: Record<string, string> = {
+  pending: "排队中",
+  queued: "排队中",
+  assigned: "已分发",
+  running: "执行中",
+  done: "已完成",
+  failed: "失败",
+  timeout: "超时",
+};
+
+const DEG_TXT: Record<number, string> = {
+  0: "全功能",
+  1: "已切备选",
+  2: "规则兜底",
+};
+
+function humanizeStatus(s: string) {
+  return STATUS_TXT[s] ?? s;
+}
+
+function humanizeDegradation(level: number) {
+  return DEG_TXT[level] ?? `档位 ${level}`;
+}
+
+
 const FILTERS: Array<{ id: TaskStatus | "all"; label: string }> = [
   { id: "all", label: "全部" },
   { id: "pending", label: "待处理" },
@@ -24,7 +49,7 @@ const FILTERS: Array<{ id: TaskStatus | "all"; label: string }> = [
   { id: "failed", label: "失败" },
 ];
 
-function ResultCardImpl(props: { task: TaskState }) {
+function ResultCardImpl(props: { task: TaskState; onRerun?: (t: TaskState) => void }) {
   const t = props.task;
   const r = t.result;
   return e(
@@ -39,7 +64,7 @@ function ResultCardImpl(props: { task: TaskState }) {
       "header",
       { className: "result-head" },
       e("strong", null, t.workflowName),
-      e("span", { className: "result-status" }, t.status)
+      e("span", { className: "result-status" }, humanizeStatus(t.status))
     ),
     e(
       "p",
@@ -55,17 +80,32 @@ function ResultCardImpl(props: { task: TaskState }) {
           e("dd", { "data-metric": "tokens_used" }, String(r.tokensUsed ?? 0)),
           e("dt", null, "latency_ms"),
           e("dd", { "data-metric": "latency_ms" }, String(r.latencyMs ?? 0)),
-          e("dt", null, "degradation_level"),
+          e("dt", null, "链路"),
           e(
             "dd",
             { "data-metric": "degradation_level" },
-            String(r.degradationLevel ?? 0)
+            humanizeDegradation(r.degradationLevel ?? 0)
           )
         )
       : null,
     t.error
       ? e("p", { className: "result-error", "data-error": "true" }, t.error)
-      : null
+      : null,
+    e(
+      "div",
+      { className: "result-actions" },
+      e(
+        "button",
+        {
+          type: "button",
+          className: UI.button + " " + UI.buttonGhost,
+          "data-action": "task-rerun",
+          "data-task-id": t.taskId,
+          onClick: () => props.onRerun?.(t),
+        },
+        "再来一次"
+      )
+    )
   );
 }
 
@@ -111,6 +151,7 @@ export function TaskProgressBar(props: {
 }
 
 export function TaskCenter(props: {
+  onRerun?: (t: TaskState) => void;
   tasks: TaskState[];
   filter?: TaskStatus | "all";
   loading?: boolean;
@@ -217,7 +258,8 @@ export function TaskCenter(props: {
                   className: "task-list",
                   "data-view": "task-list",
                   keyOf: (t: TaskState) => t.taskId,
-                  renderItem: (t: TaskState) => e(ResultCard, { task: t }),
+                  renderItem: (t: TaskState) => e(ResultCard, {
+                onRerun: props.onRerun, task: t }),
                 })
               : e(
                   "div",

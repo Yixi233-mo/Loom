@@ -337,7 +337,24 @@ export default function App() {
         e(
           "p",
           { className: "app-subtitle" },
-          "跨端 Agent 工作台 — 对话 · 任务 · 文件 · Agent"
+          "一个 Loom · 跨端无感 — 对话 · 任务 · 接入 · 资产"
+        )
+      ),
+      e(
+        "button",
+        {
+          type: "button",
+          className: "cap-pill",
+          "data-view": "cap-pill",
+          title: "当前能力 · 点击去接入",
+          onClick: () => navigate("agents"),
+        },
+        e("span", { className: "cap-dot", "aria-hidden": "true" }),
+        e(
+          "span",
+          null,
+          `接入 ${agents.length} · 任务 ${tasks.length} · ` +
+            (llmProviders.find((p) => p.defaultModel)?.defaultModel || "本地回声")
         )
       ),
       e(
@@ -614,6 +631,13 @@ export default function App() {
           })
       : activeRoute === "tasks"
         ? e(TaskCenter, {
+            onRerun: (task: { workflowName?: string; taskId: string }) => {
+              stores.session.appendMessage({
+                role: "assistant",
+                content: "已重新排队「" + (task.workflowName || task.taskId) + "」，可在任务里看进度。",
+              });
+              setTick((x) => x + 1);
+            },
             tasks,
             filter,
             loading: pageLoading,
