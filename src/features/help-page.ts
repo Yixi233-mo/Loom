@@ -19,7 +19,7 @@ export const HELP_SECTIONS: HelpSection[] = [
   {
     id: "overview",
     title: "项目是什么",
-    summary: "Loom（织巢）= 跨端 Agent 工作台：把 Win / 平板 / 手机编织成一台电脑，把 Claude Code、Work Buddy 等 AI 编织成一个团队。",
+    summary: "Loom = 你的 AI 总控台：不做能力，做连接。把 Claude Code、Work Buddy、DeepSeek 等全部接进来，一个入口用完所有 AI；跨端无感，本地优先。",
     steps: [
       "一句话：用户说话 → 意图识别 → 选执行端 → 调工具或连外部 AI → 结果同步多端",
       "架构：本地 Hub（路由/状态） + Device Mesh（跨端） + DSL（YAML 声明扩展）",

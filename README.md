@@ -1,4 +1,4 @@
-# Loom · 织巢
+# Loom · 你的 AI 总控台
 
 ![CI](https://github.com/Yixi233-mo/Loom/actions/workflows/ci.yml/badge.svg) ![status](https://img.shields.io/badge/status-开发中-orange)
 
@@ -6,6 +6,8 @@
 > **你的 AI 总控台** — 不做能力，做连接。不做 Agent，做你所有 Agent 的总控台。
 
 大厂各自造 Agent，Loom 把它们全部接进来，让你在一个地方用完所有 AI。
+
+> 别名：织巢 · 产品名统一为 **Loom**
 产品故事见 `总控台/index.html` · 定位全文见 `目录/02-项目概览/产品定位.md`
 
 ---

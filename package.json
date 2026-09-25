@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Loom Shell 前端应用",
+  "description": "Loom — 你的 AI 总控台",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

@@ -1,4 +1,4 @@
-//! Loom Shell — Tauri 2.0 应用入口。
+//! Loom — Tauri 2.0 应用入口。
 //!
 //! 加载前端 dist / dev server，并注册 IPC 命令。
 
@@ -13,5 +13,5 @@ fn main() {
             loom_shell::commands::write_text_file,
         ])
         .run(tauri::generate_context!())
-        .expect("error while running Loom Shell");
+        .expect("error while running Loom");
 }

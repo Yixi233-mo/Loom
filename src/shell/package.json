@@ -2,5 +2,5 @@
   "name": "loom-shell",
   "private": true,
   "type": "module",
-  "description": "Loom Shell 前端模块（UI Schema 渲染器等）"
+  "description": "Loom 前端模块（UI Schema 渲染器等）"
 }

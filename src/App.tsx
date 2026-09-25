@@ -183,7 +183,7 @@ export default function App() {
           "div",
           null,
           e("strong", null, "Loom"),
-          e("div", { className: "side-label" }, "AI 总控台 · 连接所有 Agent")
+          e("div", { className: "side-label" }, "你的 AI 总控台")
         )
       ),
       e(
@@ -333,11 +333,11 @@ export default function App() {
       e(
         "div",
         null,
-        e("h1", { className: "app-title" }, "Loom · 织巢"),
+        e("h1", { className: "app-title" }, "Loom"),
         e(
           "p",
           { className: "app-subtitle" },
-          "一个 Loom · 跨端无感 — 对话 · 任务 · 接入 · 资产"
+          "你的 AI 总控台 — 用 AI · 接 AI · 我的资产"
         )
       ),
       e(

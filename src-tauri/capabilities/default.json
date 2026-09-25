@@ -1,6 +1,6 @@
 {
   "identifier": "default",
-  "description": "Loom Shell 默认能力",
+  "description": "Loom 默认能力",
   "windows": ["main"],
   "permissions": ["core:default"]
 }

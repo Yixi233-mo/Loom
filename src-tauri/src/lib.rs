@@ -7,7 +7,7 @@ pub mod commands;
 pub mod plugin_loader;
 
 pub fn greet() -> &'static str {
-    "Loom Shell"
+    "Loom"
 }
 
 #[cfg(test)]
@@ -16,6 +16,6 @@ mod tests {
 
     #[test]
     fn greet_works() {
-        assert_eq!(greet(), "Loom Shell");
+        assert_eq!(greet(), "Loom");
     }
 }

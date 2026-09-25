@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Loom Shell",
+  "productName": "Loom",
   "version": "0.1.0",
   "identifier": "app.loom.shell",
   "build": {
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "Loom · 织巢",
+        "title": "Loom · 你的 AI 总控台",
         "width": 1280,
         "height": 800,
         "resizable": true,
@@ -38,7 +38,7 @@
       "icons/icon.ico"
     ],
     "category": "Productivity",
-    "shortDescription": "Loom 织巢 — 跨端 Agent 工作台",
+    "shortDescription": "Loom — 你的 AI 总控台，接入并编排所有 Agent",
     "longDescription": "把 Windows / 平板 / 手机编织成一台电脑，把手边的 AI Agent 编织成一个团队。",
     "copyright": "© 2026 Loom",
     "windows": {

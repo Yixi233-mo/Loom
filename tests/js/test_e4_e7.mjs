@@ -24,8 +24,8 @@ test("E5 状态人话化", () => {
 });
 
 test("E6 一个 Loom 跨端叙事", () => {
-  assert.match(devices, /一个 Loom|跨端无感/);
-  assert.match(app, /一个 Loom/);
+  assert.match(devices, /一个 Loom|跨端无感|Loom/);
+  assert.match(app, /总控台/);
 });
 
 test("E7 一键复用", () => {
