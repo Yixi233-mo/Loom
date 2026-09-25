@@ -112,9 +112,10 @@ export default function App() {
   const [launchState, setLaunchState] = React.useState<Record<string, "idle" | "ok" | "missing" | "error">>({});
   const [promptItems, setPromptItems] = React.useState<PromptItem[]>(() => promptStore.list());
   const [activePrompt, setActivePrompt] = React.useState<PromptItem | null>(null);
-  const [settingsTab, setSettingsTab] = React.useState<"llm" | "mcp">("llm");
+  const [settingsTab, setSettingsTab] = React.useState<"llm" | "mcp" | "devices">("llm");
   const [pageLoading, setPageLoading] = React.useState(false);
   const [pageError, setPageError] = React.useState<string | null>(null);
+  const [taskPanelOpen, setTaskPanelOpen] = React.useState(false);
   const route = useHashRoute();
   const activeRoute: AppRoute = route.route;
 
@@ -174,21 +175,41 @@ export default function App() {
           e("div", { className: "side-label" }, "跨端 Agent 工作台")
         )
       ),
-      e("div", { className: "side-label" }, "导航"),
+      e(
+        "button",
+        {
+          type: "button",
+          className: "side-new-chat",
+          "data-action": "new-chat",
+          onClick: () => {
+            stores.session.resetForNew();
+            setActivePrompt(null);
+            setPageError(null);
+            navigate("chat");
+            setTick((t) => t + 1);
+          },
+        },
+        e("span", { className: "side-new-icon", "aria-hidden": "true" }, "＋"),
+        "新建对话"
+      ),
       e(
         "nav",
-        { className: "side-nav", "aria-label": "侧栏导航", "data-view": "side-nav" },
+        {
+          className: "side-nav scroll-area",
+          "aria-label": "侧栏导航",
+          "data-view": "side-nav",
+        },
         e("div", { className: "side-label" }, "工作区"),
         (
           [
-            ["chat", "对话"],
-            ["prompts", "提示词"],
-            ["tasks", "任务"],
-            ["files", "文件"],
-            ["knowledge", "知识库"],
-            ["agents", "Agent"],
-          ] as Array<[AppRoute, string]>
-        ).map(([id, label]) =>
+            ["chat", "对话", "💬"],
+            ["tasks", "任务", "◎"],
+            ["files", "文件", "▤"],
+            ["knowledge", "知识库", "◈"],
+            ["agents", "Agent", "⬡"],
+            ["prompts", "提示词", "✎"],
+          ] as Array<[AppRoute, string, string]>
+        ).map(([id, label, icon]) =>
           e(
             "button",
             {
@@ -196,37 +217,44 @@ export default function App() {
               type: "button",
               className: "nav-link" + (activeRoute === id ? " is-active" : ""),
               "data-route": id,
+              "aria-current": activeRoute === id ? "page" : undefined,
               onClick: () => navigate(id),
             },
-            label
+            e("span", { className: "nav-icon", "aria-hidden": "true" }, icon),
+            e("span", { className: "nav-text" }, label)
           )
         ),
         e("div", { className: "side-label" }, "设置 · 跨端"),
-        (
-          [
-            ["settings", "设置"],
-            ["devices", "跨端"],
-          ] as Array<[AppRoute, string]>
-        ).map(([id, label]) =>
-          e(
-            "button",
-            {
-              key: id,
-              type: "button",
-              className: "nav-link" + (activeRoute === id ? " is-active" : ""),
-              "data-route": id,
-              onClick: () => navigate(id),
+        e(
+          "button",
+          {
+            type: "button",
+            className:
+              "nav-link" +
+              (activeRoute === "settings" || activeRoute === "devices"
+                ? " is-active"
+                : ""),
+            "data-route": "settings",
+            "data-action": "open-settings-devices",
+            "aria-current":
+              activeRoute === "settings" || activeRoute === "devices"
+                ? "page"
+                : undefined,
+            onClick: () => {
+              setSettingsTab("devices");
+              navigate("settings");
             },
-            label
-          )
+          },
+          e("span", { className: "nav-icon", "aria-hidden": "true" }, "⚙"),
+          e("span", { className: "nav-text" }, "设置 · 跨端")
         ),
-        e("div", { className: "side-label" }, "MCP · 推荐"),
+        e("div", { className: "side-label" }, "工具"),
         (
           [
-            ["mcp", "MCP"],
-            ["recommend", "推荐"],
-          ] as Array<[AppRoute, string]>
-        ).map(([id, label]) =>
+            ["mcp", "MCP", "⌘"],
+            ["recommend", "推荐", "☆"],
+          ] as Array<[AppRoute, string, string]>
+        ).map(([id, label, icon]) =>
           e(
             "button",
             {
@@ -236,7 +264,8 @@ export default function App() {
               "data-route": id,
               onClick: () => navigate(id),
             },
-            label
+            e("span", { className: "nav-icon", "aria-hidden": "true" }, icon),
+            e("span", { className: "nav-text" }, label)
           )
         ),
         e("div", { className: "side-label" }, "帮助"),
@@ -248,13 +277,28 @@ export default function App() {
             "data-route": "help",
             onClick: () => navigate("help"),
           },
-          "使用说明"
+          e("span", { className: "nav-icon", "aria-hidden": "true" }, "?"),
+          e("span", { className: "nav-text" }, "使用说明")
         )
       ),
       e(
         "div",
-        { className: "side-foot" },
-        platform.device.deviceType + " · " + platform.layout
+        { className: "side-user", "data-view": "side-user" },
+        e("div", { className: "user-avatar", "aria-hidden": "true" }, "我"),
+        e(
+          "div",
+          { className: "user-meta" },
+          e("div", { className: "user-name" }, "本地用户"),
+          e(
+            "div",
+            {
+              className: "user-status",
+              "data-view": "conn-status",
+              "data-connected": "ready",
+            },
+            "Hub 就绪"
+          )
+        )
       )
     ),
     e(
@@ -277,11 +321,8 @@ export default function App() {
           [
             ["chat", "对话"],
             ["tasks", "任务"],
-            ["settings", "设置"],
-            ["devices", "跨端"],
-            ["help", "使用说明"],
-            ["recommend", "推荐"],
-            ["mcp", "MCP"],
+            ["settings", "设置·跨端"],
+            ["help", "说明"],
           ] as Array<[AppRoute, string]>
         ).map(([id, label]) =>
           e(
@@ -300,45 +341,98 @@ export default function App() {
         )
       ),
       e(
-        "button",
+        "div",
         {
-          type: "button",
-          className: "task-progress-pill",
+          className:
+            "task-progress-pill" + (taskPanelOpen ? " is-open" : ""),
           "data-view": "task-progress-pill",
-          "data-action": "goto-tasks",
-          onClick: () => navigate("tasks"),
-          title: "打开任务中心",
+          "data-action": "toggle-task-panel",
         },
-        e("span", { className: "pill-label" }, "任务"),
         e(
-          "span",
-          { className: "pill-count" },
-          String(tasks.filter((x) => x.status === "done").length) +
-            "/" +
-            String(tasks.length)
-        ),
-        e("i", {
-          className: "pill-bar",
-          style: {
-            width:
-              String(
-                tasks.length
-                  ? Math.round(
-                      (tasks.filter((x) => x.status === "done").length /
-                        tasks.length) *
-                        100
-                    )
-                  : 0
-              ) + "%",
+          "button",
+          {
+            type: "button",
+            className: "pill-btn",
+            "data-action": "toggle-task-panel",
+            "aria-expanded": taskPanelOpen ? "true" : "false",
+            onClick: () => setTaskPanelOpen((v) => !v),
+            title: "展开任务进度",
           },
-        })
+          e("span", { className: "pill-label" }, "任务进度"),
+          e(
+            "span",
+            { className: "pill-count" },
+            String(tasks.filter((x) => x.status === "done").length) +
+              "/" +
+              String(tasks.length)
+          ),
+          e("i", {
+            className: "pill-bar",
+            style: {
+              width:
+                String(
+                  tasks.length
+                    ? Math.round(
+                        (tasks.filter((x) => x.status === "done").length /
+                          tasks.length) *
+                          100
+                      )
+                    : 0
+                ) + "%",
+            },
+          })
+        ),
+        taskPanelOpen
+          ? e(
+              "div",
+              {
+                className: "task-progress-panel glass",
+                "data-view": "task-progress-panel",
+              },
+              e(
+                "button",
+                {
+                  type: "button",
+                  className: "msg-action",
+                  "data-action": "goto-tasks",
+                  onClick: () => {
+                    setTaskPanelOpen(false);
+                    navigate("tasks");
+                  },
+                },
+                "打开任务中心"
+              ),
+              ...tasks.slice(0, 5).map((t) =>
+                e(
+                  "div",
+                  {
+                    key: t.taskId,
+                    className: "task-progress-row",
+                    "data-task-id": t.taskId,
+                  },
+                  e("span", { className: "task-progress-name" }, t.workflowName),
+                  e("span", { className: "task-progress-status" }, String(t.status))
+                )
+              ),
+              tasks.length === 0
+                ? e("p", { className: "hint" }, "暂无任务")
+                : null
+            )
+          : null
       ),
       e(
         "span",
-        { className: "app-badge", "data-platform-badge": "true" },
-        `${platform.device.deviceType} · ${platform.layout}${
-          platform.tauri.available ? " · Tauri" : " · Web"
-        }`
+        {
+          className: "app-badge",
+          "data-platform-badge": "true",
+          "data-view": "conn-status",
+          "data-connected": "ready",
+          title: `${platform.device.deviceType} · ${platform.layout} · ${
+            platform.tauri.available ? "Tauri" : "Web"
+          }`,
+        },
+        e("i", { className: "conn-dot", "aria-hidden": "true" }),
+        platform.tauri.available ? "桌面已连接" : "Web 已连接"
       )
     ),
 
@@ -353,6 +447,25 @@ export default function App() {
           error: pageError,
           busy: chatBusy,
           modelLabel: llmProviders.find((p) => p.defaultModel)?.defaultModel,
+          models: llmProviders.map((p) => p.defaultModel).filter(Boolean) as string[],
+          onModelChange: () => setTick((t) => t + 1),
+          onNewChat: () => {
+            stores.session.resetForNew();
+            setActivePrompt(null);
+            setTick((t) => t + 1);
+          },
+          onAttach: () => navigate("files"),
+          onCopy: (text: string) => {
+            void navigator.clipboard?.writeText(text);
+          },
+          onRetryMessage: (text: string) => {
+            stores.session.appendMessage({ role: "user", content: text });
+            stores.session.appendMessage({
+              role: "assistant",
+              content: "（已重新排队，稍后给出答复）",
+            });
+            setTick((t) => t + 1);
+          },
           chatSize,
           prompts: promptItems,
           activePromptId: activePrompt?.id ?? null,
@@ -564,9 +677,18 @@ export default function App() {
           : activeRoute === "settings"
           ? e(SettingsPage, {
               tab: settingsTab,
-              onTab: (t) => {
-                setSettingsTab(t);
-                navigate("settings", t);
+              devicesNode: e(DeviceHubPage, {
+                layout: platform.layout,
+                hubOnline: true,
+                pendingTasks: tasks.filter((t) => t.status === "pending").length,
+                runningTasks: tasks.filter((t) => t.status === "running").length,
+                doneTasks: tasks.filter((t) => t.status === "done").length,
+                onlineAgents: agents.filter((a) => a.status === "online").length,
+                onRefresh: () => setTick((x) => x + 1),
+              }),
+              onTab: (next) => {
+                setSettingsTab(next);
+                navigate("settings");
               },
               loading: pageLoading,
               error: pageError,
@@ -784,11 +906,9 @@ export default function App() {
         [
           ["chat", "对话"],
           ["tasks", "任务"],
-          ["devices", "跨端"],
-            ["help", "说明"],
-          ["recommend", "推荐"],
+          ["knowledge", "知识"],
           ["settings", "设置"],
-          ["mcp", "MCP"],
+          ["help", "说明"],
         ] as Array<[AppRoute, string]>
       ).map(([id, label]) =>
         e(

@@ -1,5 +1,5 @@
 /**
- * FE.3 设置页 — LLM + MCP 子页壳 + 完整页面状态
+ * 设置 · 跨端 — LLM + MCP + 设备（U2 合并入口）
  */
 
 import * as React from "react";
@@ -16,7 +16,7 @@ import { McpPanel, type McpProbeResult } from "../views/mcp-panel.ts";
 
 const e = React.createElement;
 
-export type SettingsTab = "llm" | "mcp";
+export type SettingsTab = "llm" | "mcp" | "devices";
 
 export function SettingsPage(props: {
   tab: SettingsTab;
@@ -58,6 +58,8 @@ export function SettingsPage(props: {
   onMcpProbe?: () => void;
   mcpResult?: McpProbeResult | null;
   mcpBusy?: boolean;
+  /** U2：跨端设备面板节点（App 注入） */
+  devicesNode?: unknown;
 }) {
   const tab = props.tab;
   const phase = phaseOf({
@@ -71,8 +73,8 @@ export function SettingsPage(props: {
     PageShell,
     {
       route: "settings",
-      title: "设置",
-      subtitle: "自定义 LLM · MCP 外接服务",
+      title: "设置 · 跨端",
+      subtitle: "模型 · MCP · 设备，一处管完",
       actions: e(
         "div",
         { className: "settings-tabs", role: "tablist" },
@@ -101,6 +103,21 @@ export function SettingsPage(props: {
             onClick: () => props.onTab?.("mcp"),
           },
           "MCP 服务"
+        ),
+        e(
+          "button",
+          {
+            type: "button",
+            role: "tab",
+            "aria-selected": tab === "devices" ? "true" : "false",
+            className:
+              UI.button +
+              " " +
+              (tab === "devices" ? UI.buttonPrimary : "ui-button--ghost"),
+            "data-tab": "devices",
+            onClick: () => props.onTab?.("devices"),
+          },
+          "跨端设备"
         )
       ),
     },
@@ -143,6 +160,13 @@ export function SettingsPage(props: {
                   onDelete: props.onDeleteProvider,
                   onTestChat: props.onTestChat,
                 })
+              )
+            : tab === "devices"
+            ? e(
+                "div",
+                { "data-view": "settings-devices" },
+                (props.devicesNode as never) ??
+                  e("p", { className: "hint" }, "设备面板加载中…")
               )
             : e(
                 "div",

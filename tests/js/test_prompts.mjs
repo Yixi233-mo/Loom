@@ -43,6 +43,6 @@ const app = readFileSync("src/App.tsx", "utf8");
 assert.match(app, /task-progress-pill/);
 assert.match(app, /工作区/);
 assert.match(app, /设置 · 跨端/);
-assert.match(app, /MCP · 推荐/);
+assert.match(app, /工具/);
 
 console.log("test_prompts: ALL PASS");
