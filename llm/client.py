@@ -13,12 +13,16 @@ class HttpPostGet(Protocol):
 
 
 class DefaultHttp:
-    """httpx 实现（已有依赖）。"""
+    """httpx 实现（已有依赖）。4.4 超时：HTTP 30s / LLM 120s。"""
+
+    def __init__(self, http_timeout: float = 30.0, llm_timeout: float = 120.0) -> None:
+        self.http_timeout = http_timeout
+        self.llm_timeout = llm_timeout
 
     async def get_json(self, url: str, headers: Dict[str, str]) -> Dict[str, Any]:
         import httpx
 
-        async with httpx.AsyncClient(timeout=30.0) as client:
+        async with httpx.AsyncClient(timeout=self.http_timeout) as client:
             r = await client.get(url, headers=headers)
             r.raise_for_status()
             return r.json()
@@ -28,7 +32,7 @@ class DefaultHttp:
     ) -> Dict[str, Any]:
         import httpx
 
-        async with httpx.AsyncClient(timeout=60.0) as client:
+        async with httpx.AsyncClient(timeout=self.llm_timeout) as client:
             r = await client.post(url, headers=headers, json=body)
             r.raise_for_status()
             return r.json()
@@ -101,11 +105,22 @@ class LLMClient:
         messages: List[Dict[str, str]],
         **params: Any,
     ) -> Dict[str, Any]:
+        from observability.resilience import RETRY_MAX, retry_async
+
+        if not api_key:
+            # 2.4 缺密钥明确报错
+            raise RuntimeError(
+                "缺少 API Key：请在设置页配置，或设置环境变量 DEEPSEEK_API_KEY/OPERIT_API_KEY（见 .env.example）"
+            )
         base = base_url.rstrip("/")
         body = {"model": model, "messages": messages, **params}
-        return await self.http.post_json(
-            base + "/v1/chat/completions", self._headers(api_key), body
-        )
+        headers = self._headers(api_key)
+
+        async def _once() -> Dict[str, Any]:
+            return await self.http.post_json(base + "/v1/chat/completions", headers, body)
+
+        # 4.5 指数退避 ≤3 次
+        return await retry_async(_once, retries=RETRY_MAX)
 
     async def complete_text(
         self,
@@ -115,10 +130,10 @@ class LLMClient:
         user_text: str,
         system: str = "",
     ) -> str:
-        messages = []
-        if system:
-            messages.append({"role": "system", "content": system})
-        messages.append({"role": "user", "content": user_text})
+        from observability.security import split_prompt_messages
+
+        # 11.2 system / user 分离
+        messages = split_prompt_messages(user_text, system=system)
         resp = await self.chat(base_url, api_key, model, messages)
         try:
             return str(resp["choices"][0]["message"]["content"])

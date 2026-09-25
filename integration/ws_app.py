@@ -21,6 +21,9 @@ from device_mesh.protocol import (
 )
 from device_mesh.ws_server import HubRuntime, _verify_signature
 from integration.stack import HubStack, _status_str
+from observability.audit import get_audit
+from observability.resilience import check_dependencies
+from observability.security import redact_obj
 
 logger = logging.getLogger(__name__)
 
@@ -62,6 +65,18 @@ def create_integrated_app(stack: HubStack) -> FastAPI:
     app.state.runtime = rt
     app.state.stack = stack
 
+    @app.exception_handler(Exception)
+    async def _unhandled_exception(request, exc):  # noqa: ANN001
+        # 4.6 未捕获异常不崩进程；错误体脱敏
+        logger.error("未捕获异常 %s: %s", request.url.path, exc, exc_info=True)
+        from fastapi.responses import JSONResponse
+
+        return JSONResponse(status_code=500, content=redact_obj({
+            "code": "INTERNAL",
+            "message": "内部错误，已记录日志",
+            "trace_id": getattr(request.state, "trace_id", ""),
+        }))
+
     async def _send(ws: WebSocket, payload: Dict[str, Any]) -> None:
         msg_type = payload.pop("type")
         await ws.send_text(build_message(msg_type, **payload))
@@ -72,6 +87,13 @@ def create_integrated_app(stack: HubStack) -> FastAPI:
         ts = msg.get("ts", 0)
         sig = msg.get("signature") or ""
         if not _verify_signature(device_id, device_type, ts, sig, stack.secret):
+            get_audit().record(
+                actor=device_id or "unknown",
+                action="device.register",
+                resource=device_id,
+                result="denied",
+                reason="invalid_signature",
+            )
             await _send(
                 ws,
                 {
@@ -84,6 +106,13 @@ def create_integrated_app(stack: HubStack) -> FastAPI:
         await stack.cm.register(device_id, ws)
         stack.monitor.update(device_id)
         stack.mesh.register(device_id, device_type, msg.get("capabilities") or [])
+        get_audit().record(
+            actor=device_id,
+            action="device.register",
+            resource=device_id,
+            result="ok",
+            device_type=device_type,
+        )
         await _send(
             ws,
             {"type": MessageType.REGISTERED, "session_id": f"sess_{device_id}"},
@@ -197,8 +226,35 @@ def create_integrated_app(stack: HubStack) -> FastAPI:
     async def health() -> Dict[str, Any]:
         return {
             "ok": True,
+            "status": "up",
             "online": stack.cm.get_online_devices(),
+            "count": stack.cm.connection_count(),
             "tasks": [t["task_id"] for t in stack.orch.list_tasks()],
         }
+
+    @app.get("/ready")
+    async def ready() -> Dict[str, Any]:
+        """4.2 就绪：检查存储 / 任务引擎 / 密钥配置。"""
+        from auth.secrets import audit_secrets
+
+        secrets = audit_secrets()
+        db_ok = True
+        try:
+            _ = stack.orch.list_tasks()
+            if getattr(stack, "kb", None) is not None:
+                stack.kb.list_kbs()
+        except Exception as e:  # noqa: BLE001
+            db_ok = False
+            logger.warning("ready 检查数据层失败: %s", e)
+        status = check_dependencies(
+            db_ok=db_ok,
+            model_ok=bool(stack.agents),
+            secrets_ok=secrets.ok,
+            extra={"mesh": {"ok": True, "devices": len(stack.mesh.list_devices()) if hasattr(stack.mesh, "list_devices") else 0}},
+        )
+        from fastapi.responses import JSONResponse
+
+        body = status.to_dict()
+        return JSONResponse(status_code=200 if status.ok else 503, content=body)
 
     return app

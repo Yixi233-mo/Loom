@@ -96,9 +96,20 @@ async def execute_on_server(stack, task_id: str, workflow: dict, trace_id=None) 
 
 
 def main() -> None:
+    import asyncio
+
     import uvicorn
 
     logging.basicConfig(level=logging.INFO)
+    # 2.3 / 2.7 启动密钥审计：默认 WS_SECRET 告警，生产缺密钥报错
+    from auth.secrets import warn_if_default_secret
+
+    report = warn_if_default_secret()
+    if report.errors and report.is_production:
+        for e in report.errors:
+            logger.error("启动拒绝：%s", e)
+        raise SystemExit(2)
+
     mode = os.environ.get("NETWORK_MODE", "local")
     host = "127.0.0.1" if mode == "local" else "0.0.0.0"
     port = int(os.environ.get("WS_PORT", "8765"))
@@ -108,8 +119,37 @@ def main() -> None:
     # REST 全套：/api/* + /api/llm/*
     from api.routes import mount_api
     mount_api(app, stack)
-    logger.info("Loom Hub 启动: ws://%s:%s/ws  health=/health", host, port)
-    uvicorn.run(app, host=host, port=port)
+    logger.info("Loom Hub 启动: ws://%s:%s/ws  health=/health  ready=/ready", host, port)
+
+    # 4.3 优雅停机：SIGTERM 时清理热加载/调度器
+    from observability.resilience import GracefulShutdown
+
+    shutdown = GracefulShutdown(timeout=30.0)
+
+    async def _cleanup() -> None:
+        for name in ("dsl_reloader", "scheduler"):
+            obj = getattr(stack, name, None)
+            stop = getattr(obj, "stop", None)
+            if callable(stop):
+                try:
+                    r = stop()
+                    if asyncio.iscoroutine(r):
+                        await r
+                    logger.info("已停止 %s", name)
+                except Exception as e:  # noqa: BLE001
+                    logger.warning("停止 %s 失败: %s", name, e)
+
+    shutdown.add_cleanup(_cleanup)
+
+    config = uvicorn.Config(app, host=host, port=port, timeout_graceful_shutdown=30)
+    server = uvicorn.Server(config)
+
+    async def _serve() -> None:
+        shutdown.install()
+        await server.serve()
+        await shutdown.run_cleanups()
+
+    asyncio.run(_serve())
 
 
 if __name__ == "__main__":

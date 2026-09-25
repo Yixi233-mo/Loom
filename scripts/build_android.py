@@ -18,7 +18,6 @@ import argparse
 import os
 import shutil
 import subprocess
-import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -59,7 +58,6 @@ def main() -> int:
     profile = "release" if args.release else "debug"
     task = "assembleArm64Release" if args.release else "assembleArm64Debug"
 
-    npx = "npx.cmd" if os.name == "nt" else "npx"
     # 1) Rust
     run(
         "Rust aarch64",

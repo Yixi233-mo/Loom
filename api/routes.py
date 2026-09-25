@@ -8,14 +8,24 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, FastAPI, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from integration.stack import HubStack
+from observability.audit import get_audit
+from observability.security import MAX_INPUT_CHARS
 
 
 class SessionMessageIn(BaseModel):
     role: str = "user"
     content: str = ""
+
+    @field_validator("content")
+    @classmethod
+    def _limit_content(cls, v: str) -> str:
+        # 11.1 输入长度 ≤2000
+        if len(v) > MAX_INPUT_CHARS:
+            raise ValueError(f"消息超过长度上限 {MAX_INPUT_CHARS}")
+        return v
 
 
 class TriggerIn(BaseModel):
@@ -92,6 +102,14 @@ def create_api_router(stack: HubStack, store: Optional[ApiStore] = None) -> APIR
         }
         s["messages"].append(msg)
         s["updatedAt"] = _now()
+        get_audit().record(
+            actor="api",
+            action="session.message",
+            resource=session_id,
+            result="ok",
+            role=body.role,
+            size=len(body.content),
+        )
         return msg
 
     # ---- 任务 ----

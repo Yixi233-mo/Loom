@@ -145,7 +145,9 @@ class StructuredLogger:
             if len(self.records) > self.max_records:
                 self.records = self.records[-self.max_records :]
             if self.echo:
-                line = json.dumps(rec.to_dict(), ensure_ascii=False)
+                from observability.security import redact_obj
+
+                line = json.dumps(redact_obj(rec.to_dict()), ensure_ascii=False)
                 print(line, file=self.stream or sys.stdout, flush=True)
         return rec
 

@@ -1,17 +1,25 @@
 services:
   hub:
     build: .
+    image: loom/hub:0.1.0
     ports:
       - "8765:8765"
     environment:
       - NETWORK_MODE=public
       - WS_PORT=8765
-      - WS_SECRET=${WS_SECRET:-dev-secret}
-      - LOOM_AUTH_SECRET=${LOOM_AUTH_SECRET:-loom-auth-dev}
-      - LOOM_MASTER_KEY=${LOOM_MASTER_KEY:-loom-dev-master}
+      - LOOM_ENV=${LOOM_ENV:-production}
+      - WS_SECRET=${WS_SECRET:?请设置 WS_SECRET，生产禁止 dev-secret}
+      - LOOM_AUTH_SECRET=${LOOM_AUTH_SECRET:?请设置 LOOM_AUTH_SECRET}
+      - LOOM_MASTER_KEY=${LOOM_MASTER_KEY:?请设置 LOOM_MASTER_KEY}
     volumes:
       - ./plugins:/app/plugins
+      - ./data:/app/data
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8765/health', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
 
   mcp-demo:
     image: python:3.12-slim

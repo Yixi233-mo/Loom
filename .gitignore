@@ -34,3 +34,8 @@ src-tauri/gen/android/**/build/
 src-tauri/gen/android/keystore.properties
 *.jks
 *.keystore
+
+# √‹‘ø£®2.2£©
+.env
+.env.*
+!.env.example
