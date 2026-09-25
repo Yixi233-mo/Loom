@@ -11,9 +11,9 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
-from llm.client import LLMBackedGenerator, LLMClient  # noqa: E402
-from llm.config import LLMConfigStore  # noqa: E402
-from llm.crypto import CryptoError, decrypt, encrypt, mask_secret  # noqa: E402
+from llm.client import LLMBackedGenerator, LLMClient
+from llm.config import LLMConfigStore
+from llm.crypto import CryptoError, decrypt, encrypt, mask_secret
 
 
 class TestCrypto(unittest.TestCase):

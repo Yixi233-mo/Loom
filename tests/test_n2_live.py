@@ -14,10 +14,10 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
-from device_mesh.ws_server import make_signature as sign  # noqa: E402
-from integration.ws_app import create_integrated_app  # noqa: E402
+from device_mesh.ws_server import make_signature as sign
+from integration.ws_app import create_integrated_app
 
-from scripts.run_hub_server import build_demo_stack  # noqa: E402
+from scripts.run_hub_server import build_demo_stack
 
 SECRET = "dev-secret"
 

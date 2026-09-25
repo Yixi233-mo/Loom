@@ -9,7 +9,7 @@ from __future__ import annotations
 import time
 import uuid
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from device_mesh.registry import DeviceMesh
 from sync.sync_engine import SyncEngine
@@ -21,7 +21,7 @@ class TraceEvent:
     trace_id: str
     stage: str  # trigger | route | execute | broadcast | view
     device: str
-    detail: Dict[str, Any] = field(default_factory=dict)
+    detail: dict[str, Any] = field(default_factory=dict)
     ts: float = field(default_factory=time.time)
 
 
@@ -31,17 +31,17 @@ class E2EOrchestrator:
     def __init__(
         self,
         workflow_yaml: str,
-        tools: Dict[str, Any],
-        agents: Optional[Dict[str, Any]] = None,
+        tools: dict[str, Any],
+        agents: dict[str, Any] | None = None,
     ) -> None:
         self.mesh = DeviceMesh()
         self.orch = TaskOrchestrator(self.mesh)
         self.sync = SyncEngine()
-        self.events: List[TraceEvent] = []
+        self.events: list[TraceEvent] = []
         self.workflow_yaml = workflow_yaml
         self.tools = tools
         self.agents = agents or {}
-        self.results: Dict[str, Any] = {}
+        self.results: dict[str, Any] = {}
 
     def _put(self, key: str, value: Any, device_id: str) -> None:
         # 同步直写（跳过 async 广播；E2E 断言走 changes/all_keys）
@@ -56,15 +56,15 @@ class E2EOrchestrator:
         )
 
     def register_device(
-        self, device_id: str, device_type: str, capabilities: List[str]
+        self, device_id: str, device_type: str, capabilities: list[str]
     ) -> None:
         self.mesh.register(device_id, device_type, capabilities)
 
     def trigger_from_mobile(
         self,
         mobile_id: str,
-        payload: Dict[str, Any],
-        trace_id: Optional[str] = None,
+        payload: dict[str, Any],
+        trace_id: str | None = None,
     ) -> str:
         """手机触发任务，返回 trace_id。"""
         trace_id = trace_id or str(uuid.uuid4())
@@ -129,8 +129,8 @@ class E2EOrchestrator:
         self.results[trace_id] = summary
         return trace_id
 
-    def events_for(self, trace_id: str) -> List[TraceEvent]:
+    def events_for(self, trace_id: str) -> list[TraceEvent]:
         return [e for e in self.events if e.trace_id == trace_id]
 
-    def stages(self, trace_id: str) -> List[str]:
+    def stages(self, trace_id: str) -> list[str]:
         return [e.stage for e in self.events_for(trace_id)]

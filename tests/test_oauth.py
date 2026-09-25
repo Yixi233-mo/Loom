@@ -14,8 +14,8 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
-from api.auth_routes import create_auth_router  # noqa: E402
-from auth.oauth import (  # noqa: E402
+from api.auth_routes import create_auth_router
+from auth.oauth import (
     AuthError,
     OAuthService,
     TokenExpired,

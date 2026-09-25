@@ -16,11 +16,10 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
 from integration.stack import HubStack
-from integration.ws_app import create_integrated_app  # noqa: E402
+from integration.ws_app import create_integrated_app
 from knowledge.store import KnowledgeStore
-
-from plugins.example.notes_runtime import NotesStore, make_notes_tools  # noqa: E402
-from plugins.example.workflow_runner import WorkflowRunner  # noqa: E402
+from plugins.example.notes_runtime import NotesStore, make_notes_tools
+from plugins.example.workflow_runner import WorkflowRunner
 
 logger = logging.getLogger(__name__)
 

@@ -40,7 +40,10 @@ def lint_python() -> int:
     # ruff 可选
     ruff = shutil.which("ruff")
     if ruff:
-        r = subprocess.run([ruff, "check", "."], cwd=str(ROOT))
+        r = subprocess.run(
+            [ruff, "check", "--config", str(ROOT / "apps/hub/ruff.toml"), "apps", "scripts", "tests"],
+            cwd=str(ROOT),
+        )
         if r.returncode != 0:
             errors += 1
     else:

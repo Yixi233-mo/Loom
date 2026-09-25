@@ -10,14 +10,14 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
-from knowledge.importer import (  # noqa: E402
+from knowledge.importer import (
     detect_source_kind,
     extract_text,
     guess_kind,
     import_file,
     import_path,
 )
-from knowledge.store import KnowledgeStore  # noqa: E402
+from knowledge.store import KnowledgeStore
 
 
 class TestImporter(unittest.TestCase):

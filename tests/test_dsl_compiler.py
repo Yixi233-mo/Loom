@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
-from dsl.compiler import DSLCompiler, DSLParseError  # noqa: E402
+from dsl.compiler import DSLCompiler, DSLParseError
 
 EX = ROOT / "apps" / "hub" / "dsl" / "examples"
 

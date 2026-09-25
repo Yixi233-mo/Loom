@@ -33,6 +33,13 @@
 - 三端 UI：无横滚、无写死宽、无 PC 专属交互（`src/styles/responsive.css`）  
 - 密钥只进环境变量 / `.env`（见 `SECURITY.md`）  
 
+## 构建产物（不入库）
+
+- `dist/` — Web 构建输出
+- `dist-bundle/` — MSI / NSIS / APK 安装包
+- `node_modules/` — 依赖
+- `apps/web` 的 `vite` / `tsconfig`；Python 工具配置在 `apps/hub/`
+
 ## 常用命令
 
 ```powershell

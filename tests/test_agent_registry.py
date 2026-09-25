@@ -5,19 +5,19 @@ from __future__ import annotations
 import sys
 import unittest
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
-from agent_hub.registry import AgentNotFoundError, AgentRegistry  # noqa: E402
+from agent_hub.registry import AgentNotFoundError, AgentRegistry
 
 
 def adapter_factory(tag: str):
     """构造 mock adapter：返回 {tag, prompt, kwargs}。"""
 
-    async def _adapter(prompt: str, **kwargs: Any) -> Dict[str, Any]:
+    async def _adapter(prompt: str, **kwargs: Any) -> dict[str, Any]:
         return {"tag": tag, "prompt": prompt, "kwargs": kwargs}
 
     return _adapter

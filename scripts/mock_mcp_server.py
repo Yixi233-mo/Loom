@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import Any, Dict
+from typing import Any
 
 import uvicorn
 from fastapi import FastAPI, Request
@@ -68,7 +68,7 @@ buddy_task  Work Buddy 兼容任务（演示）</pre>
 """
 
 
-def rpc_result(req_id: Any, result: Any) -> Dict[str, Any]:
+def rpc_result(req_id: Any, result: Any) -> dict[str, Any]:
     return {"jsonrpc": "2.0", "id": req_id, "result": result}
 
 
@@ -163,7 +163,7 @@ async def mcp_endpoint(request: Request) -> JSONResponse:
 
 
 @app.get("/health")
-async def health() -> Dict[str, Any]:
+async def health() -> dict[str, Any]:
     return {"ok": True, "name": "loom-demo-mcp"}
 
 

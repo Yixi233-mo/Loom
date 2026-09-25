@@ -19,23 +19,23 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
-from agent_hub.adapters.mcp_protocol import (  # noqa: E402
+from agent_hub.adapters.mcp_protocol import (
     McpClaudeCodeAdapter,
     McpJsonRpcClient,
 )
-from agent_hub.adapters.work_buddy import (  # noqa: E402
+from agent_hub.adapters.work_buddy import (
     WorkBuddyAdapter,
     work_buddy_catalog_entry,
 )
-from agent_hub.graph import build_hub_graph  # noqa: E402
-from agent_hub.mcp_catalog import (  # noqa: E402
+from agent_hub.graph import build_hub_graph
+from agent_hub.mcp_catalog import (
     builtin_mcp_catalog,
     catalog_download_links,
 )
-from agent_hub.registry import AgentRegistry  # noqa: E402
-from api.mcp_routes import create_mcp_router  # noqa: E402
+from agent_hub.registry import AgentRegistry
+from api.mcp_routes import create_mcp_router
 
-from scripts.mock_mcp_server import app as mock_mcp_app  # noqa: E402
+from scripts.mock_mcp_server import app as mock_mcp_app
 
 
 def make_tool_transport(

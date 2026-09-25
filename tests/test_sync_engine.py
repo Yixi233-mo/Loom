@@ -6,13 +6,13 @@ import asyncio
 import sys
 import unittest
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
-from sync.sync_engine import (  # noqa: E402
+from sync.sync_engine import (
     EVENT_KEY_DELETED,
     EVENT_KEY_UPDATED,
     SyncConflictError,
@@ -70,7 +70,7 @@ class TestConcurrentWrites(unittest.IsolatedAsyncioTestCase):
         """验收：两设备并发写同一 key，版本号正确递增。"""
         eng = SyncEngine()
 
-        async def write(dev: str, val: int) -> Dict[str, Any]:
+        async def write(dev: str, val: int) -> dict[str, Any]:
             return await eng.put("shared", val, dev)
 
         r1, r2 = await asyncio.gather(write("pc-1", 1), write("mobile-1", 2))
@@ -162,7 +162,7 @@ class TestIncrementalPull(unittest.IsolatedAsyncioTestCase):
 
 class TestBroadcast(unittest.IsolatedAsyncioTestCase):
     async def test_put_broadcasts(self):
-        events: List[Tuple[str, dict]] = []
+        events: list[tuple[str, dict]] = []
 
         def on_broadcast(event: str, data: dict) -> None:
             events.append((event, data))
@@ -175,7 +175,7 @@ class TestBroadcast(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(events[0][1]["version"], entry["version"])
 
     async def test_delete_broadcasts(self):
-        events: List[Tuple[str, dict]] = []
+        events: list[tuple[str, dict]] = []
         eng = SyncEngine(on_broadcast=lambda e, d: events.append((e, d)))
         await eng.put("k", 1, "pc")
         await eng.delete("k", "pc")
@@ -183,7 +183,7 @@ class TestBroadcast(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(events[1][0], EVENT_KEY_DELETED)
 
     async def test_async_broadcast(self):
-        events: List[str] = []
+        events: list[str] = []
 
         async def on_broadcast(event: str, data: dict) -> None:
             events.append(event)
@@ -202,7 +202,7 @@ class TestBroadcast(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(eng.get("k")["value"], 1)
 
     async def test_no_broadcast_when_conflict(self):
-        events: List[str] = []
+        events: list[str] = []
         eng = SyncEngine(on_broadcast=lambda e, d: events.append(e))
         await eng.put("k", 1, "pc", expected_version=0)
         with self.assertRaises(SyncConflictError):

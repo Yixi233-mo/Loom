@@ -11,14 +11,14 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
-from observability.cost import TOKEN_LIMIT_PER_TASK, CostMeter  # noqa: E402
-from observability.logging import (  # noqa: E402
+from observability.cost import TOKEN_LIMIT_PER_TASK, CostMeter
+from observability.logging import (
     DEG_RULES,
     StructuredLogger,
     new_trace_id,
 )
 
-from scripts.run_hub_server import build_demo_stack  # noqa: E402
+from scripts.run_hub_server import build_demo_stack
 
 
 class TestStructuredLogger(unittest.TestCase):

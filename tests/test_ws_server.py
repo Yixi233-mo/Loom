@@ -7,7 +7,7 @@ import sys
 import time
 import unittest
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 from fastapi.testclient import TestClient
 
@@ -15,16 +15,16 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
-from device_mesh.connection_manager import ConnectionManager  # noqa: E402
-from device_mesh.heartbeat import HeartbeatMonitor  # noqa: E402
-from device_mesh.protocol import (  # noqa: E402
+from device_mesh.connection_manager import ConnectionManager
+from device_mesh.heartbeat import HeartbeatMonitor
+from device_mesh.protocol import (
     ErrorCode,
     MessageType,
     ProtocolError,
     build_message,
     parse_message,
 )
-from device_mesh.ws_server import (  # noqa: E402
+from device_mesh.ws_server import (
     HubRuntime,
     create_app,
     make_signature,
@@ -59,7 +59,7 @@ def heartbeat_msg(device_id: str) -> str:
     return json.dumps({"type": "heartbeat", "device_id": device_id, "ts": time.time()})
 
 
-def recv_json(ws) -> Dict[str, Any]:
+def recv_json(ws) -> dict[str, Any]:
     return json.loads(ws.receive_text())
 
 
@@ -122,7 +122,7 @@ class TestConnectionManager(unittest.IsolatedAsyncioTestCase):
 
     async def test_broadcast(self):
         cm = ConnectionManager()
-        sent: List[str] = []
+        sent: list[str] = []
 
         class FakeWS:
             async def send_text(self, t):
@@ -273,7 +273,7 @@ class TestWSEdge(unittest.TestCase):
             self.assertEqual(resp["code"], ErrorCode.INVALID_MESSAGE.value)
 
     def test_result_handler(self):
-        captured: List[dict] = []
+        captured: list[dict] = []
         rt = HubRuntime(secret=SECRET, on_result=lambda m: captured.append(m))
         client = TestClient(create_app(rt))
         with client.websocket_connect("/ws") as ws:

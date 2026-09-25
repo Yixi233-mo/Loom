@@ -45,3 +45,9 @@ plugins/_smoke*
 plugins/_n9_out/
 plugins/_hot_test/
 plugins/_llm_*.json
+
+# 构建产物（发布时生成，不入库）
+dist/
+dist-bundle/
+app.html
+docs/app-single.html

@@ -11,14 +11,14 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
-from dsl.hot_reload import (  # noqa: E402
+from dsl.hot_reload import (
     DslHotReloader,
     apply_cron_to_scheduler,
     apply_tools_to_stack,
 )
-from task_orchestrator.scheduler import TriggerScheduler  # noqa: E402
+from task_orchestrator.scheduler import TriggerScheduler
 
-from scripts.run_hub_server import build_demo_stack  # noqa: E402
+from scripts.run_hub_server import build_demo_stack
 
 
 def write(p: Path, text: str) -> None:

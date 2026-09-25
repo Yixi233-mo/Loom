@@ -11,13 +11,13 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
-from task_orchestrator.scheduler import (  # noqa: E402
+from task_orchestrator.scheduler import (
     TriggerScheduler,
     load_workflows_cron,
     parse_cron,
 )
 
-from scripts.run_hub_server import build_demo_stack  # noqa: E402
+from scripts.run_hub_server import build_demo_stack
 
 
 class TestCronParse(unittest.TestCase):

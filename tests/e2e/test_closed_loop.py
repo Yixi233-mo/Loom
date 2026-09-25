@@ -10,8 +10,9 @@ ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
-from plugins.example.notes_runtime import NotesStore, make_notes_tools  # noqa: E402
-from tests.e2e.orchestrator import E2EOrchestrator  # noqa: E402
+from plugins.example.notes_runtime import NotesStore, make_notes_tools
+
+from tests.e2e.orchestrator import E2EOrchestrator
 
 WORKFLOW = ROOT / "apps" / "hub" / "plugins" / "example" / "workflows" / "mobile_to_pc_pdf.yaml"
 

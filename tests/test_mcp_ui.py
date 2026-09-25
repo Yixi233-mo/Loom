@@ -13,8 +13,8 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
-from agent_hub.adapters.mcp_protocol import McpJsonRpcClient  # noqa: E402
-from api.mcp_routes import create_mcp_router  # noqa: E402
+from agent_hub.adapters.mcp_protocol import McpJsonRpcClient
+from api.mcp_routes import create_mcp_router
 
 
 class TestMcpProbeApi(unittest.TestCase):

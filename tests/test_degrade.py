@@ -11,13 +11,13 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
-from agent_hub.degrade import (  # noqa: E402
+from agent_hub.degrade import (
     DegradationChain,
     Provider,
     default_chain,
     rules_provider,
 )
-from observability.logging import (  # noqa: E402
+from observability.logging import (
     DEG_FALLBACK_AGENT,
     DEG_FULL,
     DEG_RULES,

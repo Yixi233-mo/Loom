@@ -5,13 +5,13 @@ from __future__ import annotations
 import sys
 import unittest
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
-from agent_hub.graph import (  # noqa: E402
+from agent_hub.graph import (
     AGENT_CODE,
     AGENT_RAG,
     build_hub_graph,
@@ -20,11 +20,11 @@ from agent_hub.graph import (  # noqa: E402
     run_hub,
     run_hub_sync,
 )
-from agent_hub.registry import AgentRegistry  # noqa: E402
+from agent_hub.registry import AgentRegistry
 
 
 def echo_adapter_factory(tag: str):
-    async def _adapter(prompt: str, **kwargs: Any) -> Dict[str, Any]:
+    async def _adapter(prompt: str, **kwargs: Any) -> dict[str, Any]:
         return {"tag": tag, "prompt": prompt}
 
     return _adapter

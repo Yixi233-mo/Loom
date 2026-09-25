@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
-from data import backup_db, resolve_db_path, restore_db  # noqa: E402
+from data import backup_db, resolve_db_path, restore_db
 
 
 def main() -> int:
