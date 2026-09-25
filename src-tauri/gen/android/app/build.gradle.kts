@@ -13,9 +13,26 @@ val tauriProperties = Properties().apply {
     }
 }
 
+// U/Android：release 签名（本地 keystore.properties，gitignore）
+val keystoreProperties = Properties().apply {
+    val ks = rootProject.file("keystore.properties")
+    if (ks.exists()) ks.inputStream().use { load(it) }
+}
+val hasReleaseSigning = keystoreProperties.getProperty("storeFile") != null
+
 android {
     compileSdk = 36
     namespace = "app.loom.shell"
+    signingConfigs {
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = file(keystoreProperties.getProperty("storeFile"))
+                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+            }
+        }
+    }
     defaultConfig {
         manifestPlaceholders["usesCleartextTraffic"] = "false"
         applicationId = "app.loom.shell"
@@ -43,6 +60,7 @@ android {
                     .plus(getDefaultProguardFile("proguard-android-optimize.txt"))
                     .toList().toTypedArray()
             )
+            signingConfig = if (hasReleaseSigning) signingConfigs.getByName("release") else null
         }
     }
     kotlinOptions {

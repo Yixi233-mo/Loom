@@ -29,3 +29,8 @@ dist-bundle/
 src-tauri/gen/android/app/src/main/jniLibs/
 src-tauri/gen/android/.gradle/
 src-tauri/gen/android/**/build/
+
+# Android 签名（本机）
+src-tauri/gen/android/keystore.properties
+*.jks
+*.keystore

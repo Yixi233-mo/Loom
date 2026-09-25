@@ -39,16 +39,16 @@ def run(title: str, cmd: list[str], cwd: Path, env: dict | None = None) -> None:
 
 def copy_so(profile: str) -> Path:
     """Windows 无符号链接权限时用复制代替 symlink。"""
-    so = NATIVE / profile / "libloom_shell.so"
+    so = (NATIVE / profile / "libloom_shell.so").resolve()
     if not so.exists():
         raise SystemExit(f"missing {so} — 先编 Rust：cargo build --target aarch64-linux-android --lib")
-    dst_dir = GEN / "app" / "src" / "main" / "jniLibs" / "arm64-v8a"
+    dst_dir = (GEN / "app" / "src" / "main" / "jniLibs" / "arm64-v8a").resolve()
     dst_dir.mkdir(parents=True, exist_ok=True)
     dst = dst_dir / "libloom_shell.so"
     if dst.exists() or dst.is_symlink():
         dst.unlink()
     shutil.copy2(so, dst)
-    print(f"copied {so.name} -> jniLibs ({dst.stat().st_size} bytes)")
+    print("copied", so, "->", dst, dst.stat().st_size, "bytes")
     return dst
 
 
