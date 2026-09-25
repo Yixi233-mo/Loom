@@ -60,10 +60,11 @@ ok("宽度映射 pc/tablet/mobile", () => {
   assert.equal(detectDeviceType(375), "mobile");
 });
 
-ok("layoutFor 三档", () => {
-  assert.equal(layoutFor("pc"), "wide");
-  assert.equal(layoutFor("tablet"), "medium");
-  assert.equal(layoutFor("mobile"), "narrow");
+ok("layoutFor 四档", () => {
+  assert.equal(layoutFor("pc", 1440), "wide");
+  assert.equal(layoutFor("tablet", 1100), "medium");
+  assert.equal(layoutFor("tablet", 900), "compact");
+  assert.equal(layoutFor("mobile", 375), "narrow");
 });
 
 ok("detectDevice 字段完整", () => {

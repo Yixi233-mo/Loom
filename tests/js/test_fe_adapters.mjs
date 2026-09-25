@@ -33,13 +33,16 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
 // --- Web 断点 ---
 {
+  // U3 四档：sm/md/lg/xl
   assert.deepEqual(breakpointOf(1440, "pc"), {
-    name: "lg",
+    name: "xl",
     columns: 3,
     isMobile: false,
     isTablet: false,
     isDesktop: true,
   });
+  assert.equal(breakpointOf(1100, "tablet").name, "lg");
+  assert.equal(breakpointOf(900, "tablet").name, "md");
   assert.equal(breakpointOf(900, "tablet").columns, 2);
   assert.equal(breakpointOf(375, "mobile").columns, 1);
   assert.equal(breakpointOf(375, "mobile").isMobile, true);
@@ -183,7 +186,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
     invoke: async () => ({ ok: true }),
   });
   assert.equal(pc.host, "tauri-desktop");
-  assert.equal(pc.breakpoint.name, "lg");
+  assert.equal(pc.breakpoint.name, "xl");
 }
 
 // --- 样式与验证步骤文档 ---

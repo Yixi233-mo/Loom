@@ -23,7 +23,8 @@
   overflow: hidden;
 }
 
-.app-shell.layout-medium {
+.app-shell.layout-medium,
+.app-shell.layout-compact {
   grid-template-columns: 72px 1fr;
 }
 
@@ -40,6 +41,11 @@
 .layout-narrow .app-main {
   /* 为 fixed tabbar 留出安全区，避免内容被遮挡且不引发全局滚动 */
   padding-bottom: calc(72px + var(--safe-bottom, 0px));
+}
+
+.layout-compact .app-main {
+  padding-left: 12px;
+  padding-right: 12px;
 }
 
 /* —— 侧栏（WorkBuddy 风）—— */
@@ -67,8 +73,53 @@
 }
 
 .layout-medium .app-side .side-label,
-.layout-narrow .app-side {
+.layout-compact .app-side .side-label {
   display: none;
+}
+
+/* U3：窄屏侧栏变抽屉（默认收起，data-side-open 打开） */
+.layout-narrow .app-side {
+  position: fixed;
+  z-index: var(--z-drawer);
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: min(280px, 84vw);
+  transform: translateX(-105%);
+  transition: transform var(--duration-normal, 0.2s) ease;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+}
+.layout-narrow[data-side-open="true"] .app-side {
+  transform: translateX(0);
+}
+.side-scrim {
+  display: none;
+}
+.layout-narrow[data-side-open="true"] .side-scrim {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-drawer) - 1);
+  background: rgba(30, 24, 18, 0.35);
+  border: 0;
+  padding: 0;
+}
+
+/* 抽屉触发按钮：仅窄屏可见 */
+.side-toggle {
+  display: none;
+}
+.layout-narrow .side-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid var(--glass-border);
+  background: var(--panel);
+  cursor: pointer;
+  margin-right: 8px;
 }
 
 .app-side .mark {

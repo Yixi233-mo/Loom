@@ -16,8 +16,8 @@ export interface SafeAreaInsets {
 }
 
 export interface BreakpointInfo {
-  /** sm < 768 · md 768–1279 · lg >= 1280 */
-  name: "sm" | "md" | "lg";
+  /** U3 四档：sm <768 · md 768–1023 · lg 1024–1279 · xl >=1280 */
+  name: "sm" | "md" | "lg" | "xl";
   columns: 1 | 2 | 3;
   isMobile: boolean;
   isTablet: boolean;
@@ -36,8 +36,8 @@ export function detectHost(opts?: {
 }
 
 export function breakpointOf(width: number, deviceType: DeviceType): BreakpointInfo {
-  const name = width < 768 ? "sm" : width < 1280 ? "md" : "lg";
-  const columns = name === "lg" ? 3 : name === "md" ? 2 : 1;
+  const name = width < 768 ? "sm" : width < 1024 ? "md" : width < 1280 ? "lg" : "xl";
+  const columns = name === "xl" ? 3 : name === "lg" || name === "md" ? 2 : 1;
   return {
     name,
     columns,

@@ -116,6 +116,7 @@ export default function App() {
   const [pageLoading, setPageLoading] = React.useState(false);
   const [pageError, setPageError] = React.useState<string | null>(null);
   const [taskPanelOpen, setTaskPanelOpen] = React.useState(false);
+  const [sideOpen, setSideOpen] = React.useState(false);
   const route = useHashRoute();
   const activeRoute: AppRoute = route.route;
 
@@ -157,10 +158,18 @@ export default function App() {
     {
       className: `app-shell layout-${platform.layout}`,
       "data-app": "loom-shell",
+      "data-side-open": sideOpen ? "true" : "false",
+      "data-bp": platform.breakpoint.name,
       "data-device": platform.device.deviceType,
       "data-layout": platform.layout,
     },
 
+    e("button", {
+      type: "button",
+      className: "side-scrim",
+      "aria-label": "关闭菜单",
+      onClick: () => setSideOpen(false),
+    }),
     e(
       "aside",
       { className: "app-side", "data-view": "sidebar" },
@@ -218,7 +227,10 @@ export default function App() {
               className: "nav-link" + (activeRoute === id ? " is-active" : ""),
               "data-route": id,
               "aria-current": activeRoute === id ? "page" : undefined,
-              onClick: () => navigate(id),
+              onClick: () => {
+                navigate(id);
+                setSideOpen(false);
+              },
             },
             e("span", { className: "nav-icon", "aria-hidden": "true" }, icon),
             e("span", { className: "nav-text" }, label)
@@ -305,6 +317,18 @@ export default function App() {
       "header",
       { className: "app-header" },
       e(
+        "button",
+        {
+          type: "button",
+          className: "side-toggle",
+          "data-action": "toggle-side",
+          "aria-label": "打开菜单",
+          "aria-expanded": sideOpen ? "true" : "false",
+          onClick: () => setSideOpen((v) => !v),
+        },
+        "☰"
+      ),
+      e(
         "div",
         null,
         e("h1", { className: "app-title" }, "Loom · 织巢"),
@@ -334,7 +358,10 @@ export default function App() {
                 "nav-link" + (activeRoute === id ? " is-active" : ""),
               "data-route": id,
               "aria-current": activeRoute === id ? "page" : undefined,
-              onClick: () => navigate(id),
+              onClick: () => {
+                navigate(id);
+                setSideOpen(false);
+              },
             },
             label
           )
@@ -457,6 +484,10 @@ export default function App() {
           onAttach: () => navigate("files"),
           onCopy: (text: string) => {
             void navigator.clipboard?.writeText(text);
+          },
+          onOpenTask: () => {
+            setTaskPanelOpen(true);
+            navigate("tasks");
           },
           onRetryMessage: (text: string) => {
             stores.session.appendMessage({ role: "user", content: text });

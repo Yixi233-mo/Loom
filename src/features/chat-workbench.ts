@@ -31,6 +31,7 @@ function MessageRowImpl(props: {
   message: SessionMessage;
   onCopy?: (text: string) => void;
   onRetry?: (text: string) => void;
+  onOpenTask?: (taskId: string) => void;
 }) {
   const m = props.message;
   const isUser = m.role === "user";
@@ -63,9 +64,16 @@ function MessageRowImpl(props: {
       e("div", { className: "msg-content" }, m.content),
       m.taskId
         ? e(
-            "div",
-            { className: "msg-task-link", "data-task-id": m.taskId },
-            `关联任务 ${m.taskId}`
+            "button",
+            {
+              type: "button",
+              className: "msg-task-tag",
+              "data-task-id": m.taskId,
+              "data-action": "goto-task",
+              title: "打开任务中心",
+              onClick: () => props.onOpenTask?.(String(m.taskId)),
+            },
+            `任务 ${m.taskId}`
           )
         : null,
       e(
@@ -176,6 +184,7 @@ export function ChatWorkbench(props: {
   onAttach?: () => void;
   onCopy?: (text: string) => void;
   onRetryMessage?: (text: string) => void;
+  onOpenTask?: (taskId: string) => void;
   prompts?: PromptChip[];
   activePromptId?: string | null;
   activePromptTitle?: string;
@@ -270,6 +279,7 @@ export function ChatWorkbench(props: {
                     message: m,
                     onCopy: props.onCopy,
                     onRetry: props.onRetryMessage,
+                    onOpenTask: props.onOpenTask,
                   })
                 )
               ),

@@ -6,6 +6,8 @@ export {
   detectDevice,
   detectDeviceType,
   layoutFor,
+  breakpointName,
+  type BpName,
   type DeviceInfo,
   type DeviceType,
   type LayoutMode,
@@ -74,7 +76,7 @@ export function createPlatformLayer(
   const tauri = new TauriBridge(tauriImpl);
   return {
     device,
-    layout: layoutFor(device.deviceType),
+    layout: layoutFor(device.deviceType, device.width),
     capabilities: capabilitiesFor(device.deviceType),
     tauri,
     host: detectHost({ hasTauri: tauri.available, deviceType: device.deviceType }),

@@ -21,6 +21,16 @@ export function detectDeviceType(width: number, height?: number): DeviceType {
   return "pc";
 }
 
+/** U3：四档视口 — xl 宽屏 / lg 中屏 / md 窄栏 / sm 移动 */
+export type BpName = "sm" | "md" | "lg" | "xl";
+
+export function breakpointName(width: number): BpName {
+  if (width < 768) return "sm";
+  if (width < 1024) return "md";
+  if (width < 1280) return "lg";
+  return "xl";
+}
+
 export function detectDevice(
   width?: number,
   height?: number
@@ -39,11 +49,21 @@ export function detectDevice(
   };
 }
 
-/** 布局模式：三栏 / 双栏 / 单栏 */
-export type LayoutMode = "wide" | "medium" | "narrow";
+/**
+ * 布局四档（U3）：
+ * wide 宽屏侧栏 | medium 中屏侧栏 | compact 图标栏 | narrow 移动 Tab+抽屉
+ */
+export type LayoutMode = "wide" | "medium" | "compact" | "narrow";
 
-export function layoutFor(deviceType: DeviceType): LayoutMode {
-  if (deviceType === "pc") return "wide";
-  if (deviceType === "tablet") return "medium";
-  return "narrow";
+export function layoutFor(
+  deviceType: DeviceType,
+  width?: number
+): LayoutMode {
+  const w = width ?? (typeof window !== "undefined" ? window.innerWidth : 1280);
+  const bp = breakpointName(w);
+  if (bp === "sm") return "narrow";
+  if (bp === "md") return "compact";
+  if (bp === "lg") return "medium";
+  // xl：桌面宽屏；小高度设备仍走 medium
+  return deviceType === "mobile" ? "narrow" : "wide";
 }

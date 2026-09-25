@@ -30,7 +30,7 @@ export function DeviceHubPage(props: {
   onlineAgents?: number;
   onRefresh?: () => void;
   onPing?: (deviceId: string) => void;
-  layout?: "wide" | "medium" | "narrow";
+  layout?: "wide" | "medium" | "compact" | "narrow";
 }) {
   const devices = props.devices ?? [
     { deviceId: "hub-pc-1", name: "本机 Hub / PC", kind: "pc" as const, online: true, lastSeen: "刚刚", capabilities: ["shell.exec", "file.read", "MCP 工具"] },
