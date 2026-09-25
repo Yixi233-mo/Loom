@@ -17,7 +17,12 @@
     "test:py": "python -m unittest discover -s tests",
     "test:rust": "cd src-tauri && cargo test",
     "lint": "python scripts/lint_all.py",
-    "ci": "python scripts/lint_all.py && python scripts/test_all.py"
+    "ci": "python scripts/lint_all.py && python scripts/test_all.py",
+    "tauri:dev": "npx @tauri-apps/cli dev",
+    "tauri:build": "npx @tauri-apps/cli build",
+    "build:msi": "npx @tauri-apps/cli build --bundles msi",
+    "build:bundle": "npx @tauri-apps/cli build --bundles msi,nsis",
+    "build:windows": "python scripts/build_windows.py"
   },
   "dependencies": {
     "react": "^19.0.0",

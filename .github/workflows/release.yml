@@ -36,8 +36,28 @@ jobs:
           push: false
           tags: loom-hub:${{ github.ref_name }}
 
-  release:
+  windows-msi:
     needs: build-test
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: dtolnay/rust-toolchain@stable
+      - run: npm install
+      - name: Build MSI + NSIS
+        run: python scripts/build_windows.py
+      - name: Upload Windows installers
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist-bundle/*.msi
+            dist-bundle/*.exe
+          generate_release_notes: true
+
+  release:
+    needs: [build-test, windows-msi]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

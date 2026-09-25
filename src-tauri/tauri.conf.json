@@ -25,7 +25,23 @@
   },
   "bundle": {
     "active": true,
-    "targets": "all",
-    "icon": ["icons/icon.ico"]
+    "targets": ["msi", "nsis"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/256x256.png",
+      "icons/icon.ico"
+    ],
+    "category": "Productivity",
+    "shortDescription": "Loom 织巢 — 跨端 Agent 工作台",
+    "longDescription": "把 Windows / 平板 / 手机编织成一台电脑，把手边的 AI Agent 编织成一个团队。",
+    "copyright": "© 2026 Loom",
+    "windows": {
+      "webviewInstallMode": { "type": "downloadBootstrapper" },
+      "nsis": {
+        "displayLanguageSelector": true,
+        "installMode": "currentUser"
+      }
+    }
   }
 }

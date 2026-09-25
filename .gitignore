@@ -21,3 +21,5 @@ e2e_hub.*
 plugins/_e2e_*
 plugins/_test_*
 plugins/_smoke*
+
+dist-bundle/

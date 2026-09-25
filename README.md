@@ -82,6 +82,9 @@ npm run build:single       # 打开 app.html
 # 桌面 Win
 cd src-tauri && cargo run  # 另开终端保持 npm run dev
 
+# Windows 安装包（.msi + NSIS setup）
+npm run build:windows      # 产物在 dist-bundle/
+
 # 移动预览：手机访问 http://<PC-IP>:5173/（正式 Tauri 打包待配置）
 
 # 演示 MCP
@@ -108,6 +111,9 @@ npm run build:single       # app.html
 
 # Hub（Docker）
 docker compose up hub      # :8765
+
+# Windows 安装包
+npm run build:windows      # dist-bundle/*.msi + *-setup.exe
 ```
 
 - CI：`.github/workflows/ci.yml`
