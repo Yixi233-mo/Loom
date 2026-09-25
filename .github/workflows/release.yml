@@ -22,19 +22,47 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - run: pip install -r requirements.txt
       - run: npm install
+      - name: Check version consistency (3.8)
+        run: python scripts/check_versions.py
       - run: python scripts/lint_all.py
       - run: python scripts/test_all.py
 
   docker:
     needs: build-test
     runs-on: ubuntu-latest
+    # 推送 registry：配置 secrets 后启用（DOCKERHUB_USERNAME / DOCKERHUB_TOKEN）
     steps:
       - uses: actions/checkout@v4
-      - uses: docker/build-push-action@v6
+      - uses: docker/setup-buildx-action@v3
+      - name: Build Hub image (fixed tag)
+        uses: docker/build-push-action@v6
         with:
           context: .
           push: false
-          tags: loom-hub:${{ github.ref_name }}
+          tags: |
+            loom/hub:0.1.0
+            loom-hub:${{ github.ref_name }}
+          load: true
+      - name: Save image artifact
+        run: docker save loom/hub:0.1.0 | gzip > loom-hub-0.1.0.tar.gz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: loom-hub-image
+          path: loom-hub-0.1.0.tar.gz
+      - name: Login and push (optional)
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          if [ -z "$DOCKERHUB_USERNAME" ]; then
+            echo "skip registry push (no DOCKERHUB_USERNAME)"
+            exit 0
+          fi
+          echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+          docker tag loom/hub:0.1.0 "$DOCKERHUB_USERNAME/loom-hub:0.1.0"
+          docker tag loom/hub:0.1.0 "$DOCKERHUB_USERNAME/loom-hub:${GITHUB_REF_NAME}"
+          docker push "$DOCKERHUB_USERNAME/loom-hub:0.1.0"
+          docker push "$DOCKERHUB_USERNAME/loom-hub:${GITHUB_REF_NAME}"
 
   windows-msi:
     needs: build-test
@@ -54,9 +82,42 @@ jobs:
           files: |
             dist-bundle/*.msi
             dist-bundle/*.exe
+            CHANGELOG.md
+            INSTALL.md
           generate_release_notes: true
 
-  release:
+  android-apk:
+    needs: build-test
+    runs-on: ubuntu-latest
+    # 需要 Android SDK/NDK；有 secrets 时构建并上传 APK
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+      - run: npm install
+      - name: Build arm64 APK (if toolchain ready)
+        run: python scripts/build_android.py --release
+        continue-on-error: true
+      - name: Upload APK
+        if: hashFiles('dist-bundle/*.apk') != ''
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist-bundle/*.apk
+          generate_release_notes: true
+
+  release-docs:
     needs: [build-test, windows-msi]
     runs-on: ubuntu-latest
     steps:
@@ -66,9 +127,30 @@ jobs:
           node-version: "22"
       - run: npm install
       - run: npm run build:single
-      - name: Upload app.html to GitHub Release
+      - name: Upload app.html + docs to Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
             app.html
+            CHANGELOG.md
+            INSTALL.md
+            SECURITY.md
+            RUNBOOK.md
           generate_release_notes: true
+
+  notify-failure:
+    needs: [build-test, docker, windows-msi, android-apk, release-docs]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create failure issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Release ${context.ref} failed`,
+              body: `Workflow: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}\nRollback: see RUNBOOK.md §5`,
+              labels: ["release", "ci-failure"],
+            });

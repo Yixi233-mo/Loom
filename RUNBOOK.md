@@ -30,6 +30,8 @@ docker compose stop hub   # SIGTERM → ≤30s 优雅停机
 
 ## 2. 数据
 
+镜像固定 tag：**loom/hub:0.1.0**（勿用 latest）。版本一致性：python scripts/check_versions.py。
+
 - 默认库：`./data/loom.db`（`LOOM_DB_PATH` 可覆盖）
 - 自动：建目录、建表、WAL、迁移（`migrations/README.md`）
 
