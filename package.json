@@ -22,7 +22,9 @@
     "tauri:build": "npx @tauri-apps/cli build",
     "build:msi": "npx @tauri-apps/cli build --bundles msi",
     "build:bundle": "npx @tauri-apps/cli build --bundles msi,nsis",
-    "build:windows": "python scripts/build_windows.py"
+    "build:windows": "python scripts/build_windows.py",
+    "build:android": "python scripts/build_android.py",
+    "tauri:android": "npx @tauri-apps/cli android build --debug --apk -t aarch64"
   },
   "dependencies": {
     "react": "^19.0.0",

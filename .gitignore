@@ -23,3 +23,9 @@ plugins/_test_*
 plugins/_smoke*
 
 dist-bundle/
+
+# Android 打包产物 / 本地 SDK
+dist-bundle/
+src-tauri/gen/android/app/src/main/jniLibs/
+src-tauri/gen/android/.gradle/
+src-tauri/gen/android/**/build/
