@@ -1,21 +1,37 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Loom / Tauri Android — 防止 R8 混淆导致启动闪退
+# 11.x WebView + Tauri JNI 桥不能被裁剪
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Tauri / WRY / JNI
+-keep class com.tauri.** { *; }
+-keep class app.tauri.** { *; }
+-keep class tauri.** { *; }
+-keep class wry.** { *; }
+-keep class wu.jiu.** { *; }
+-keep class app.loom.shell.** { *; }
+-keep class app.loom.shell.MainActivity { *; }
+-keep class app.loom.shell.TauriActivity { *; }
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# 保留 native 方法与 JNI 注册
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+-keepclassmembers class * {
+    @android.webkit.JavascriptInterface <methods>;
+}
+-keepattributes JavascriptInterface
+-keepattributes *Annotation*
+-keepattributes SourceFile,LineNumberTable
+-keepattributes InnerClasses,EnclosingMethod
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Kotlin / coroutines
+-keep class kotlin.** { *; }
+-keep class kotlinx.** { *; }
+-dontwarn kotlin.**
+-dontwarn kotlinx.**
+
+# WebView
+-keep class android.webkit.** { *; }
+-dontwarn android.webkit.**
+
+# 签名 / keystore 相关勿混淆入口
+-keep class androidx.core.content.FileProvider { *; }

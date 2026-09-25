@@ -34,7 +34,8 @@ android {
         }
     }
     defaultConfig {
-        manifestPlaceholders["usesCleartextTraffic"] = "false"
+        // 兼容：局域网 Hub 为 http，必须允许明文，否则 WebView 连不上
+        manifestPlaceholders["usesCleartextTraffic"] = "true"
         applicationId = "app.loom.shell"
         minSdk = 24
         targetSdk = 36
@@ -54,7 +55,9 @@ android {
             }
         }
         getByName("release") {
-            isMinifyEnabled = true
+            // 兼容：R8 曾导致真机闪退；保留 proguard 规则以备后续再开
+            isMinifyEnabled = false
+            isShrinkResources = false
             proguardFiles(
                 *fileTree(".") { include("**/*.pro") }
                     .plus(getDefaultProguardFile("proguard-android-optimize.txt"))

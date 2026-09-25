@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">"Loom Shell"</string>
-    <string name="main_activity_title">"Loom Shell"</string>
+    <string name="app_name">"Loom"</string>
+    <string name="main_activity_title">"Loom"</string>
 </resources>

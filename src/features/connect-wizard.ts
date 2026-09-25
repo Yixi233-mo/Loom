@@ -8,6 +8,31 @@ import { qrToSvg } from "./qr-code.ts";
 
 const e = React.createElement;
 
+/** 旧 WebView 兼容：clipboard / crypto 不存在时不抛 */
+export function safeClipboard(text: string): Promise<boolean> {
+  try {
+    const n: any = (globalThis as any).navigator;
+    if (n?.clipboard?.writeText) return n.clipboard.writeText(text).then(() => true, () => false);
+  } catch {
+    /* ignore */
+  }
+  try {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.left = "-9999px";
+    document.body.appendChild(ta);
+    ta.select();
+    const ok = document.execCommand && document.execCommand("copy");
+    document.body.removeChild(ta);
+    return Promise.resolve(!!ok);
+  } catch {
+    return Promise.resolve(false);
+  }
+}
+
+
 export type TaskPreview = {
   title: string;
   trigger: string;
@@ -237,7 +262,7 @@ export function PairingPanel(props: {
             "data-action": "pairing-copy",
             onClick: () => {
               const text = info ? `${info.url}\n${info.hub}` : "";
-              void navigator.clipboard?.writeText(text).then(() => setCopied(true));
+              void safeClipboard(text).then((ok) => setCopied(!!ok));
             },
           },
           copied ? "已复制" : "复制链接"
