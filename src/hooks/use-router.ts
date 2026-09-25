@@ -7,6 +7,7 @@ export type AppRoute =
   | "chat"
   | "tasks"
   | "files"
+  | "knowledge"
   | "agents"
   | "settings"
   | "mcp"
@@ -30,6 +31,7 @@ const VALID_ROUTES: readonly AppRoute[] = [
   "chat",
   "tasks",
   "files",
+  "knowledge",
   "agents",
   "settings",
   "mcp",

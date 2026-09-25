@@ -1,0 +1,19 @@
+{
+  "kbs": {
+    "builtin": "内置知识库"
+  },
+  "docs": [
+    {
+      "id": "kb-demo001",
+      "title": "部署流程",
+      "content": "使用 docker compose up hub 启动",
+      "tags": [
+        "运维"
+      ],
+      "source": "manual",
+      "kb": "builtin",
+      "created_at": 1790265678.9,
+      "updated_at": 1790265678.9
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 /**
- * Agent 状态页 — 谁能干活、干得好不好（中文说明）
+ * Agent 状态页 — 中文说明 · 宽文排版 · 小按钮
  */
 
 import * as React from "react";
@@ -27,11 +27,11 @@ const AGENT_META: Record<string, { title: string; desc: string }> = {
   },
   claude_code: {
     title: "Claude Code",
-    desc: "外部编码助手（需本机/MCP 已连接）。",
+    desc: "外部编码助手（需本机 / MCP 已连接）。",
   },
   work_buddy: {
     title: "Work Buddy",
-    desc: "腾讯桌面助手：邮件/云服务等工具（已连 connector-proxy）。",
+    desc: "腾讯桌面助手：邮件 / 云服务等工具。",
   },
   ollama: {
     title: "本地模型（Ollama）",
@@ -57,12 +57,7 @@ const DEG_TXT: Record<number, string> = {
 };
 
 function metaFor(name: string) {
-  return (
-    AGENT_META[name] ?? {
-      title: name,
-      desc: "联邦中的一个助手节点。",
-    }
-  );
+  return AGENT_META[name] ?? { title: name, desc: "联邦中的一个助手节点。" };
 }
 
 export function AgentsPage(props: {
@@ -97,26 +92,22 @@ export function AgentsPage(props: {
         "div",
         { className: "agent-help glass", "data-view": "agent-help" },
         e("h3", null, "这页是干什么的？"),
-        e("p", null, "Loom 会把你的活派给不同的「助手」去干。这里列出所有助手，告诉你："),
         e(
-          "ul",
+          "p",
           null,
-          e("li", null, e("b", null, "状态"), " — 现在能不能干活（在线 / 忙碌 / 降级 / 离线）"),
-          e("li", null, e("b", null, "能干什么"), " — 比如写代码、查资料、跑命令"),
-          e("li", null, e("b", null, "降级档位"), " — 主力挂了以后退到哪一档"),
-          e("li", null, e("b", null, "延迟 / tokens"), " — 上次调用快不快、费了多少")
+          "Loom 把活派给不同「助手」。这里看每个助手：状态（在线/忙碌/降级/离线）、能干什么、降级档位、上次速度与 tokens。点右侧「测试」可验证链路。"
         ),
         e(
           "p",
           { className: "hint" },
-          `当前 ${online} 个在线 / 共 ${props.agents.length} 个。对话里点「测试调用」验证链路是否通。`
+          `当前 ${online} 个在线 / 共 ${props.agents.length} 个`
         )
       ),
 
       props.agents.length === 0
         ? e(EmptyState, {
             title: "还没有助手",
-            hint: "在「设置」配好模型，或在「MCP」连上 Work Buddy / Claude Code 后，这里会出现成员。",
+            hint: "在「设置」配好模型，或在「MCP」连上 Work Buddy / Claude Code 后会出现。",
           })
         : e(
             "ul",
@@ -128,61 +119,58 @@ export function AgentsPage(props: {
                 "li",
                 {
                   key: a.agentName,
-                  className: "agent-row glass",
+                  className: "agent-card-row glass",
                   "data-agent": a.agentName,
                   "data-status": a.status,
                 },
+                /* 左：信息占满宽度；右上：状态 + 小按钮 */
                 e(
                   "div",
-                  { className: "agent-row-head" },
+                  { className: "agent-card-top" },
+                  e("strong", { className: "agent-title" }, meta.title),
                   e(
                     "div",
-                    null,
-                    e("strong", { className: "agent-title" }, meta.title),
-                    e("p", { className: "hint agent-desc" }, meta.desc)
-                  ),
-                  e(
-                    "span",
-                    {
-                      className:
-                        "badge " +
-                        (a.status === "online" || a.status === "busy"
-                          ? "ok"
-                          : a.status === "degraded"
-                            ? "todo"
-                            : "todo"),
-                    },
-                    STATUS_TXT[a.status] ?? a.status
-                  )
-                ),
-                e(
-                  "div",
-                  { className: "plugin-tools" },
-                  (a.capabilities || []).map((c) =>
+                    { className: "agent-card-actions" },
                     e(
-                      "code",
-                      { key: c, title: c },
-                      CAP_TXT[c] ?? c
+                      "span",
+                      {
+                        className:
+                          "badge " +
+                          (a.status === "online" || a.status === "busy" ? "ok" : "todo"),
+                      },
+                      STATUS_TXT[a.status] ?? a.status
+                    ),
+                    e(
+                      "button",
+                      {
+                        type: "button",
+                        className: "agent-test-btn",
+                        "data-action": "test-agent",
+                        disabled: a.status === "offline",
+                        onClick: () => props.onTest?.(a.agentName),
+                      },
+                      "测试"
                     )
                   )
                 ),
+                e("p", { className: "agent-desc" }, meta.desc),
                 e(
                   "div",
-                  { className: "agent-row-meta" },
-                  `质量：${deg}` +
-                    (a.lastLatencyMs != null ? ` · 速度：${a.lastLatencyMs} 毫秒` : "") +
-                    (a.lastTokensUsed != null ? ` · 上次消耗：${a.lastTokensUsed} tokens` : "")
-                ),
-                e(
-                  "button",
-                  {
-                    type: "button",
-                    className: UI.button + " " + UI.buttonPrimary,
-                    "data-action": "test-agent",
-                    disabled: a.status === "offline",
-                    onClick: () => props.onTest?.(a.agentName),
-                  },
-                  "发一条测试消息"
+                  { className: "agent-foot" },
+                  e(
+                    "div",
+                    { className: "agent-caps" },
+                    (a.capabilities || []).map((c) =>
+                      e("span", { key: c, className: "cap-chip", title: c }, CAP_TXT[c] ?? c)
+                    )
+                  ),
+                  e(
+                    "span",
+                    { className: "agent-meta" },
+                    `${deg}` +
+                      (a.lastLatencyMs != null ? ` · ${a.lastLatencyMs}ms` : "") +
+                      (a.lastTokensUsed != null ? ` · ${a.lastTokensUsed} tokens` : "")
+                  )
                 )
               );
             })

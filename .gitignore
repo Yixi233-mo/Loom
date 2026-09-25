@@ -16,3 +16,8 @@ scripts/_*.py
 
 # 本机 WorkBuddy 连接（含 token）
 plugins/work_buddy_connection.json
+# E2E / 运行时临时
+e2e_hub.*
+plugins/_e2e_*
+plugins/_test_*
+plugins/_smoke*

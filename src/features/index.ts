@@ -26,6 +26,7 @@ export { HelpPage, HELP_SECTIONS } from "./help-page.ts";
 export { PromptsPage } from "./prompts-page.ts";
 export { FilesPage } from "./files-page.ts";
 export { AgentsPage } from "./agents-page.ts";
+export { KnowledgePage } from "./knowledge-page.ts";
 export { RecommendPage, RECOMMENDED_AGENTS, type AgentApp } from "./recommend-page.ts";
 
 export type FeatureId =

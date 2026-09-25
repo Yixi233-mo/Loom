@@ -9,6 +9,7 @@ import {
   PromptsPage,
   FilesPage,
   AgentsPage,
+  KnowledgePage,
   RecommendPage,
   type AgentApp,
 } from "./features/index.ts";
@@ -184,6 +185,7 @@ export default function App() {
             ["prompts", "提示词"],
             ["tasks", "任务"],
             ["files", "文件"],
+            ["knowledge", "知识库"],
             ["agents", "Agent"],
           ] as Array<[AppRoute, string]>
         ).map(([id, label]) =>
@@ -418,6 +420,8 @@ export default function App() {
               navigate("chat");
             },
           })
+      : activeRoute === "knowledge"
+        ? e(KnowledgePage, { rest: services.rest })
       : activeRoute === "files"
         ? e(FilesPage, {
             services,

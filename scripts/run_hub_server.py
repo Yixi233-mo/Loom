@@ -14,8 +14,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from integration.stack import HubStack  # noqa: E402
+from integration.stack import HubStack
 from integration.ws_app import create_integrated_app  # noqa: E402
+from knowledge.store import KnowledgeStore
 from plugins.example.notes_runtime import NotesStore, make_notes_tools  # noqa: E402
 from plugins.example.workflow_runner import WorkflowRunner  # noqa: E402
 
@@ -29,8 +30,13 @@ def build_demo_stack() -> HubStack:
     store.create("想法", "把设备、Agent、任务编织成一体")
     tools = make_notes_tools(store)
 
+    kb = KnowledgeStore(ROOT / "plugins" / "knowledge.json")
+    from knowledge.federated import FederatedKnowledge
+
+    fed = FederatedKnowledge(kb, sources_path=ROOT / "plugins" / "knowledge_sources.json")
+
     def builtin_rag(prompt: str):
-        return {"summary": f"RAG 总结：{prompt[:60]}", "citations": []}
+        return fed.answer(prompt)
 
     stack = HubStack(
         tools=tools,

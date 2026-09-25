@@ -219,3 +219,10 @@ def mount_api(app: FastAPI, stack: HubStack) -> None:
     app.include_router(create_llm_router(llm_store))
     from api.mcp_routes import mount_mcp_api
     mount_mcp_api(app)
+    import os
+    from pathlib import Path as _P
+
+    from api.knowledge_routes import mount_knowledge_api
+    from knowledge.store import KnowledgeStore
+    kb_path = _P(os.environ.get("LOOM_KB_PATH", "plugins/knowledge.json"))
+    mount_knowledge_api(app, KnowledgeStore(kb_path))
