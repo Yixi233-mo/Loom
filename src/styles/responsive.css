@@ -1,0 +1,339 @@
+/**
+ * RS1 全局响应式地基 — 三条铁律 + 统一骨架
+ * 1) 不横向滚动  2) 不写死像素宽  3) 无 PC 专属交互依赖
+ */
+
+/* —— 铁律：全局禁止横向滚动 —— */
+html,
+body,
+#root {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+/* 任何内容块不得撑破视口 */
+img,
+svg,
+video,
+canvas,
+pre,
+table {
+  max-width: 100%;
+}
+
+pre,
+code {
+  overflow-x: auto;
+  word-break: break-word;
+}
+
+/* —— 触控目标 ≥44px（移动端） —— */
+@media (max-width: 767.98px) {
+  .nav-link,
+  .navbtn,
+  .btn,
+  button,
+  [role="button"],
+  .chip,
+  .task-tag,
+  .result-card {
+    min-height: 44px;
+  }
+  input,
+  select,
+  textarea,
+  .ui-input {
+    min-height: 44px;
+    font-size: 16px; /* 防 iOS 聚焦缩放 */
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .composer-input,
+  .chat-composer textarea,
+  .chat-composer input {
+    min-height: 44px;
+  }
+}
+
+/* —— 统一骨架：移动 顶栏 + 内容 + 底 Tab —— */
+@media (max-width: 767.98px) {
+  .app-shell {
+    grid-template-rows: auto 1fr auto !important;
+    grid-template-columns: 1fr !important;
+    grid-template-areas:
+      "head"
+      "main"
+      "tabbar" !important;
+  }
+  .app-header {
+    min-height: 56px;
+    padding: 8px 12px calc(8px + var(--safe-top, 0px));
+  }
+  .app-header .app-title {
+    font-size: 16px;
+  }
+  .app-main {
+    padding: 12px 12px calc(12px + env(safe-area-inset-bottom, 0px));
+    max-width: 100%;
+  }
+  .tabbar {
+    min-height: 56px;
+    padding: 6px 4px calc(6px + var(--safe-bottom, 0px));
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr)) !important;
+    gap: 2px;
+  }
+  .tabbar .navbtn {
+    min-height: 44px;
+    font-size: 11px;
+    padding: 6px 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+/* —— PC 多栏：侧栏 + 主内容 —— */
+@media (min-width: 1024px) {
+  .app-shell {
+    grid-template-columns: var(--side-w, 220px) 1fr;
+    grid-template-areas:
+      "side head"
+      "side main";
+  }
+  .app-side {
+    grid-area: side;
+  }
+  .app-header {
+    grid-area: head;
+  }
+  .app-main {
+    grid-area: main;
+  }
+  .tabbar {
+    display: none !important;
+  }
+}
+
+/* —— 表单单列 —— */
+.llm-form,
+.settings-form,
+.pairing-manual-row,
+.kb-bar,
+.prompt-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+@media (max-width: 767.98px) {
+  .llm-form > *,
+  .settings-form > *,
+  .pairing-manual-row > *,
+  .kb-bar > * {
+    width: 100% !important;
+    max-width: 100%;
+  }
+  .pairing-manual-row {
+    flex-direction: column;
+  }
+  .pairing-input-port {
+    flex: 1 1 auto !important;
+  }
+}
+
+/* —— 弹窗 → 底部抽屉（移动） —— */
+@media (max-width: 767.98px) {
+  .modal,
+  .ui-modal,
+  .dialog {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    top: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 80vh !important;
+    margin: 0 !important;
+    border-radius: 16px 16px 0 0 !important;
+    overflow-y: auto;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    transform: none !important;
+  }
+  .modal-overlay,
+  .ui-modal-overlay {
+    align-items: flex-end !important;
+  }
+}
+
+/* —— 表格 → 卡片/横滚 —— */
+@media (max-width: 767.98px) {
+  .table,
+  table.data,
+  .result-metrics {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .table thead {
+    display: none;
+  }
+  .table tr,
+  .result-metrics {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line, rgba(0, 0, 0, 0.08));
+    min-width: 0;
+  }
+  .table td,
+  .result-metrics dt,
+  .result-metrics dd {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    text-align: left;
+    padding: 4px 0;
+    border: 0;
+  }
+  .table td::before {
+    content: attr(data-label);
+    color: var(--muted, #7a6b60);
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+  .result-metrics {
+    display: grid;
+    grid-template-columns: auto 1fr;
+  }
+  .result-metrics dt {
+    color: var(--muted, #7a6b60);
+    font-size: 12px;
+  }
+  .result-metrics dd {
+    margin: 0;
+    justify-content: flex-end;
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+}
+
+/* —— 消息气泡：移动全宽弹性 —— */
+@media (max-width: 767.98px) {
+  .chat-stream .msg,
+  .chat-stream .message,
+  .bubble {
+    max-width: min(100%, calc(100vw - 32px)) !important;
+    overflow-wrap: anywhere;
+  }
+  .chat-workbench {
+    padding: 0;
+    gap: 8px;
+  }
+  .chat-composer {
+    position: sticky;
+    bottom: 0;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+    background: inherit;
+  }
+  .task-preview {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .task-preview-actions {
+    flex-direction: column;
+  }
+  .task-preview-actions button {
+    width: 100%;
+    min-height: 44px;
+  }
+}
+
+/* —— 任务卡：移动加宽 —— */
+@media (max-width: 767.98px) {
+  .result-card,
+  .agent-list li,
+  .connect-step {
+    width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .result-head {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .result-trace {
+    overflow-wrap: anywhere;
+  }
+  .connect-wizard-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .pairing-panel {
+    grid-template-columns: 1fr !important;
+  }
+  .pairing-qr svg {
+    width: min(185px, 70vw);
+    height: auto;
+  }
+}
+
+/* —— 顶栏：移动隐藏次要状态 —— */
+@media (max-width: 767.98px) {
+  .cap-pill {
+    max-width: 42vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .app-subtitle {
+    display: none;
+  }
+  .app-nav {
+    display: none;
+  }
+}
+
+/* —— 中屏：侧栏收窄 —— */
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  .app-shell {
+    grid-template-columns: 72px 1fr;
+    grid-template-areas:
+      "side head"
+      "side main";
+  }
+  .app-side .nav-text,
+  .app-side .side-label,
+  .app-side .side-new-chat .side-new-icon + * {
+    /* 保留图标栏 */
+  }
+  .app-side .nav-text {
+    display: none;
+  }
+  .app-side .side-label {
+    display: none;
+  }
+}
+
+/* —— 代码块移动软换行 —— */
+@media (max-width: 767.98px) {
+  pre,
+  .code-block,
+  code {
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-x: hidden;
+  }
+}
+
+/* —— 长文本默认可折 —— */
+.clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

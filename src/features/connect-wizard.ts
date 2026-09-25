@@ -5,6 +5,7 @@
 import * as React from "react";
 import { UI } from "../components/index.ts";
 import { qrToSvg } from "./qr-code.ts";
+import { CameraScanner } from "./camera-scan.ts";
 
 const e = React.createElement;
 
@@ -360,6 +361,7 @@ export function ConnectWizard(props: {
   onOpen?: (action: "devices" | "mcp" | "settings" | "scan") => void;
 }) {
   const [showPair, setShowPair] = React.useState(true);
+  const [showScan, setShowScan] = React.useState(false);
 
   return e(
     "div",
@@ -396,22 +398,32 @@ export function ConnectWizard(props: {
               "data-action": `connect-${s.id}`,
               onClick: () => {
                 if (s.action === "scan") {
-                  setShowPair((v) => !v);
+                  // 移动端优先相机扫码；桌面仍可看二维码
+                  setShowScan((v) => !v);
                   props.onOpen?.("scan");
                   return;
                 }
                 props.onOpen?.(s.action);
               },
             },
-            showPair && s.action === "scan" ? "隐藏二维码" : s.cta
+            s.action === "scan" ? (showScan ? "关闭相机扫码" : "打开相机扫码") : s.cta
           )
         )
       )
     ),
-    showPair
-      ? e(PairingPanel, {
-          onPair: () => props.onOpen?.("devices"),
+    showScan
+      ? e(CameraScanner, {
+          onResult: (_r) => {
+            setShowScan(false);
+            setShowPair(true);
+            props.onOpen?.("devices");
+          },
+          onClose: () => setShowScan(false),
         })
-      : null
+      : showPair
+        ? e(PairingPanel, {
+            onPair: () => props.onOpen?.("devices"),
+          })
+        : null
   );
 }
