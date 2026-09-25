@@ -19,10 +19,10 @@ const KEY = process.env.LOOM_TEST_API_KEY || "";
 const LIVE = !!KEY;
 
 const { fetchProviderModels, modelsEndpoints } = await import(
-  tsUrl(path.join(root, "src/services/llm-api.ts"))
+  tsUrl(path.join(root, "apps/web/src/services/llm-api.ts"))
 );
 const { ModelChatClient, normalizeChatBaseUrl } = await import(
-  tsUrl(path.join(root, "src/services/model-chat.ts"))
+  tsUrl(path.join(root, "apps/web/src/services/model-chat.ts"))
 );
 
 let passed = 0;

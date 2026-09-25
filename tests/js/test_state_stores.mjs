@@ -12,8 +12,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "../..");
 const tsUrl = (p) => pathToFileURL(p).href;
 
-const contracts = await import(tsUrl(path.join(root, "src/contracts/index.ts")));
-const state = await import(tsUrl(path.join(root, "src/state/index.ts")));
+const contracts = await import(tsUrl(path.join(root, "apps/web/src/contracts/index.ts")));
+const state = await import(tsUrl(path.join(root, "apps/web/src/state/index.ts")));
 
 const { EVENTS, API } = contracts;
 const {

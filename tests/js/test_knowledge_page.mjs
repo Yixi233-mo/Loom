@@ -5,7 +5,7 @@
 import assert from "node:assert/strict";
 import { renderToStaticMarkup } from "react-dom/server";
 import * as React from "react";
-import { KnowledgePage } from "../../src/features/knowledge-page.ts";
+import { KnowledgePage } from "../../apps/web/src/features/knowledge-page.ts";
 
 const e = React.createElement;
 
@@ -88,7 +88,7 @@ assert.match(html, /data-field="kb-title"/);
 
 // App 路由挂载
 import { readFileSync } from "node:fs";
-const app = readFileSync("src/App.tsx", "utf8");
+const app = readFileSync("apps/web/src/App.tsx", "utf8");
 assert.match(app, /KnowledgePage/);
 assert.match(app, /knowledge/);
 

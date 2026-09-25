@@ -15,6 +15,7 @@ from fastapi.testclient import TestClient
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
 from device_mesh.ws_server import HubRuntime, create_app, make_signature  # noqa: E402
 

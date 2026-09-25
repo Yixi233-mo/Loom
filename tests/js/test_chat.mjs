@@ -19,12 +19,12 @@ const ReactDOMServer = require("react-dom/server");
 const e = React.createElement;
 const render = (el) => ReactDOMServer.renderToStaticMarkup(el);
 
-const { ChatPanel } = await import(tsUrl(path.join(root, "src/views/chat-panel.ts")));
+const { ChatPanel } = await import(tsUrl(path.join(root, "apps/web/src/views/chat-panel.ts")));
 const { ModelChatClient, toChatMessages } = await import(
-  tsUrl(path.join(root, "src/services/model-chat.ts"))
+  tsUrl(path.join(root, "apps/web/src/services/model-chat.ts"))
 );
 const { createSessionState } = await import(
-  tsUrl(path.join(root, "src/state/session-store.ts"))
+  tsUrl(path.join(root, "apps/web/src/state/session-store.ts"))
 );
 
 let passed = 0;

@@ -12,8 +12,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "../..");
 const tsUrl = (p) => pathToFileURL(p).href;
 
-const { API, EVENTS } = await import(tsUrl(path.join(root, "src/contracts/index.ts")));
-const services = await import(tsUrl(path.join(root, "src/services/index.ts")));
+const { API, EVENTS } = await import(tsUrl(path.join(root, "apps/web/src/contracts/index.ts")));
+const services = await import(tsUrl(path.join(root, "apps/web/src/services/index.ts")));
 const { RestClient, EventBus, FileService, createServiceLayer } = services;
 
 let passed = 0;

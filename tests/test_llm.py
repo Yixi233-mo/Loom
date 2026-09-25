@@ -9,6 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
 from llm.client import LLMBackedGenerator, LLMClient  # noqa: E402
 from llm.config import LLMConfigStore  # noqa: E402
@@ -128,10 +129,9 @@ class TestLLMClient(unittest.IsolatedAsyncioTestCase):
 
 class TestLlmApi(unittest.TestCase):
     def setUp(self):
+        from api.llm_routes import create_llm_router
         from fastapi import FastAPI
         from fastapi.testclient import TestClient
-
-        from api.llm_routes import create_llm_router
 
         self.path = ROOT / "plugins" / "_llm_api.json"
         self.store = LLMConfigStore(self.path, master_key="m")

@@ -18,8 +18,8 @@ import {
   DesktopAdapter,
   shareUrl,
   copyText,
-} from "../../src/platform/adapters.ts";
-import { createPlatformLayer, TauriBridge } from "../../src/platform/index.ts";
+} from "../../apps/web/src/platform/adapters.ts";
+import { createPlatformLayer, TauriBridge } from "../../apps/web/src/platform/index.ts";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
@@ -191,7 +191,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
 // --- 样式与验证步骤文档 ---
 {
-  const css = readFileSync(join(root, "src/styles/adapters.css"), "utf8");
+  const css = readFileSync(join(root, "apps/web/src/styles/adapters.css"), "utf8");
   assert.ok(css.includes("--safe-top"));
   assert.ok(css.includes(".ui-drawer"));
   assert.ok(css.includes('data-kb'));
@@ -200,7 +200,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
   const plan = readFileSync(join(root, "目录/04-进度与路线/plan.md"), "utf8");
   // 验证步骤写入 plan 后应包含；先断言源文件存在
   assert.ok(css.length > 0);
-  const indexCss = readFileSync(join(root, "src/styles/index.css"), "utf8");
+  const indexCss = readFileSync(join(root, "apps/web/src/styles/index.css"), "utf8");
   assert.ok(indexCss.includes("adapters.css"));
 }
 

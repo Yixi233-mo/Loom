@@ -8,11 +8,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
 import yaml  # noqa: E402
-
 from dsl.compiler import DSLCompiler  # noqa: E402
 from dsl.schema import validate_plugin, validate_workflow  # noqa: E402
+
 from plugins.example.notes_runtime import NotesStore, make_notes_tools  # noqa: E402
 from plugins.example.workflow_runner import (  # noqa: E402
     WorkflowRunner,

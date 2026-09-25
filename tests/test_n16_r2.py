@@ -153,7 +153,7 @@ class TestModelLayer(unittest.TestCase):
         self.assertEqual(get_active_model("deepseek")["model"], "deepseek-reasoner")
 
     def test_prompt_v1_exists(self):
-        p = Path(__file__).resolve().parent.parent / "prompts" / "v1.md"
+        p = Path(__file__).resolve().parent.parent / "apps" / "hub" / "prompts" / "v1.md"
         self.assertTrue(p.exists())
         text = p.read_text(encoding="utf-8")
         self.assertIn("dsl.generator", text)

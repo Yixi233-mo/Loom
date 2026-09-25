@@ -51,7 +51,7 @@ def lint_python() -> int:
 
 def lint_rust() -> int:
     print("\n=== Rust cargo fmt --check ===", flush=True)
-    tauri = ROOT / "src-tauri"
+    tauri = ROOT / "apps/desktop/src-tauri"
     if not (tauri / "Cargo.toml").exists():
         print("(no Cargo.toml, skip)")
         return 0
@@ -63,7 +63,7 @@ def lint_rust() -> int:
 def lint_ts() -> int:
     print("\n=== TS/JS 基础检查 ===", flush=True)
     # 无 ESLint 时跳过；检查关键文件存在
-    ok = (ROOT / "src" / "shell" / "schema-renderer.impl.ts").exists()
+    ok = (ROOT / "apps" / "web" / "src" / "shell" / "schema-renderer.impl.ts").exists()
     print(f"--- TS check: {'PASS' if ok else 'FAIL'} ---")
     return 0 if ok else 1
 

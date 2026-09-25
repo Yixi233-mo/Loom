@@ -8,9 +8,9 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
-const app = readFileSync(join(root, "src", "App.tsx"), "utf8");
-const layout = readFileSync(join(root, "src", "styles", "layout.css"), "utf8");
-const wizard = readFileSync(join(root, "src", "features", "connect-wizard.ts"), "utf8");
+const app = readFileSync(join(root, "apps", "web", "src", "App.tsx"), "utf8");
+const layout = readFileSync(join(root, "apps", "web", "src", "styles", "layout.css"), "utf8");
+const wizard = readFileSync(join(root, "apps", "web", "src", "features", "connect-wizard.ts"), "utf8");
 
 test("保留原侧栏属性", () => {
   assert.ok(app.includes("side-brand"), "side-brand");

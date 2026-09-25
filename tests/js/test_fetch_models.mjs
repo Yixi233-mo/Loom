@@ -14,7 +14,7 @@ const root = path.resolve(__dirname, "../..");
 const tsUrl = (p) => pathToFileURL(p).href;
 
 const { fetchProviderModels } = await import(
-  tsUrl(path.join(root, "src/services/llm-api.ts"))
+  tsUrl(path.join(root, "apps/web/src/services/llm-api.ts"))
 );
 
 let passed = 0;
@@ -114,7 +114,7 @@ await okAsync("服务商返回空列表报错", async () => {
 });
 
 ok("App 不再写死模型列表回退", () => {
-  const src = readFileSync(path.join(root, "src/App.tsx"), "utf8");
+  const src = readFileSync(path.join(root, "apps/web/src/App.tsx"), "utf8");
   assert.ok(!src.includes('models: ["gpt-4o"'));
   assert.ok(src.includes("fetchProviderModels"));
 });

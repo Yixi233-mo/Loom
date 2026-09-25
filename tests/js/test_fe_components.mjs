@@ -19,7 +19,7 @@ import {
   Layout,
   Card,
   ComponentGallery,
-} from "../../src/components/index.ts";
+} from "../../apps/web/src/components/index.ts";
 
 const e = React.createElement;
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
@@ -152,7 +152,7 @@ const html = (n) => renderToStaticMarkup(n);
 
 // --- 样式覆盖 ---
 {
-  const css = readFileSync(join(root, "src/styles/components.css"), "utf8");
+  const css = readFileSync(join(root, "apps/web/src/styles/components.css"), "utf8");
   for (const sel of [
     ".ui-button--primary",
     ".ui-button--ghost",

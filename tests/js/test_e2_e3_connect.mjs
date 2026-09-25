@@ -8,10 +8,10 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
-const wizard = readFileSync(join(root, "src/features/connect-wizard.ts"), "utf8");
-const agents = readFileSync(join(root, "src/features/agents-page.ts"), "utf8");
-const chat = readFileSync(join(root, "src/features/chat-workbench.ts"), "utf8");
-const app = readFileSync(join(root, "src/App.tsx"), "utf8");
+const wizard = readFileSync(join(root, "apps/web/src/features/connect-wizard.ts"), "utf8");
+const agents = readFileSync(join(root, "apps/web/src/features/agents-page.ts"), "utf8");
+const chat = readFileSync(join(root, "apps/web/src/features/chat-workbench.ts"), "utf8");
+const app = readFileSync(join(root, "apps/web/src/App.tsx"), "utf8");
 
 test("E2 三步接入：扫码 / 授权 / 贴 Key", () => {
   assert.match(wizard, /扫码连接/);

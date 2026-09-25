@@ -13,7 +13,7 @@ const root = path.resolve(__dirname, "../..");
 const tsUrl = (p) => pathToFileURL(p).href;
 
 const { ModelChatClient, normalizeChatBaseUrl, toChatMessages } = await import(
-  tsUrl(path.join(root, "src/services/model-chat.ts"))
+  tsUrl(path.join(root, "apps/web/src/services/model-chat.ts"))
 );
 
 let passed = 0;

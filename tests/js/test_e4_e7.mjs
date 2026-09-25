@@ -8,10 +8,10 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
-const app = readFileSync(join(root, "src", "App.tsx"), "utf8");
-const tasks = readFileSync(join(root, "src", "features", "task-center.ts"), "utf8");
-const devices = readFileSync(join(root, "src", "features", "device-hub.ts"), "utf8");
-const layout = readFileSync(join(root, "src", "styles", "layout.css"), "utf8");
+const app = readFileSync(join(root, "apps", "web", "src", "App.tsx"), "utf8");
+const tasks = readFileSync(join(root, "apps", "web", "src", "features", "task-center.ts"), "utf8");
+const devices = readFileSync(join(root, "apps", "web", "src", "features", "device-hub.ts"), "utf8");
+const layout = readFileSync(join(root, "apps", "web", "src", "styles", "layout.css"), "utf8");
 
 test("E4 顶栏能力胶囊", () => {
   assert.match(app, /cap-pill/);

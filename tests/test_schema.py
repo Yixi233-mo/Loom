@@ -10,6 +10,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
 from dsl.schema import (  # noqa: E402
     AGENT_SCHEMA,
@@ -24,7 +25,7 @@ from dsl.schema import (  # noqa: E402
     validate_workflow,
 )
 
-EX = ROOT / "dsl" / "examples"
+EX = ROOT / "apps" / "hub" / "dsl" / "examples"
 
 
 def load(name: str):

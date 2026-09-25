@@ -20,9 +20,9 @@ import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-GEN = ROOT / "src-tauri" / "gen" / "android"
+GEN = ROOT / "apps/desktop/src-tauri" / "gen" / "android"
 OUT = ROOT / "dist-bundle"
-NATIVE = ROOT / "src-tauri" / "target" / "aarch64-linux-android"
+NATIVE = ROOT / "apps/desktop/src-tauri" / "target" / "aarch64-linux-android"
 
 
 def run(title: str, cmd: list[str], cwd: Path, env: dict | None = None) -> None:
@@ -82,14 +82,14 @@ def main() -> int:
             "--package",
             "loom_shell",
             "--manifest-path",
-            str(ROOT / "src-tauri" / "Cargo.toml"),
+            str(ROOT / "apps/desktop/src-tauri" / "Cargo.toml"),
             "--target",
             "aarch64-linux-android",
             "--lib",
         ]
         + (["--release"] if args.release else [])
         + (["--features", "custom-protocol"] if args.release else []),
-        ROOT / "src-tauri",
+        ROOT / "apps/desktop/src-tauri",
     )
 
     npm = "npm.cmd" if os.name == "nt" else "npm"

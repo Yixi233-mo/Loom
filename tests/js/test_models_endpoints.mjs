@@ -13,7 +13,7 @@ const root = path.resolve(__dirname, "../..");
 const tsUrl = (p) => pathToFileURL(p).href;
 
 const { modelsEndpoints, fetchProviderModels } = await import(
-  tsUrl(path.join(root, "src/services/llm-api.ts"))
+  tsUrl(path.join(root, "apps/web/src/services/llm-api.ts"))
 );
 
 let passed = 0;

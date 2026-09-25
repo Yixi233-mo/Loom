@@ -18,7 +18,7 @@ const React = require("react");
 const ReactDOMServer = require("react-dom/server");
 
 const { UI_WHITELIST, UI_TYPES, resolveUiSchema, unknownTypeMessage, isUiComponentType } =
-  await import(tsUrl(path.join(root, "src/shell/ui-registry.ts")));
+  await import(tsUrl(path.join(root, "apps/web/src/shell/ui-registry.ts")));
 
 const {
   FormView,
@@ -28,7 +28,7 @@ const {
   UnknownTypeNotice,
   UI_COMPONENTS,
   SchemaRenderer,
-} = await import(tsUrl(path.join(root, "src/shell/schema-renderer.impl.ts")));
+} = await import(tsUrl(path.join(root, "apps/web/src/shell/schema-renderer.impl.ts")));
 
 const e = React.createElement;
 const render = (el) => ReactDOMServer.renderToStaticMarkup(el);

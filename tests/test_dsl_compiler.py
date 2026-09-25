@@ -9,10 +9,11 @@ from pathlib import Path
 # 保证从项目根目录可 import dsl
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
 from dsl.compiler import DSLCompiler, DSLParseError  # noqa: E402
 
-EX = ROOT / "dsl" / "examples"
+EX = ROOT / "apps" / "hub" / "dsl" / "examples"
 
 
 class TestWorkflow(unittest.TestCase):

@@ -14,6 +14,7 @@ import httpx
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
 ENDPOINT = os.environ.get("LOOM_WORK_BUDDY_MCP", "http://127.0.0.1:54916/mcp")
 # 启动 WorkBuddy 时会在其日志/CLI 注入 connector token；也可用环境变量覆盖

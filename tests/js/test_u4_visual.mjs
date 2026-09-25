@@ -5,9 +5,9 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
-const tokens = readFileSync("src/styles/tokens.css", "utf8");
-const controls = readFileSync("src/styles/controls.css", "utf8");
-const base = readFileSync("src/styles/base.css", "utf8");
+const tokens = readFileSync("apps/web/src/styles/tokens.css", "utf8");
+const controls = readFileSync("apps/web/src/styles/controls.css", "utf8");
+const base = readFileSync("apps/web/src/styles/base.css", "utf8");
 
 // 1. 圆角三档 8/12/16
 assert.match(tokens, /--radius-sm:\s*8px/);

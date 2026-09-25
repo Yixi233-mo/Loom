@@ -4,9 +4,9 @@
 import assert from "node:assert/strict";
 import { renderToStaticMarkup } from "react-dom/server";
 import * as React from "react";
-import { FilesPage } from "../../src/features/files-page.ts";
-import { AgentsPage } from "../../src/features/agents-page.ts";
-import { createServiceLayer } from "../../src/services/index.ts";
+import { FilesPage } from "../../apps/web/src/features/files-page.ts";
+import { AgentsPage } from "../../apps/web/src/features/agents-page.ts";
+import { createServiceLayer } from "../../apps/web/src/services/index.ts";
 import { readFileSync } from "node:fs";
 
 const e = React.createElement;
@@ -53,7 +53,7 @@ assert.match(agentsHtml, /data-page="agents"/);
 assert.match(agentsHtml, /builtin_rag/);
 assert.match(agentsHtml, /test-agent/);
 
-const app = readFileSync("src/App.tsx", "utf8");
+const app = readFileSync("apps/web/src/App.tsx", "utf8");
 assert.match(app, /FilesPage/);
 assert.match(app, /AgentsPage/);
 

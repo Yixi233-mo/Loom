@@ -17,6 +17,7 @@ from fastapi.testclient import TestClient
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
 from agent_hub.adapters.mcp_protocol import (  # noqa: E402
     McpClaudeCodeAdapter,
@@ -33,6 +34,7 @@ from agent_hub.mcp_catalog import (  # noqa: E402
 )
 from agent_hub.registry import AgentRegistry  # noqa: E402
 from api.mcp_routes import create_mcp_router  # noqa: E402
+
 from scripts.mock_mcp_server import app as mock_mcp_app  # noqa: E402
 
 
@@ -238,7 +240,7 @@ class TestCatalogModule(unittest.TestCase):
 
 class TestFrontendPanel(unittest.TestCase):
     def test_panel_has_work_buddy_and_catalog(self):
-        panel = (ROOT / "src" / "views" / "mcp-panel.ts").read_text(encoding="utf-8")
+        panel = (ROOT / "apps" / "web" / "src" / "views" / "mcp-panel.ts").read_text(encoding="utf-8")
         self.assertIn("Work Buddy", panel)
         self.assertIn("下载 Work Buddy", panel)
         self.assertIn("catalog", panel)

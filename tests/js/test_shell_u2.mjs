@@ -5,11 +5,11 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
-const app = readFileSync("src/App.tsx", "utf8");
-const settings = readFileSync("src/features/settings-page.ts", "utf8");
-const chat = readFileSync("src/features/chat-workbench.ts", "utf8");
-const layout = readFileSync("src/styles/layout.css", "utf8");
-const pages = readFileSync("src/styles/pages.css", "utf8");
+const app = readFileSync("apps/web/src/App.tsx", "utf8");
+const settings = readFileSync("apps/web/src/features/settings-page.ts", "utf8");
+const chat = readFileSync("apps/web/src/features/chat-workbench.ts", "utf8");
+const layout = readFileSync("apps/web/src/styles/layout.css", "utf8");
+const pages = readFileSync("apps/web/src/styles/pages.css", "utf8");
 
 // 1. 新建对话入口
 assert.match(app, /data-action": "new-chat"/);

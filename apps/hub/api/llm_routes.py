@@ -5,10 +5,9 @@ from __future__ import annotations
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel, Field
-
 from llm.client import LLMClient
 from llm.config import LLMConfigStore
+from pydantic import BaseModel, Field
 
 
 class ProviderIn(BaseModel):

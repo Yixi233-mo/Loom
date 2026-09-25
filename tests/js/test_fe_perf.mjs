@@ -16,9 +16,9 @@ import {
   memo,
   shallowEqual,
   debounce,
-} from "../../src/perf/index.ts";
-import { ResultCard, TaskCenter } from "../../src/features/task-center.ts";
-import { MessageRow } from "../../src/features/chat-workbench.ts";
+} from "../../apps/web/src/perf/index.ts";
+import { ResultCard, TaskCenter } from "../../apps/web/src/features/task-center.ts";
+import { MessageRow } from "../../apps/web/src/features/chat-workbench.ts";
 
 const e = React.createElement;
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");

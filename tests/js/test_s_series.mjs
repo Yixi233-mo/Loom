@@ -6,9 +6,9 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
-const rest = readFileSync(join(root, "src", "services", "rest.ts"), "utf8");
-const errors = readFileSync(join(root, "api", "errors.py"), "utf8");
-const routes = readFileSync(join(root, "api", "routes.py"), "utf8");
+const rest = readFileSync(join(root, "apps", "web", "src", "services", "rest.ts"), "utf8");
+const errors = readFileSync(join(root, "apps", "hub", "api", "errors.py"), "utf8");
+const routes = readFileSync(join(root, "apps", "hub", "api", "routes.py"), "utf8");
 const hub = readFileSync(join(root, "scripts", "run_hub_server.py"), "utf8");
 
 test("S1 统一错误体 code/message/trace_id", () => {

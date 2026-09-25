@@ -8,12 +8,12 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, FastAPI, HTTPException
-from pydantic import BaseModel, Field, field_validator
-
-from api.stream_routes import iso_ts
 from integration.stack import HubStack
 from observability.audit import get_audit
 from observability.security import MAX_INPUT_CHARS
+from pydantic import BaseModel, Field, field_validator
+
+from api.stream_routes import iso_ts
 
 
 class SessionMessageIn(BaseModel):
@@ -233,8 +233,9 @@ def mount_api(app: FastAPI, stack: HubStack) -> None:
     from api.errors import install_error_contract
 
     install_error_contract(app)
-    from api.llm_routes import create_llm_router
     from llm.config import LLMConfigStore
+
+    from api.llm_routes import create_llm_router
 
     app.include_router(create_api_router(stack))
     llm_store = LLMConfigStore(Path(__file__).resolve().parent.parent / "plugins" / "llm_providers.json")
@@ -244,7 +245,8 @@ def mount_api(app: FastAPI, stack: HubStack) -> None:
     import os
     from pathlib import Path as _P
 
-    from api.knowledge_routes import mount_knowledge_api
     from knowledge.store import KnowledgeStore
+
+    from api.knowledge_routes import mount_knowledge_api
     kb_path = _P(os.environ.get("LOOM_KB_PATH", "plugins/knowledge.json"))
     mount_knowledge_api(app, KnowledgeStore(kb_path))

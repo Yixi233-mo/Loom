@@ -7,8 +7,8 @@ import { renderToStaticMarkup } from "react-dom/server";
 import * as React from "react";
 import { readFileSync } from "node:fs";
 
-import { ChatWorkbench } from "../../src/features/chat-workbench.ts";
-import { createSessionState } from "../../src/state/session-store.ts";
+import { ChatWorkbench } from "../../apps/web/src/features/chat-workbench.ts";
+import { createSessionState } from "../../apps/web/src/state/session-store.ts";
 
 const e = React.createElement;
 
@@ -56,7 +56,7 @@ const e = React.createElement;
 
 // 3. 源码：新建对话 / 任务面板 / 连接状态 / 分组导航
 {
-  const app = readFileSync("src/App.tsx", "utf8");
+  const app = readFileSync("apps/web/src/App.tsx", "utf8");
   assert.match(app, /"data-action": "new-chat"/);
   assert.match(app, /resetForNew/);
   assert.match(app, /task-progress-panel/);
@@ -76,12 +76,12 @@ const e = React.createElement;
 
 // 4. CSS 三重活跃态与气泡布局
 {
-  const layout = readFileSync("src/styles/layout.css", "utf8");
+  const layout = readFileSync("apps/web/src/styles/layout.css", "utf8");
   assert.match(layout, /nav-link\.is-active/);
   assert.match(layout, /is-active::before/);
   assert.match(layout, /side-new-chat/);
   assert.match(layout, /side-user/);
-  const pages = readFileSync("src/styles/pages.css", "utf8");
+  const pages = readFileSync("apps/web/src/styles/pages.css", "utf8");
   assert.match(pages, /msg-row--user/);
   assert.match(pages, /msg-actions/);
   assert.match(pages, /composer-icon/);

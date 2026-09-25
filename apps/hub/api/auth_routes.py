@@ -4,10 +4,9 @@ from __future__ import annotations
 
 from typing import Any, Dict, Optional
 
+from auth.oauth import AuthError, OAuthService, TokenExpired, extract_bearer
 from fastapi import APIRouter, Header, HTTPException
 from pydantic import BaseModel, Field
-
-from auth.oauth import AuthError, OAuthService, TokenExpired, extract_bearer
 
 
 class TokenIn(BaseModel):

@@ -72,7 +72,7 @@ def main() -> int:
 
     # Rust
     if not args.skip_rust:
-        tauri = ROOT / "src-tauri"
+        tauri = ROOT / "apps/desktop/src-tauri"
         if (tauri / "Cargo.toml").exists():
             failures += run("Rust cargo test", [CARGO, "test"], tauri)
 

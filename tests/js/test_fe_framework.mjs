@@ -8,15 +8,15 @@ import {
   createApiContext,
   refreshPlatform,
   deviceRegisterPayload,
-} from "../../src/api/index.ts";
+} from "../../apps/web/src/api/index.ts";
 import {
   parseHash,
   buildHash,
   isAppRoute,
-} from "../../src/hooks/use-router.ts";
-import { createRootStores } from "../../src/stores/index.ts";
-import { FEATURES } from "../../src/features/index.ts";
-import { UI } from "../../src/components/index.ts";
+} from "../../apps/web/src/hooks/use-router.ts";
+import { createRootStores } from "../../apps/web/src/stores/index.ts";
+import { FEATURES } from "../../apps/web/src/features/index.ts";
+import { UI } from "../../apps/web/src/components/index.ts";
 
 // --- parseHash / buildHash ---
 {

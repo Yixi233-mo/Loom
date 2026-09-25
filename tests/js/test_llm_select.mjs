@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { renderToStaticMarkup } from "react-dom/server";
 import * as React from "react";
-import { LlmSettingsPanel } from "../../src/views/llm-settings-panel.ts";
+import { LlmSettingsPanel } from "../../apps/web/src/views/llm-settings-panel.ts";
 
 const e = React.createElement;
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
@@ -48,13 +48,13 @@ assert.match(out, /data-action="use-provider"/);
 assert.match(out, /data-field="model-select"/);
 assert.match(out, /deepseek-reasoner/);
 
-const css = readFileSync(join(root, "src/styles/controls.css"), "utf8");
+const css = readFileSync(join(root, "apps/web/src/styles/controls.css"), "utf8");
 assert.ok(css.includes(".nav-link"));
 assert.ok(css.includes("backdrop-filter"));
 assert.ok(css.includes(".ui-button"));
 assert.ok(css.includes(".llm-item.is-active"));
 
-const idx = readFileSync(join(root, "src/styles/index.css"), "utf8");
+const idx = readFileSync(join(root, "apps/web/src/styles/index.css"), "utf8");
 assert.ok(idx.includes("controls.css"));
 
 console.log("test_llm_select: ALL PASS");

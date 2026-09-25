@@ -16,10 +16,10 @@ import {
   EmptyState,
   ErrorState,
   PageShell,
-} from "../../src/features/page-states.ts";
-import { ChatWorkbench } from "../../src/features/chat-workbench.ts";
-import { TaskCenter } from "../../src/features/task-center.ts";
-import { SettingsPage } from "../../src/features/settings-page.ts";
+} from "../../apps/web/src/features/page-states.ts";
+import { ChatWorkbench } from "../../apps/web/src/features/chat-workbench.ts";
+import { TaskCenter } from "../../apps/web/src/features/task-center.ts";
+import { SettingsPage } from "../../apps/web/src/features/settings-page.ts";
 
 const e = React.createElement;
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
@@ -177,14 +177,14 @@ function html(node) {
 
 // --- 样式与导出 ---
 {
-  const pagesCss = readFileSync(join(root, "src/styles/pages.css"), "utf8");
-  const indexCss = readFileSync(join(root, "src/styles/index.css"), "utf8");
+  const pagesCss = readFileSync(join(root, "apps/web/src/styles/pages.css"), "utf8");
+  const indexCss = readFileSync(join(root, "apps/web/src/styles/index.css"), "utf8");
   assert.ok(pagesCss.includes(".fe-state--loading"));
   assert.ok(pagesCss.includes(".fe-state--empty"));
   assert.ok(pagesCss.includes(".fe-state--error"));
   assert.ok(indexCss.includes("pages.css"));
 
-  const feat = await import("../../src/features/index.ts");
+  const feat = await import("../../apps/web/src/features/index.ts");
   assert.ok(feat.ChatWorkbench);
   assert.ok(feat.TaskCenter);
   assert.ok(feat.SettingsPage);

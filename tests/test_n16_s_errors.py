@@ -4,10 +4,9 @@ from __future__ import annotations
 
 import unittest
 
+from api.errors import install_error_contract, make_error
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-
-from api.errors import install_error_contract, make_error
 
 
 class TestErrorContract(unittest.TestCase):

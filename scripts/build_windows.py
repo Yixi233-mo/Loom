@@ -16,7 +16,7 @@ import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-BUNDLE = ROOT / "src-tauri" / "target" / "release" / "bundle"
+BUNDLE = ROOT / "apps/desktop/src-tauri" / "target" / "release" / "bundle"
 OUT = ROOT / "dist-bundle"
 
 

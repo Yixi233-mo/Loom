@@ -8,11 +8,11 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
-const css = readFileSync(join(root, "src/styles/responsive.css"), "utf8");
-const wizard = readFileSync(join(root, "src/features/connect-wizard.ts"), "utf8");
-const scan = readFileSync(join(root, "src/features/camera-scan.ts"), "utf8");
+const css = readFileSync(join(root, "apps/web/src/styles/responsive.css"), "utf8");
+const wizard = readFileSync(join(root, "apps/web/src/features/connect-wizard.ts"), "utf8");
+const scan = readFileSync(join(root, "apps/web/src/features/camera-scan.ts"), "utf8");
 const manifest = readFileSync(
-  join(root, "src-tauri/gen/android/app/src/main/AndroidManifest.xml"),
+  join(root, "apps", "desktop", "src-tauri", "gen", "android", "app", "src", "main", "AndroidManifest.xml"),
   "utf8"
 );
 const plan = readFileSync(

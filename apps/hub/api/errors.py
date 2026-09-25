@@ -7,7 +7,6 @@ from typing import Any, Dict, Optional
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
-
 from observability.security import redact_secrets
 
 # 业务码映射（HTTP status → code）

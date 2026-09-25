@@ -6,15 +6,15 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { qrToSvg, encodeQrMatrix } from "../../src/features/qr-code.ts";
+import { qrToSvg, encodeQrMatrix } from "../../apps/web/src/features/qr-code.ts";
 import {
   CONNECT_STEPS,
   buildPairingInfo,
   makePairingCode,
-} from "../../src/features/connect-wizard.ts";
+} from "../../apps/web/src/features/connect-wizard.ts";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
-const wizard = readFileSync(join(root, "src/features/connect-wizard.ts"), "utf8");
+const wizard = readFileSync(join(root, "apps/web/src/features/connect-wizard.ts"), "utf8");
 
 test("QR 生成 SVG", () => {
   const svg = qrToSvg("loom://pair?code=TEST12", { scale: 4 });

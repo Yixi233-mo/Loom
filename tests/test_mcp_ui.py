@@ -11,6 +11,7 @@ from fastapi.testclient import TestClient
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
 from agent_hub.adapters.mcp_protocol import McpJsonRpcClient  # noqa: E402
 from api.mcp_routes import create_mcp_router  # noqa: E402
@@ -94,7 +95,7 @@ class TestMockMcpServer(unittest.TestCase):
 
 class TestFrontendMcpPanel(unittest.TestCase):
     def test_panel_has_plain_language(self):
-        panel = (ROOT / "src" / "views" / "mcp-panel.ts").read_text(encoding="utf-8")
+        panel = (ROOT / "apps" / "web" / "src" / "views" / "mcp-panel.ts").read_text(encoding="utf-8")
         self.assertIn("MCP 外接服务", panel)
         self.assertIn("检测连接", panel)
         self.assertIn("mcp-probe", panel)

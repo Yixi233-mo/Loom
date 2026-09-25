@@ -9,9 +9,6 @@ import logging
 from contextlib import asynccontextmanager
 from typing import Any, Dict, Optional
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from fastapi.middleware.cors import CORSMiddleware
-
 from device_mesh.protocol import (
     ErrorCode,
     MessageType,
@@ -20,10 +17,13 @@ from device_mesh.protocol import (
     parse_message,
 )
 from device_mesh.ws_server import HubRuntime, _verify_signature
-from integration.stack import HubStack, _status_str
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.middleware.cors import CORSMiddleware
 from observability.audit import get_audit
 from observability.resilience import check_dependencies
 from observability.security import redact_obj
+
+from integration.stack import HubStack, _status_str
 
 logger = logging.getLogger(__name__)
 
@@ -236,7 +236,6 @@ def create_integrated_app(stack: HubStack) -> FastAPI:
     async def metrics():
         """10.7 Prometheus 文本指标。"""
         from fastapi.responses import PlainTextResponse
-
         from observability.metrics import get_metrics
 
         return PlainTextResponse(get_metrics().to_prometheus(), media_type="text/plain; version=0.0.4")

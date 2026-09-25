@@ -12,6 +12,7 @@ import httpx
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
 from agent_hub.adapters.claude_code import (  # noqa: E402
     CLAUDE_CODE_CAPABILITIES,

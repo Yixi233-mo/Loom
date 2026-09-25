@@ -9,6 +9,7 @@ from typing import Any, Dict
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
 from agent_hub.graph import (  # noqa: E402
     AGENT_CODE,

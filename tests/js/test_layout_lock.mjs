@@ -5,12 +5,12 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
-const base = readFileSync("src/styles/base.css", "utf8");
-const layout = readFileSync("src/styles/layout.css", "utf8");
-const rootCss = readFileSync("src/styles.css", "utf8");
-const indexHtml = readFileSync("index.html", "utf8");
-const tauri = JSON.parse(readFileSync("src-tauri/tauri.conf.json", "utf8"));
-const pages = readFileSync("src/styles/pages.css", "utf8");
+const base = readFileSync("apps/web/src/styles/base.css", "utf8");
+const layout = readFileSync("apps/web/src/styles/layout.css", "utf8");
+const rootCss = readFileSync("apps/web/src/styles.css", "utf8");
+const indexHtml = readFileSync("apps/web/index.html", "utf8");
+const tauri = JSON.parse(readFileSync("apps/desktop/src-tauri/tauri.conf.json", "utf8"));
+const pages = readFileSync("apps/web/src/styles/pages.css", "utf8");
 
 // 1. 视口锁定：html/body/#root 不整体滚动
 assert.match(base, /html\s*\{[^}]*overflow:\s*hidden/s);

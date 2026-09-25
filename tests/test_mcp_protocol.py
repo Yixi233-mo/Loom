@@ -11,6 +11,7 @@ import httpx
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
 from agent_hub.adapters.mcp_protocol import (  # noqa: E402
     DualProtocolAdapter,
@@ -129,13 +130,13 @@ class TestMcpAdapterFallback(unittest.IsolatedAsyncioTestCase):
 
 class TestFrontendRestWiring(unittest.TestCase):
     def test_llm_panel_uses_rest_api_paths(self):
-        panel = (ROOT / "src" / "views" / "llm-settings-panel.ts").read_text(encoding="utf-8")
+        panel = (ROOT / "apps" / "web" / "src" / "views" / "llm-settings-panel.ts").read_text(encoding="utf-8")
         self.assertIn("save-llm", panel)
         self.assertIn("fetch-models", panel)
         self.assertIn("model-select", panel)
 
     def test_api_module_exports(self):
-        idx = (ROOT / "src" / "services" / "index.ts").read_text(encoding="utf-8")
+        idx = (ROOT / "apps" / "web" / "src" / "services" / "index.ts").read_text(encoding="utf-8")
         self.assertIn("FileService", idx)
         self.assertIn("createServiceLayer", idx)
 

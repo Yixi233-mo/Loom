@@ -19,10 +19,10 @@ const ReactDOMServer = await import(
   tsUrl(path.join(modulesRoot, "react-dom", "server.js"))
 );
 const { SchemaRenderer } = await import(
-  tsUrl(path.join(root, "src/shell/schema-renderer.impl.ts"))
+  tsUrl(path.join(root, "apps/web/src/shell/schema-renderer.impl.ts"))
 );
 const { resolveUiSchema } = await import(
-  tsUrl(path.join(root, "src/shell/ui-registry.ts"))
+  tsUrl(path.join(root, "apps/web/src/shell/ui-registry.ts"))
 );
 
 const e = React.createElement ?? React.default.createElement;

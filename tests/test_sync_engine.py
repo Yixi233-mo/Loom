@@ -10,6 +10,7 @@ from typing import Any, Dict, List, Tuple
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
 from sync.sync_engine import (  # noqa: E402
     EVENT_KEY_DELETED,

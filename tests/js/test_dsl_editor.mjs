@@ -18,7 +18,7 @@ const require = createRequire(path.join(root, "package.json"));
 const React = require("react");
 const ReactDOMServer = require("react-dom/server");
 
-const impl = await import(tsUrl(path.join(root, "src/shell/dsl-editor.impl.ts")));
+const impl = await import(tsUrl(path.join(root, "apps/web/src/shell/dsl-editor.impl.ts")));
 const {
   createMemoryFs,
   createEditorState,
@@ -34,7 +34,7 @@ const {
 } = impl;
 
 const { DslEditor, TextareaCodeEditor, ValidationBanner } = await import(
-  tsUrl(path.join(root, "src/shell/dsl-editor.ui.ts"))
+  tsUrl(path.join(root, "apps/web/src/shell/dsl-editor.ui.ts"))
 );
 
 const e = React.createElement;

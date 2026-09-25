@@ -12,7 +12,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "../..");
 const tsUrl = (p) => pathToFileURL(p).href;
 
-const platform = await import(tsUrl(path.join(root, "src/platform/index.ts")));
+const platform = await import(tsUrl(path.join(root, "apps/web/src/platform/index.ts")));
 const {
   detectDeviceType,
   detectDevice,

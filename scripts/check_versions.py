@@ -16,9 +16,9 @@ def versions() -> dict[str, str]:
     if pkg.exists():
         out["package.json"] = str(json.loads(pkg.read_text(encoding="utf-8")).get("version", ""))
     for rel, pat in (
-        ("src-tauri/Cargo.toml", r'version\s*=\s*"([^"]+)"'),
+        ("apps/desktop/src-tauri/Cargo.toml", r'version\s*=\s*"([^"]+)"'),
         ("pyproject.toml", r'version\s*=\s*"([^"]+)"'),
-        ("src-tauri/tauri.conf.json", r'"version"\s*:\s*"([^"]+)"'),
+        ("apps/desktop/src-tauri/tauri.conf.json", r'"version"\s*:\s*"([^"]+)"'),
     ):
         p = ROOT / rel
         if p.exists():

@@ -13,11 +13,13 @@ from fastapi.testclient import TestClient
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "apps" / "hub"))
 
 from device_mesh.ws_server import make_signature as sign  # noqa: E402
 from integration.hub_bridge import build_integrated_hub_graph  # noqa: E402
 from integration.stack import HubStack  # noqa: E402
 from integration.ws_app import create_integrated_app  # noqa: E402
+
 from plugins.example.notes_runtime import NotesStore, make_notes_tools  # noqa: E402
 
 SECRET = "itest-secret"

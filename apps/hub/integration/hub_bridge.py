@@ -4,8 +4,6 @@ from __future__ import annotations
 
 from typing import Any, Awaitable, Callable, Dict
 
-from langgraph.graph import END, StateGraph
-
 from agent_hub.graph import (
     HubState,
     aggregate_results,
@@ -13,6 +11,7 @@ from agent_hub.graph import (
     compile_dsl_node,
     route_by_intent,
 )
+from langgraph.graph import END, StateGraph
 
 
 def make_orchestrated_dispatch(

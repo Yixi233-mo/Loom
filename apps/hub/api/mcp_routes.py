@@ -8,11 +8,10 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel, Field
-
 from agent_hub.adapters.mcp_protocol import McpJsonRpcClient
 from agent_hub.mcp_catalog import builtin_mcp_catalog, catalog_download_links
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel, Field
 
 
 class McpProbeIn(BaseModel):

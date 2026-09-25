@@ -15,14 +15,14 @@ import {
   isThemeName,
   themeAttr,
   TOKEN_DOC_PATH,
-} from "../../src/styles/tokens.ts";
+} from "../../apps/web/src/styles/tokens.ts";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
-const tokensCss = readFileSync(join(root, "src/styles/tokens.css"), "utf8");
-const baseCss = readFileSync(join(root, "src/styles/base.css"), "utf8");
-const componentsCss = readFileSync(join(root, "src/styles/components.css"), "utf8");
-const indexCss = readFileSync(join(root, "src/styles/index.css"), "utf8");
-const doc = readFileSync(join(root, "src/styles/README.md"), "utf8");
+const tokensCss = readFileSync(join(root, "apps/web/src/styles/tokens.css"), "utf8");
+const baseCss = readFileSync(join(root, "apps/web/src/styles/base.css"), "utf8");
+const componentsCss = readFileSync(join(root, "apps/web/src/styles/components.css"), "utf8");
+const indexCss = readFileSync(join(root, "apps/web/src/styles/index.css"), "utf8");
+const doc = readFileSync(join(root, "apps/web/src/styles/README.md"), "utf8");
 
 function mustDefine(css, name) {
   assert.ok(css.includes(`${name}:`), `tokens.css 应定义 ${name}`);

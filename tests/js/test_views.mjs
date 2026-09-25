@@ -19,10 +19,10 @@ const ReactDOMServer = require("react-dom/server");
 const e = React.createElement;
 const render = (el) => ReactDOMServer.renderToStaticMarkup(el);
 
-const views = await import(tsUrl(path.join(root, "src/views/index.ts")));
+const views = await import(tsUrl(path.join(root, "apps/web/src/views/index.ts")));
 const { ChatPanel, TaskPanel, ResultCard, FilePanel, Workspace, MessageBubble } = views;
 const { createSessionState, createTask, TaskStore, SessionStore } = await import(
-  tsUrl(path.join(root, "src/state/index.ts"))
+  tsUrl(path.join(root, "apps/web/src/state/index.ts"))
 );
 
 let passed = 0;

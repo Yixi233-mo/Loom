@@ -4,7 +4,7 @@
 import assert from "node:assert/strict";
 import { renderToStaticMarkup } from "react-dom/server";
 import * as React from "react";
-import { RecommendPage, RECOMMENDED_AGENTS } from "../../src/features/recommend-page.ts";
+import { RecommendPage, RECOMMENDED_AGENTS } from "../../apps/web/src/features/recommend-page.ts";
 
 const e = React.createElement;
 const apps = RECOMMENDED_AGENTS;
@@ -37,7 +37,7 @@ assert.match(html, /agent-card glass/);
 assert.doesNotMatch(html, /data-view="agent-detail"/);
 
 const app = await import("node:fs");
-const appSrc = app.readFileSync("src/App.tsx", "utf8");
+const appSrc = app.readFileSync("apps/web/src/App.tsx", "utf8");
 assert.match(appSrc, /recommend/);
 assert.match(appSrc, /RecommendPage/);
 

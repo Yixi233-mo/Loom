@@ -25,13 +25,13 @@ function ok(name, fn) {
   }
 }
 
-const app = readFileSync(path.join(root, "src/App.tsx"), "utf8");
+const app = readFileSync(path.join(root, "apps/web/src/App.tsx"), "utf8");
 const panel = readFileSync(
-  path.join(root, "src/views/llm-settings-panel.ts"),
+  path.join(root, "apps/web/src/views/llm-settings-panel.ts"),
   "utf8"
 );
 const chat = readFileSync(
-  path.join(root, "src/services/model-chat.ts"),
+  path.join(root, "apps/web/src/services/model-chat.ts"),
   "utf8"
 );
 
