@@ -1,51 +1,47 @@
-node_modules/
-dist/
-target/
-__pycache__/
-*.pyc
-.pytest_cache/
-.llm/
-plugins/_n9_out/
-plugins/_hot_test/
-plugins/_llm_*.json
-plugins/llm_providers.json
-
-# è®¡å
-ç®å½
-scripts/_*.py
-
-# æ¬æº WorkBuddy è¿æ¥ï¼å« tokenï¼
-plugins/work_buddy_connection.json
-# E2E / è¿è¡æ¶ä¸´æ¶
-e2e_hub.*
-plugins/_e2e_*
-plugins/_test_*
-plugins/_smoke*
-
-dist-bundle/
-
-# Android æåäº§ç© / æ¬å° SDK
-dist-bundle/
-src-tauri/gen/android/app/src/main/jniLibs/
-src-tauri/gen/android/.gradle/
-src-tauri/gen/android/**/build/
-
-# Android ç­¾åï¼æ¬æºï¼
-src-tauri/gen/android/keystore.properties
-*.jks
-*.keystore
+# Loom .gitignore
 
-# ÃÜÔ¿£¨2.2£©
+# 依赖 / 构建
+node_modules/
+dist/
+dist-bundle/
+app.html
+target/
+src-tauri/target/
+src-tauri/gen/android/app/src/main/jniLibs/
+src-tauri/gen/android/.gradle/
+src-tauri/gen/android/**/build/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.llm/
+
+# 密钥与本机
 .env
 .env.*
 !.env.example
+src-tauri/gen/android/keystore.properties
+*.jks
+*.keystore
+plugins/llm_providers.json
+plugins/work_buddy_connection.json
 
 # 产品长文档（按约定不进 git）
 目录/
 目录/**
 
-# 调试与本地
+# 调试与本地临时
 docs/*.png
 scripts/_archive/
+scripts/_*.py
 *.log
 tmp/
+e2e_hub.*
+plugins/_e2e_*
+plugins/_test_*
+plugins/_smoke*
+plugins/_n9_out/
+plugins/_hot_test/
+plugins/_llm_*.json
