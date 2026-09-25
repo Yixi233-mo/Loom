@@ -194,7 +194,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
   assert.ok(css.includes('data-kb'));
   assert.ok(css.includes("data-dragover"));
 
-  const plan = readFileSync(join(root, "目录/plan.md"), "utf8");
+  const plan = readFileSync(join(root, "目录/04-进度与路线/plan.md"), "utf8");
   // 验证步骤写入 plan 后应包含；先断言源文件存在
   assert.ok(css.length > 0);
   const indexCss = readFileSync(join(root, "src/styles/index.css"), "utf8");

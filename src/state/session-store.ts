@@ -82,4 +82,10 @@ export class SessionStore extends Store<SessionState> {
   endSession(): void {
     this.setStatus("ended");
   }
+
+  /** U2 新建对话：清空消息与草稿，换会话 */
+  resetForNew(sessionId?: string, title = "新会话"): void {
+    const id = sessionId ?? `sess-${Date.now()}`;
+    this.reset(createSessionState(id, title));
+  }
 }

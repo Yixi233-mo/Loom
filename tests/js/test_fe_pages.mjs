@@ -86,7 +86,7 @@ function html(node) {
 
   const empty = html(e(ChatWorkbench, { session }));
   assert.match(empty, /data-phase="empty"/);
-  assert.match(empty, /还没有对话/);
+  assert.match(empty, /开始一段新对话|还没有对话/);
 
   const ready = html(
     e(ChatWorkbench, {

@@ -21,28 +21,88 @@ export type PromptChip = { id: string; title: string; body: string; updatedAt?: 
 
 const e = React.createElement;
 
-function MessageRowImpl(props: { message: SessionMessage }) {
+function formatTime(ts?: number): string {
+  if (!ts) return "";
+  const d = new Date(ts);
+  return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+}
+
+function MessageRowImpl(props: {
+  message: SessionMessage;
+  onCopy?: (text: string) => void;
+  onRetry?: (text: string) => void;
+}) {
   const m = props.message;
+  const isUser = m.role === "user";
+  const name = isUser ? "你" : m.role === "assistant" ? "Loom" : m.role;
   return e(
     "article",
     {
-      className: `msg-bubble role-${m.role}`,
+      className: `msg-row msg-row--${isUser ? "user" : "assistant"}`,
       "data-role": m.role,
       "data-message-id": m.id,
     },
     e(
       "div",
-      { className: "msg-meta" },
-      m.role === "user" ? "你" : m.role === "assistant" ? "Loom" : m.role
+      {
+        className: "msg-avatar",
+        "data-avatar": isUser ? "user" : "bot",
+        "aria-hidden": "true",
+      },
+      isUser ? "我" : "巢"
     ),
-    e("div", { className: "msg-content" }, m.content),
-    m.taskId
-      ? e(
-          "div",
-          { className: "msg-task-link", "data-task-id": m.taskId },
-          `关联任务 ${m.taskId}`
+    e(
+      "div",
+      { className: "msg-bubble role-" + m.role },
+      e(
+        "div",
+        { className: "msg-meta" },
+        e("span", { className: "msg-author" }, name),
+        e("span", { className: "msg-time" }, formatTime(m.createdAt))
+      ),
+      e("div", { className: "msg-content" }, m.content),
+      m.taskId
+        ? e(
+            "div",
+            { className: "msg-task-link", "data-task-id": m.taskId },
+            `关联任务 ${m.taskId}`
+          )
+        : null,
+      e(
+        "div",
+        { className: "msg-actions", "data-view": "msg-actions" },
+        e(
+          "button",
+          {
+            type: "button",
+            className: "msg-action",
+            "data-action": "msg-copy",
+            onClick: () => props.onCopy?.(m.content),
+          },
+          "复制"
+        ),
+        e(
+          "button",
+          {
+            type: "button",
+            className: "msg-action",
+            "data-action": "msg-retry",
+            onClick: () => props.onRetry?.(m.content),
+          },
+          "重试"
+        ),
+        e(
+          "button",
+          {
+            type: "button",
+            className: "msg-action",
+            "data-action": "msg-quote",
+            onClick: () => props.onCopy?.(m.content),
+          },
+          "引用"
         )
-      : null
+      )
+    )
   );
 }
 
@@ -105,11 +165,17 @@ export function ChatWorkbench(props: {
   error?: string | null;
   busy?: boolean;
   modelLabel?: string;
+  models?: string[];
+  onModelChange?: (model: string) => void;
   chatSize?: "default" | "expanded";
   onSend?: (text: string) => void;
   onDraft?: (text: string) => void;
   onToggleSize?: () => void;
   onRetry?: () => void;
+  onNewChat?: () => void;
+  onAttach?: () => void;
+  onCopy?: (text: string) => void;
+  onRetryMessage?: (text: string) => void;
   prompts?: PromptChip[];
   activePromptId?: string | null;
   activePromptTitle?: string;
@@ -161,12 +227,37 @@ export function ChatWorkbench(props: {
               onRetry: props.onRetry,
             })
           : phase === "empty"
-            ? e(EmptyState, {
-                title: "还没有对话",
-                hint: "在下方输入，开始和 Agent 协作。",
-                actionLabel: "试试：帮我总结这份 PDF",
-                onAction: () => props.onSend?.("帮我总结这份 PDF"),
-              })
+            ? e(
+                "div",
+                { className: "chat-empty", "data-view": "chat-empty" },
+                e(EmptyState, {
+                  title: "开始一段新对话",
+                  hint: "问问题、丢文件，或点下方快捷任务。侧栏「新建对话」可随时清空重来。",
+                  actionLabel: "试试：帮我总结这份 PDF",
+                  onAction: () => props.onSend?.("帮我总结这份 PDF"),
+                }),
+                e(
+                  "div",
+                  { className: "chat-starters", "data-view": "chat-starters" },
+                  ...[
+                    ["帮我规划今天的任务", "规划"],
+                    ["查资料：项目怎么部署", "查资料"],
+                    ["审查这段代码的潜在问题", "审查代码"],
+                  ].map(([text, label]) =>
+                    e(
+                      "button",
+                      {
+                        key: text,
+                        type: "button",
+                        className: "chat-starter",
+                        "data-action": "chat-starter",
+                        onClick: () => props.onSend?.(text),
+                      },
+                      label
+                    )
+                  )
+                )
+              )
             : e(
                 "div",
                 {
@@ -174,7 +265,12 @@ export function ChatWorkbench(props: {
                   "data-view": "chat-stream",
                 },
                 props.session.messages.map((m) =>
-                  e(MessageRow, { key: m.id, message: m })
+                  e(MessageRow, {
+                    key: m.id,
+                    message: m,
+                    onCopy: props.onCopy,
+                    onRetry: props.onRetryMessage,
+                  })
                 )
               ),
       e(PromptChips, {
@@ -194,6 +290,31 @@ export function ChatWorkbench(props: {
             if (canSend && props.onSend) props.onSend(draft);
           },
         },
+        e(
+          "button",
+          {
+            type: "button",
+            className: "composer-icon",
+            "data-action": "chat-attach",
+            title: "添加附件",
+            onClick: () => props.onAttach?.(),
+          },
+          "＋"
+        ),
+        props.models && props.models.length > 0
+          ? e(
+              "select",
+              {
+                className: "composer-model",
+                "data-field": "chat-model",
+                "aria-label": "模型",
+                value: props.modelLabel ?? props.models[0],
+                onChange: (ev: { target: { value: string } }) =>
+                  props.onModelChange?.(ev.target.value),
+              },
+              ...props.models.map((m) => e("option", { key: m, value: m }, m))
+            )
+          : e("span", { className: "composer-model-label" }, props.modelLabel || "本地回声"),
         e("input", {
           className: UI.input,
           "data-field": "chat-draft",
