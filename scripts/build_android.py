@@ -5,11 +5,10 @@
   - JAVA_HOME（JDK 17+）
   - ANDROID_HOME / ANDROID_SDK_ROOT（含 NDK）
   - rustup target add aarch64-linux-android
-  - npx tauri android init（首次）
 
 用法：
   python scripts/build_android.py            # arm64 debug APK
-  python scripts/build_android.py --release  # 尝试 release（需签名配置）
+  python scripts/build_android.py --release  # release（需 keystore.properties）
 """
 
 from __future__ import annotations
@@ -51,14 +50,30 @@ def copy_so(profile: str) -> Path:
     return dst
 
 
+def copy_frontend_assets() -> None:
+    """把 vite dist/ 同步到 app/src/main/assets/（Tauri asset loader）。
+
+    缺失会导致 WebView 无页面，原生层闪退。
+    """
+    dist = ROOT / "dist"
+    assets = GEN / "app" / "src" / "main" / "assets"
+    if not (dist / "index.html").exists():
+        raise SystemExit(f"missing {dist}/index.html — 先 npm run build")
+    if assets.exists():
+        shutil.rmtree(assets)
+    shutil.copytree(dist, assets)
+    n = sum(1 for p in assets.rglob("*") if p.is_file())
+    print(f"copied frontend assets: {n} files -> {assets}")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--release", action="store_true")
     args = ap.parse_args()
     profile = "release" if args.release else "debug"
     task = "assembleArm64Release" if args.release else "assembleArm64Debug"
+    skip = f"rustBuildArm64{'Release' if args.release else 'Debug'}"
 
-    # 1) Rust
     run(
         "Rust aarch64",
         [
@@ -76,20 +91,19 @@ def main() -> int:
         ROOT / "src-tauri",
     )
 
-    # 2) 前端
-    run("Vite build", ["npm.cmd" if os.name == "nt" else "npm", "run", "build"], ROOT)
+    npm = "npm.cmd" if os.name == "nt" else "npm"
+    run("Vite build", [npm, "run", "build"], ROOT)
 
-    # 3) so → jniLibs
+    # 关键：前端必须进 assets，否则真机闪退
+    copy_frontend_assets()
     copy_so(profile)
 
-    # 4) Gradle（跳过会再跑 cargo 的 rustBuild）
     run(
         f"Gradle {task}",
-        [str(GEN / "gradlew.bat"), task, "-x", f"rustBuildArm64{'Release' if args.release else 'Debug'}", "--no-daemon"],
+        [str(GEN / "gradlew.bat"), task, "-x", skip, "--no-daemon"],
         GEN,
     )
 
-    # 5) 收集
     OUT.mkdir(exist_ok=True)
     copied = []
     for p in (GEN / "app" / "build" / "outputs" / "apk").rglob("*.apk"):
