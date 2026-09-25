@@ -6,6 +6,7 @@ import * as React from "react";
 import type { AgentState } from "../contracts/index.ts";
 import { PageShell, EmptyState } from "./page-states.ts";
 import { UI } from "../components/index.ts";
+import { ConnectWizard } from "./connect-wizard.ts";
 
 const e = React.createElement;
 
@@ -64,6 +65,7 @@ export function AgentsPage(props: {
   agents: AgentState[];
   onTest?: (agentName: string) => void;
   onRefresh?: () => void;
+  onOpenRoute?: (route: "devices" | "mcp" | "settings") => void;
 }) {
   const online = props.agents.filter((a) => a.status === "online").length;
 
@@ -71,8 +73,8 @@ export function AgentsPage(props: {
     PageShell,
     {
       route: "agents",
-      title: "Agent 状态",
-      subtitle: "看看谁能帮你干活 · 现在健不健康",
+      title: "接入 · Agent 状态",
+      subtitle: "先接入，再让 Loom 替你调度",
       actions: e(
         "button",
         {
@@ -87,6 +89,10 @@ export function AgentsPage(props: {
     e(
       "div",
       { className: "agents-page", "data-page": "agents", "data-view": "agents" },
+
+      e(ConnectWizard, {
+        onOpen: (action) => props.onOpenRoute?.(action),
+      }),
 
       e(
         "div",

@@ -877,3 +877,20 @@
   background: var(--panel);
   color: var(--muted);
 }
+
+/* E2/E3 总控台体验 — 接入向导 + 任务预览 */
+.connect-wizard { margin-bottom: 16px; padding: 16px 18px; }
+.connect-wizard-head h3 { margin: 0 0 4px; font-size: 16px; }
+.connect-wizard-head .hint { margin: 0 0 12px; color: var(--text-muted, #7a6b60); font-size: 13px; }
+.connect-wizard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+@media (max-width: 720px) { .connect-wizard-grid { grid-template-columns: 1fr; } }
+.connect-step { border: 1px solid var(--line, rgba(0,0,0,0.08)); border-radius: 12px; padding: 12px; background: var(--surface, rgba(255,255,255,0.6)); }
+.connect-step-icon { font-size: 18px; margin-bottom: 6px; }
+.connect-step p { margin: 6px 0 10px; font-size: 12px; color: var(--text-muted, #7a6b60); line-height: 1.5; }
+.task-preview { margin: 12px 0; padding: 14px 16px; border: 1px solid var(--accent, #d4785a); border-radius: 12px; background: var(--surface, rgba(255,255,255,0.75)); }
+.task-preview-title { font-size: 13px; font-weight: 600; color: var(--accent, #d4785a); margin-bottom: 8px; }
+.task-preview-body { font-size: 13px; display: grid; gap: 6px; }
+.tp-row { display: grid; grid-template-columns: 48px 1fr; gap: 8px; align-items: start; }
+.tp-row b { color: var(--text-muted, #7a6b60); font-weight: 600; }
+.tp-steps { margin: 0; padding-left: 18px; }
+.task-preview-actions { display: flex; gap: 8px; margin-top: 12px; }

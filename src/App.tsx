@@ -13,6 +13,7 @@ import {
   RecommendPage,
   type AgentApp,
 } from "./features/index.ts";
+import { parseTaskPreview, type TaskPreview } from "./features/connect-wizard.ts";
 import { useHashRoute, navigate, type AppRoute } from "./hooks/index.ts";
 import { createAppStores, createTask, createAgent } from "./state/index.ts";
 import { promptStore, type PromptItem } from "./stores/prompt-store.ts";
@@ -91,6 +92,7 @@ export default function App() {
   );
   const [chatSize, setChatSize] = React.useState<"default" | "expanded">("expanded");
   const [chatBusy, setChatBusy] = React.useState(false);
+  const [pendingPreview, setPendingPreview] = React.useState<TaskPreview | null>(null);
   const modelChat = React.useMemo(() => new ModelChatClient(), []);
   const [llmError, setLlmError] = React.useState("");
   const [llmTestResult, setLlmTestResult] = React.useState("");
@@ -181,7 +183,7 @@ export default function App() {
           "div",
           null,
           e("strong", null, "Loom"),
-          e("div", { className: "side-label" }, "跨端 Agent 工作台")
+          e("div", { className: "side-label" }, "AI 总控台 · 连接所有 Agent")
         )
       ),
       e(
@@ -485,6 +487,23 @@ export default function App() {
           onCopy: (text: string) => {
             void navigator.clipboard?.writeText(text);
           },
+            pendingPreview,
+            onConfirmPreview: (p: TaskPreview) => {
+              setPendingPreview(null);
+              stores.session.appendMessage({
+                role: "assistant",
+                content: `已创建任务「${p.title}」· ${p.trigger} · ${p.device}\n步骤：${p.steps.join(" → ")}\n可在「任务」里查看进度。`,
+              });
+              setTick((t) => t + 1);
+            },
+            onCancelPreview: () => {
+              setPendingPreview(null);
+              stores.session.appendMessage({
+                role: "assistant",
+                content: "已取消。直接改需求再说一遍即可。",
+              });
+              setTick((t) => t + 1);
+            },
           onOpenTask: () => {
             setTaskPanelOpen(true);
             navigate("tasks");
@@ -518,6 +537,17 @@ export default function App() {
           onSend: (text: string) => {
             stores.session.appendMessage({ role: "user", content: text });
             stores.session.setDraft("");
+            const preview = parseTaskPreview(text);
+            if (preview) {
+              setPendingPreview(preview);
+              stores.session.appendMessage({
+                role: "assistant",
+                content: "好的，我整理了任务预览。确认后才会创建；不想跑就说「再改改」。",
+              });
+              stores.session.setStatus("idle");
+              setTick((t) => t + 1);
+              return;
+            }
             stores.session.setStatus("streaming");
             setChatBusy(true);
             const active = llmProviders.find((p) => p.providerId === activeProviderId && p.defaultModel && p.baseUrl) || llmProviders.find((p) => p.defaultModel && p.baseUrl);
@@ -573,6 +603,7 @@ export default function App() {
           })
       : activeRoute === "agents"
         ? e(AgentsPage, {
+            onOpenRoute: (r: string) => navigate(r as AppRoute),
             agents,
             onRefresh: () => setTick((x) => x + 1),
             onTest: (name: string) => {

@@ -12,6 +12,7 @@ import {
   PageShell,
   phaseOf,
 } from "./page-states.ts";
+import { TaskPreviewCard, type TaskPreview } from "./connect-wizard.ts";
 import { UI } from "../components/index.ts";
 
 
@@ -191,6 +192,10 @@ export function ChatWorkbench(props: {
   onPickPrompt?: (p: PromptChip) => void;
   onClearPrompt?: () => void;
   onManagePrompts?: () => void;
+  /** E3 说话即任务：待确认预览 */
+  pendingPreview?: TaskPreview | null;
+  onConfirmPreview?: (p: TaskPreview) => void;
+  onCancelPreview?: () => void;
 }) {
   const phase = phaseOf({
     loading: props.loading,
@@ -290,6 +295,14 @@ export function ChatWorkbench(props: {
         onClear: props.onClearPrompt,
         onManage: props.onManagePrompts,
       }),
+      props.pendingPreview
+        ? e(TaskPreviewCard, {
+            preview: props.pendingPreview,
+            onConfirm: props.onConfirmPreview,
+            onCancel: props.onCancelPreview,
+          })
+        : null,
+
       e(
         "form",
         {
