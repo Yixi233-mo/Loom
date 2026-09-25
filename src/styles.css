@@ -2,11 +2,16 @@
    布局壳（.app-shell / .app-header）以 src/styles/layout.css 为准，此处只保留组件级补丁。 */
 
 .app-section {
-  background: var(--panel);
+  background: var(--surface-card, var(--panel));
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   padding: 18px 20px;
   margin-top: 20px;
+  box-shadow: var(--card-shadow);
+}
+
+.app-section:hover {
+  box-shadow: var(--card-shadow-hover, var(--card-shadow));
 }
 
 .app-section h2 {
@@ -28,9 +33,10 @@
 
 .plugin-card {
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   padding: 14px 16px;
-  background: #fbfaf7;
+  background: var(--surface-card, #fbfaf7);
+  box-shadow: var(--shadow-sm);
 }
 
 .plugin-card h3 {
@@ -239,11 +245,12 @@
 }
 
 .panel {
-  background: var(--panel);
+  background: var(--surface-card, var(--panel));
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 14px 16px;
   min-height: 280px;
+  box-shadow: var(--card-shadow);
 }
 
 .panel-header {
@@ -325,9 +332,10 @@
 
 .task-item {
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   padding: 10px;
-  background: #fbfaf7;
+  background: var(--surface-card, #fbfaf7);
+  box-shadow: var(--shadow-sm);
 }
 
 .task-head {
@@ -427,7 +435,7 @@
   font-size: 13px;
 }
 .llm-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
-.llm-item { border: 1px solid var(--line); border-radius: 8px; padding: 10px; background: #fbfaf7; }
+.llm-item { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 10px; background: var(--surface-card, #fbfaf7); box-shadow: var(--shadow-sm); }
 
 
 /* 对话区尺寸 */

@@ -57,6 +57,8 @@ export const CSS_VARS = {
   ink: "--ink",
   muted: "--muted",
   accent: "--accent",
+  accentHover: "--accent-hover",
+  accentActive: "--accent-active",
   accentStrong: "--accent-strong",
   accentSoft: "--accent-soft",
   success: "--success",

@@ -28,11 +28,14 @@
   --p-ink-300: #a8988c;
   --p-ink-100: #cfc6bd;
 
-  /* 主强调：蜜桃橘 / 暖杏 / 陶土 */
+  /* 主强调：蜜桃橘 / 暖杏 / 陶土（含 hover/active 深色阶） */
   --p-peach-400: #e8a070;
   --p-peach-300: #e8b48a;
+  --p-apricot-400: #e09a6a;
   --p-apricot-500: #d9895b;
   --p-apricot-600: #c56d42;
+  --p-apricot-700: #a85632;
+  --p-apricot-800: #8c4528;
   --p-terracotta-700: #a85632;
   --p-peach-soft: #f6e2d4;
   --p-peach-glow: rgba(232, 160, 112, 0.45);
@@ -84,8 +87,11 @@
 
   --p-peach-400: #e8a070;
   --p-peach-300: #efc09a;
+  --p-apricot-400: #e8b48a;
   --p-apricot-500: #e09a6a;
   --p-apricot-600: #d9895b;
+  --p-apricot-700: #c56d42;
+  --p-apricot-800: #b85c4a;
   --p-terracotta-700: #e8b48a;
   --p-peach-soft: #4a3428;
   --p-peach-glow: rgba(232, 160, 112, 0.35);
@@ -117,13 +123,16 @@
 :root,
 [data-theme="light"],
 [data-theme="dark"] {
-  /* 表面 */
+  /* 表面 — U4：页面底 vs 卡片底分层 */
   --bg: var(--p-cream-100);
+  --bg-page: color-mix(in srgb, var(--p-cream-100) 88%, #e8e4de);
   --bg-elevated: var(--p-cream-0);
   --bg-glow: var(--p-glow-peach);
   --panel: var(--p-glass-bg);
   --panel-solid: var(--p-cream-0);
   --panel-muted: var(--p-cream-200);
+  --surface-card: var(--p-cream-0);
+  --surface-page: var(--bg-page);
 
   /* 文字 */
   --ink: var(--p-ink-900);
@@ -133,8 +142,11 @@
   --line: var(--p-glass-border);
   --line-strong: var(--p-cream-300);
 
-  /* 强调 */
+  /* 强调 — 基 / hover / active 深色阶（U4） */
   --accent: var(--p-apricot-500);
+  --accent-hover: var(--p-apricot-600);
+  --accent-active: var(--p-apricot-700);
+  --accent-deep: var(--p-apricot-800);
   --accent-strong: var(--p-apricot-600);
   --accent-soft: var(--p-peach-soft);
   --accent-ink: #fffaf5;
@@ -182,28 +194,38 @@
   --space-9: 48px;
   --space-10: 64px;
 
-  /* 圆角 */
-  --radius-xs: 6px;
+  /* 圆角 — U4 统一 8 / 12 / 16 三档（pill 仅 chips） */
+  --radius-xs: 8px;
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
-  --radius-xl: 22px;
+  --radius-xl: 16px;
   --radius-pill: 999px;
+  /* 语义别名，便于组件直接取档 */
+  --r-sm: var(--radius-sm);
+  --r-md: var(--radius-md);
+  --r-lg: var(--radius-lg);
 
   /* 字体层级 */
   --font-body: var(--p-font-body);
   --font-display: var(--p-font-display);
   --font-mono: var(--p-font-mono);
 
-  --text-2xs: 11px;
+  /* 字体 — U4 收敛四档 24 / 16 / 14 / 12（旧名映射，兼容） */
+  --text-2xs: 12px;
   --text-xs: 12px;
-  --text-sm: 13px;
+  --text-sm: 14px;
   --text-md: 14px;
   --text-lg: 16px;
-  --text-xl: 20px;
+  --text-xl: 16px;
   --text-2xl: 24px;
-  --text-3xl: 32px;
-  --text-display: 40px;
+  --text-3xl: 24px;
+  --text-display: 24px;
+  /* 新命名（推荐组件使用） */
+  --fs-sm: 12px;
+  --fs-md: 14px;
+  --fs-lg: 16px;
+  --fs-xl: 24px;
 
   --leading-tight: 1.25;
   --leading-normal: 1.5;
@@ -239,7 +261,8 @@
  * ------------------------------------------------------------------------- */
 :root {
   --button-primary-bg: var(--accent);
-  --button-primary-bg-hover: var(--accent-strong);
+  --button-primary-bg-hover: var(--accent-hover);
+  --button-primary-bg-active: var(--accent-active);
   --button-primary-ink: var(--accent-ink);
   --button-ghost-border: var(--line);
   --button-ghost-bg-hover: var(--accent-soft);
@@ -249,7 +272,9 @@
   --card-bg: var(--glass-bg);
   --card-border: var(--glass-border);
   --card-backdrop: blur(var(--glass-blur));
+  /* U4：统一卡片阴影 */
   --card-shadow: var(--shadow-md);
+  --card-shadow-hover: 0 12px 36px rgba(120, 72, 40, 0.12);
 
   --toast-bg: var(--champagne-soft);
   --toast-border: color-mix(in srgb, var(--accent-strong) 28%, transparent);

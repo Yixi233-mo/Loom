@@ -18,9 +18,10 @@ body {
   margin: 0;
   height: 100%;
   overflow: hidden;
+  /* U4：页面浅灰层，与卡片（更亮）区分 */
   background:
     radial-gradient(ellipse 55vw 55vw at 10% 85%, var(--bg-glow), transparent 68%),
-    var(--bg);
+    var(--surface-page, var(--bg));
   color: var(--ink);
 }
 
