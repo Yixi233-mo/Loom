@@ -311,7 +311,7 @@ export const CONNECT_STEPS = [
     title: "扫码连接",
     desc: "展示本机二维码与配对码，手机扫一扫即接入。",
     action: "scan" as const,
-    cta: "显示二维码",
+    cta: "刷新二维码",
   },
   {
     id: "auth",
@@ -334,7 +334,7 @@ export const CONNECT_STEPS = [
 export function ConnectWizard(props: {
   onOpen?: (action: "devices" | "mcp" | "settings" | "scan") => void;
 }) {
-  const [showPair, setShowPair] = React.useState(false);
+  const [showPair, setShowPair] = React.useState(true);
 
   return e(
     "div",
@@ -378,7 +378,7 @@ export function ConnectWizard(props: {
                 props.onOpen?.(s.action);
               },
             },
-            showPair && s.action === "scan" ? "收起二维码" : s.cta
+            showPair && s.action === "scan" ? "隐藏二维码" : s.cta
           )
         )
       )

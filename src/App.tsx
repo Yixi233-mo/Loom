@@ -213,12 +213,12 @@ export default function App() {
         e("div", { className: "side-label" }, "工作区"),
         (
           [
-            ["chat", "对话", "💬"],
-            ["tasks", "任务", "◎"],
-            ["files", "文件", "▤"],
-            ["knowledge", "知识库", "◈"],
-            ["agents", "Agent", "⬡"],
-            ["prompts", "提示词", "✎"],
+            ["chat", "对话", "CT"],
+            ["tasks", "任务", "TK"],
+            ["files", "文件", "FL"],
+            ["knowledge", "知识库", "KB"],
+            ["agents", "Agent", "IN"],
+            ["prompts", "提示词", "PT"],
           ] as Array<[AppRoute, string, string]>
         ).map(([id, label, icon]) =>
           e(
@@ -259,14 +259,14 @@ export default function App() {
               navigate("settings");
             },
           },
-          e("span", { className: "nav-icon", "aria-hidden": "true" }, "⚙"),
+          e("span", { className: "nav-icon", "aria-hidden": "true" }, "ST"),
           e("span", { className: "nav-text" }, "设置 · 跨端")
         ),
         e("div", { className: "side-label" }, "工具"),
         (
           [
-            ["mcp", "MCP", "⌘"],
-            ["recommend", "推荐", "☆"],
+            ["mcp", "MCP", "MC"],
+            ["recommend", "推荐", "RS"],
           ] as Array<[AppRoute, string, string]>
         ).map(([id, label, icon]) =>
           e(
@@ -291,7 +291,7 @@ export default function App() {
             "data-route": "help",
             onClick: () => navigate("help"),
           },
-          e("span", { className: "nav-icon", "aria-hidden": "true" }, "?"),
+          e("span", { className: "nav-icon", "aria-hidden": "true" }, "??"),
           e("span", { className: "nav-text" }, "使用说明")
         )
       ),
@@ -328,7 +328,7 @@ export default function App() {
           "aria-expanded": sideOpen ? "true" : "false",
           onClick: () => setSideOpen((v) => !v),
         },
-        "☰"
+        "≡"
       ),
       e(
         "div",

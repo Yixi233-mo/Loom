@@ -1,5 +1,5 @@
 /**
- * E1 侧栏 — 保持原毛玻璃风格，仅轻量增强
+ * E1 侧栏 — 无 emoji 字标 + 轻量增强
  */
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -10,14 +10,26 @@ import { fileURLToPath } from "node:url";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const app = readFileSync(join(root, "src", "App.tsx"), "utf8");
 const layout = readFileSync(join(root, "src", "styles", "layout.css"), "utf8");
+const wizard = readFileSync(join(root, "src", "features", "connect-wizard.ts"), "utf8");
 
 test("保留原侧栏属性", () => {
   assert.ok(app.includes("side-brand"), "side-brand");
   assert.ok(app.includes("side-new-chat"), "side-new-chat");
   assert.ok(app.includes("side-user"), "side-user");
   assert.ok(app.includes("工作区"), "workgroup label");
-  assert.ok(app.includes("💬") && app.includes("◎"), "original emoji icons");
-  assert.ok(!app.includes("console-side"), "no console chrome");
+});
+
+test("无 emoji，使用字标", () => {
+  for (const emo of ["💬", "◎", "▤", "◈", "⬡", "✎", "⌘", "☆", "⚙", "🔐", "🔑"]) {
+    assert.ok(!app.includes(emo), `no ${emo}`);
+    assert.ok(!wizard.includes(emo), `no wizard ${emo}`);
+  }
+  assert.ok(app.includes('"CT"') && app.includes('"TK"'), "monograms");
+});
+
+test("扫码连接默认出二维码", () => {
+  assert.ok(wizard.includes("useState(true)"), "pairing shown by default");
+  assert.ok(wizard.includes("PairingPanel") && wizard.includes("qrToSvg"), "QR panel");
 });
 
 test("产品叙事轻改", () => {
@@ -43,9 +55,4 @@ test("路由未删减", () => {
       `route ${r} missing`
     );
   }
-});
-
-test("轻量增强：角标 + 接入组", () => {
-  assert.ok(layout.includes("nav-badge"), "badge css");
-  assert.ok(app.includes("接入") || app.includes("agents"), "agents entry");
 });

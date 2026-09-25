@@ -322,7 +322,7 @@ export function ChatWorkbench(props: {
             title: "添加附件",
             onClick: () => props.onAttach?.(),
           },
-          "＋"
+          "+"
         ),
         props.models && props.models.length > 0
           ? e(
