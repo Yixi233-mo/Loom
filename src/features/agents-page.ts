@@ -65,7 +65,7 @@ export function AgentsPage(props: {
   agents: AgentState[];
   onTest?: (agentName: string) => void;
   onRefresh?: () => void;
-  onOpenRoute?: (route: "devices" | "mcp" | "settings") => void;
+  onOpenRoute?: (route: "devices" | "mcp" | "settings" | "scan") => void;
 }) {
   const online = props.agents.filter((a) => a.status === "online").length;
 
