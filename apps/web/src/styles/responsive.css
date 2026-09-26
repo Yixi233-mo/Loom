@@ -554,3 +554,199 @@ body, .app-main, .fe-page, p, li, td, strong, code, pre, span {
     overflow-x: auto;
   }
 }
+
+/* ========== P1：逐页出屏 + 单列表单 + 44px 触控 ========== */
+
+/* 全局按钮/可点区（移动） */
+@media (max-width: 767.98px) {
+  button,
+  [role="button"],
+  .ui-button,
+  .nav-link,
+  .navbtn,
+  .chip,
+  a.btn {
+    min-height: 44px;
+  }
+  /* 表单一律单列 */
+  .llm-form,
+  .settings-form,
+  .prompt-editor,
+  .pairing-manual,
+  .kb-bar,
+  .kb-sources,
+  .files-page,
+  .file-drop,
+  form {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+  }
+  .llm-form > *,
+  .settings-form > *,
+  .prompt-editor > *,
+  .pairing-manual-row > *,
+  .kb-bar > *,
+  .files-page > * {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 1 1 auto !important;
+    box-sizing: border-box;
+  }
+  input,
+  select,
+  textarea,
+  .ui-input {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 44px !important;
+    box-sizing: border-box;
+    font-size: 16px;
+  }
+
+  /* —— 知识库 —— */
+  .kb-page,
+  .knowledge-page,
+  [data-page="knowledge"] {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  .kb-sources {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px;
+    width: 100%;
+    max-width: 100%;
+    overflow: visible;
+  }
+  .kb-sources > * {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .kb-bar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .kb-hits,
+  .kb-result,
+  [data-view*="kb"] {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  /* —— 设置 —— */
+  .settings-page,
+  [data-page="settings"],
+  [data-view="settings-llm"],
+  [data-view="settings-mcp"],
+  [data-view="settings-devices"] {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .llm-active-bar,
+  .llm-form {
+    width: 100% !important;
+  }
+  .llm-form {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* —— 文件 —— */
+  .files-page,
+  .file-drop,
+  .file-list,
+  [data-page="files"] {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  .file-list li,
+  .file-row {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  /* —— 跨端 / 设备表 —— */
+  .device-hub,
+  [data-page="devices"],
+  [data-view="device-hub"] {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  .device-hub table,
+  [data-page="devices"] table {
+    width: 100%;
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .device-hub thead { display: none; }
+  .device-hub tr {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line, rgba(0,0,0,0.08));
+  }
+  .device-hub td {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    border: 0;
+    padding: 2px 0;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  /* —— 帮助 / 长文 —— */
+  .help-page,
+  [data-page="help"] {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  .help-page pre,
+  .help-page code,
+  .help-page table {
+    max-width: 100%;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* —— 长列表行 —— */
+  .agent-list,
+  .prompt-list,
+  .task-list {
+    width: 100%;
+    max-width: 100%;
+  }
+  .agent-list li,
+  .prompt-list li {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    box-sizing: border-box;
+    width: 100%;
+  }
+}
+
+/* 通用：任何 data-page 不横向溢出 */
+[data-page] {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+[data-page] img,
+[data-page] svg,
+[data-page] video {
+  max-width: 100%;
+  height: auto;
+}
