@@ -56,6 +56,8 @@ def copy_frontend_assets() -> None:
     缺失会导致 WebView 无页面，原生层闪退。
     """
     dist = ROOT / "dist"
+    if not (dist / "index.html").exists():
+        dist = ROOT / "apps" / "web" / "dist"
     assets = GEN / "app" / "src" / "main" / "assets"
     if not (dist / "index.html").exists():
         raise SystemExit(f"missing {dist}/index.html — 先 npm run build")
