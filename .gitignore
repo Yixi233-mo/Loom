@@ -29,6 +29,7 @@ plugins/llm_providers.json
 plugins/work_buddy_connection.json
 
 # 产品长文档（按约定不进 git）
+AGENTS.md
 目录/
 目录/**
 

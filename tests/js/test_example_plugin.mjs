@@ -31,7 +31,7 @@ const render = (el) =>
 
 // plugin.json 与 Python 编译结果同源（T13 示例）
 const plugin = JSON.parse(
-  readFileSync(path.join(root, "plugins/example/plugin.json"), "utf8")
+  readFileSync(path.join(root, "apps/hub/plugins/example/plugin.json"), "utf8")
 );
 
 let passed = 0;

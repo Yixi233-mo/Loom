@@ -124,7 +124,7 @@ const html = (n) => renderToStaticMarkup(n);
 
 // --- 构建配置 ---
 {
-  const vite = readFileSync(join(root, "vite.config.ts"), "utf8");
+  const vite = readFileSync(join(root, "apps/web/vite.config.ts"), "utf8");
   assert.ok(vite.includes("manualChunks"));
   assert.ok(vite.includes("cssCodeSplit"));
   assert.ok(vite.includes("react-vendor"));

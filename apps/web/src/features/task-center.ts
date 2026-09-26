@@ -52,25 +52,40 @@ const FILTERS: Array<{ id: TaskStatus | "all"; label: string }> = [
 function ResultCardImpl(props: { task: TaskState; onRerun?: (t: TaskState) => void }) {
   const t = props.task;
   const r = t.result;
+  const [open, setOpen] = React.useState(false);
   return e(
     "article",
     {
-      className: "result-card",
+      className: "result-card" + (open ? " is-open" : ""),
       "data-task-id": t.taskId,
       "data-status": t.status,
       "data-view": "result-card",
+      "data-open": open ? "true" : "false",
     },
     e(
       "header",
-      { className: "result-head" },
+      {
+        className: "result-head",
+        role: "button",
+        "data-action": "task-toggle-detail",
+        onClick: () => setOpen((v) => !v),
+      },
       e("strong", null, t.workflowName),
-      e("span", { className: "result-status" }, humanizeStatus(t.status))
+      e("span", { className: "result-status" }, humanizeStatus(t.status)),
+      e(
+        "span",
+        { className: "result-chevron", "aria-hidden": "true" },
+        open ? "收起" : "详情"
+      )
     ),
     e(
       "p",
       { className: "result-trace" },
       `trace=${t.traceId} · device=${t.device}${t.assignedTo ? ` · ${t.assignedTo}` : ""}`
     ),
+    e(
+      "div",
+      { className: "result-detail", "data-open": open ? "true" : "false" },
     r?.summary ? e("p", { className: "result-summary" }, r.summary) : null,
     r
       ? e(
@@ -90,7 +105,8 @@ function ResultCardImpl(props: { task: TaskState; onRerun?: (t: TaskState) => vo
       : null,
     t.error
       ? e("p", { className: "result-error", "data-error": "true" }, t.error)
-      : null,
+      : null
+    ),
     e(
       "div",
       { className: "result-actions" },
@@ -215,23 +231,41 @@ export function TaskCenter(props: {
       },
       e(
         "div",
-        { className: "task-filters", role: "tablist" },
-        FILTERS.map((f) =>
-          e(
-            "button",
-            {
-              key: f.id,
-              type: "button",
-              role: "tab",
-              "aria-selected": filter === f.id ? "true" : "false",
-              className:
-                UI.button +
-                " " +
-                (filter === f.id ? UI.buttonPrimary : "ui-button--ghost"),
-              "data-filter": f.id,
-              onClick: () => props.onFilter?.(f.id),
-            },
-            f.label
+        { className: "task-filters-wrap" },
+        e(
+          "select",
+          {
+            className: "task-filters-select",
+            "data-view": "task-filter-select",
+            value: filter,
+            "aria-label": "筛选任务状态",
+            onChange: (ev: any) =>
+              props.onFilter?.(ev.target.value as TaskStatus | "all"),
+          },
+          FILTERS.map((f) =>
+            e("option", { key: f.id, value: f.id }, f.label)
+          )
+        ),
+        e(
+          "div",
+          { className: "task-filters", role: "tablist" },
+          FILTERS.map((f) =>
+            e(
+              "button",
+              {
+                key: f.id,
+                type: "button",
+                role: "tab",
+                "aria-selected": filter === f.id ? "true" : "false",
+                className:
+                  UI.button +
+                  " " +
+                  (filter === f.id ? UI.buttonPrimary : "ui-button--ghost"),
+                "data-filter": f.id,
+                onClick: () => props.onFilter?.(f.id),
+              },
+              f.label
+            )
           )
         )
       ),

@@ -337,3 +337,79 @@ code {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* RS2/RS3 任务中心 */
+.task-filters-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 10px 0;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: inherit;
+  padding: 6px 0;
+}
+.task-filters-select {
+  display: none;
+  width: 100%;
+  min-height: 44px;
+  border-radius: 10px;
+  border: 1px solid var(--line, rgba(0,0,0,0.1));
+  background: var(--surface, #fff);
+  padding: 0 12px;
+  font-size: 15px;
+}
+.task-filters {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+.task-filters::-webkit-scrollbar { display: none; }
+.task-filters .ui-button,
+.task-filters button {
+  flex: 0 0 auto;
+  min-height: 40px;
+  white-space: nowrap;
+}
+@media (max-width: 767.98px) {
+  .task-filters-select { display: block; }
+  .task-filters { display: none; }
+  .result-card { padding: 12px; }
+  .result-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    min-height: 44px;
+  }
+  .result-head strong {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .result-chevron {
+    flex-shrink: 0;
+    font-size: 12px;
+    color: var(--accent, #d4785a);
+    font-weight: 600;
+  }
+  .result-detail[data-open="false"] { display: none; }
+  .result-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--line, rgba(0,0,0,0.08));
+  }
+  .result-summary {
+    overflow-wrap: anywhere;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+}
