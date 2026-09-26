@@ -413,3 +413,144 @@ code {
     line-height: 1.5;
   }
 }
+
+/* ========== P0：修「出屏 / 不能滚 / 显示不全」 ========== */
+
+/* 1) 任何 flex/grid 子项允许收缩，避免撑破容器 */
+.app-shell,
+.app-main,
+.fe-page,
+.fe-page-body,
+.task-center,
+.chat-workbench,
+.result-card,
+.settings-page,
+.agents-page,
+.kb-bar,
+.pairing-panel,
+.connect-wizard-grid {
+  min-width: 0;
+}
+.app-shell > *,
+.app-main > *,
+.fe-page > *,
+.task-center > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* 2) 文本与长串必须可换行，不得顶破宽度 */
+body, .app-main, .fe-page, p, li, td, strong, code, pre, span {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* 3) 移动：模块主区必须能纵向滚；横向允许在子块内滑 */
+@media (max-width: 767.98px) {
+  html, body {
+    /* 仍不做整页滚（壳内滚），但禁止裁切隐藏横向溢出到不可达 */
+    overflow-x: clip;
+    overflow-y: hidden;
+  }
+  .app-shell {
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+  }
+  .app-main {
+    overflow-y: auto !important;
+    overflow-x: hidden;
+    padding: 12px 12px calc(88px + env(safe-area-inset-bottom, 0px));
+    max-width: 100vw;
+    width: 100%;
+    box-sizing: border-box;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+  }
+  .fe-page {
+    padding: 12px 0 24px !important;
+    margin-bottom: 0 !important;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .fe-page-body {
+    overflow: visible !important;
+    min-height: 0;
+    overflow-y: visible;
+  }
+  /* 对话页里层恢复可滚，避免 overflow:hidden 裁切 */
+  .app-main > .fe-page[data-page="chat"],
+  .app-main > .fe-page[data-page="chat"] .fe-page-body,
+  .app-main > .fe-page[data-page="chat"] .chat-workbench {
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+  .chat-stream {
+    overflow-y: auto !important;
+    max-height: min(58vh, 520px);
+  }
+  .chat-composer {
+    position: sticky;
+    bottom: 0;
+    z-index: 6;
+  }
+  /* 卡片/表单/网格 100% 宽，可换行 */
+  .result-card,
+  .glass,
+  .task-list,
+  .agent-list li,
+  .connect-step,
+  .diag-panel,
+  .kb-sources > * {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+  }
+  .connect-wizard-grid,
+  .pairing-panel {
+    grid-template-columns: 1fr !important;
+    width: 100% !important;
+  }
+  /* 宽表格：允许横向滚动而不是裁切 */
+  .table-wrap,
+  .result-metrics,
+  .task-filters {
+    overflow-x: auto !important;
+    max-width: 100%;
+  }
+  /* 顶栏不挤掉标题 */
+  .app-header {
+    flex-wrap: wrap;
+    gap: 8px;
+    max-width: 100vw;
+    box-sizing: border-box;
+  }
+  .app-header .app-title {
+    max-width: 60vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  /* 底 Tab 不挡内容 */
+  .tabbar {
+    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+    min-height: calc(56px + env(safe-area-inset-bottom, 0px)) !important;
+    box-sizing: border-box;
+    overflow-x: auto;
+    justify-content: flex-start;
+  }
+  .tabbar .navbtn {
+    flex: 1 0 auto;
+    max-width: 22vw;
+    min-width: 56px;
+  }
+}
+
+/* 4) 桌面：主区同样禁止裁切关键内容 */
+@media (min-width: 768px) {
+  .app-main {
+    overflow-y: auto;
+    overflow-x: auto;
+  }
+}
