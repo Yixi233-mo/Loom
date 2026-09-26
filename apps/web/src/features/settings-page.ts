@@ -11,6 +11,7 @@ import {
   phaseOf,
 } from "./page-states.ts";
 import { UI } from "../components/index.ts";
+import { DiagnosticsPanel } from "./diagnostics.ts";
 import { LlmSettingsPanel, type LlmProviderView } from "../views/llm-settings-panel.ts";
 import { McpPanel, type McpProbeResult } from "../views/mcp-panel.ts";
 
@@ -128,6 +129,7 @@ export function SettingsPage(props: {
         "data-phase": phase,
         "data-tab": tab,
       },
+      e(DiagnosticsPanel, { route: "settings" }),
       phase === "loading"
         ? e(LoadingState, { label: "载入设置…", rows: 2 })
         : phase === "error"

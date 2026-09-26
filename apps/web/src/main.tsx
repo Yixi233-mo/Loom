@@ -1,6 +1,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
+import { installDiagnosticsCapture } from "./features/diagnostics.ts";
 import "./styles/index.css";
 
 // 兼容：任意环境启动异常时不静默崩（手机 WebView / 旧内核）
@@ -8,7 +9,8 @@ if (typeof window !== "undefined") {
   window.addEventListener("error", (ev) => {
     try {
       console.error("[Loom]", ev?.message || ev);
-      const el = document.getElementById("root");
+      installDiagnosticsCapture();
+const el = document.getElementById("root");
       if (el && !el.getAttribute("data-boot-error")) {
         el.setAttribute("data-boot-error", "1");
         el.innerHTML =

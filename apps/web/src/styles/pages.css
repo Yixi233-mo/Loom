@@ -960,3 +960,23 @@
     max-width: 100%;
   }
 }
+
+/* 应用内诊断 */
+.diag-panel { margin: 12px 0; padding: 14px 16px; }
+.diag-rows { display: grid; gap: 8px; margin: 12px 0; }
+.diag-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+  min-width: 0;
+}
+.diag-row strong {
+  overflow-wrap: anywhere;
+  text-align: right;
+  max-width: 65%;
+}
+.diag-row strong[data-ok="0"] { color: #b3543c; }
+.diag-row strong[data-ok="1"] { color: var(--sage, #7fa88b); }
+.diag-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.diag-actions button { min-height: 44px; }
